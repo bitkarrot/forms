@@ -22,8 +22,8 @@ async def wait_for_paid_invoices():
 
 async def on_invoice_paid(payment: Payment) -> None:
     if (
-        payment.extra.get("tag") != "example"
-    ):  # Will grab any payment with the tag "example"
+        payment.extra.get("tag") != "lnforms"
+    ):  # Will grab any payment with the tag "lnforms"
         logger.debug(payment)
         # Do something
     return
