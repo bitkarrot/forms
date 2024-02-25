@@ -6,20 +6,20 @@ from lnbits.db import Database
 from lnbits.helpers import template_renderer
 from lnbits.tasks import catch_everything_and_restart
 
-db = Database("ext_lnforms")
+db = Database("ext_example")
 
-lnforms_ext: APIRouter = APIRouter(prefix="/lnforms", tags=["lnforms"])
+example_ext: APIRouter = APIRouter(prefix="/example", tags=["example"])
 
-lnforms_static_files = [
+example_static_files = [
     {
-        "path": "/lnforms/static",
-        "name": "lnforms_static",
+        "path": "/example/static",
+        "name": "example_static",
     }
 ]
 
 
-def lnforms_renderer():
-    return template_renderer(["lnforms/templates"])
+def example_renderer():
+    return template_renderer(["example/templates"])
 
 
 from .tasks import wait_for_paid_invoices
@@ -27,6 +27,6 @@ from .views import *  # noqa: F401,F403
 from .views_api import *  # noqa: F401,F403
 
 
-def lnforms_start():
+def example_start():
     loop = asyncio.get_event_loop()
     loop.create_task(catch_everything_and_restart(wait_for_paid_invoices))
