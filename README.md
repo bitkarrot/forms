@@ -1,13 +1,11 @@
-# Example Extension - <small>[LNbits](https://github.com/lnbits/lnbits) extension</small>
+# Forms Extension
 
-<small>For more about LNBits extension check [this tutorial](https://github.com/lnbits/lnbits/wiki/LNbits-Extensions)</small>
+This is an LNBits forms extension to help you organise and build you own.
 
-<h2>*tagline*</h2>
-This is an lnforms extension to help you organise and build you own.
+<h2>Useful API endpoints</h2>
 
-Try to include an image
-<img src="https://i.imgur.com/9i4xcQB.png">
-
-<h2>If your extension has API endpoints, include useful ones here</h2>
-
+- todo: update content below
+  
 <code>curl -H "Content-type: application/json" -X POST https://YOUR-LNBITS/YOUR-EXTENSION/api/v1/EXAMPLE -d '{"amount":"100","memo":"lnforms"}' -H "X-Api-Key: YOUR_WALLET-ADMIN/INVOICE-KEY"</code>
+
+<small>For more about LNBits extensions check [this tutorial](https://github.com/lnbits/lnbits/wiki/LNbits-Extensions)</small>
