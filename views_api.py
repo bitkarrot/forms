@@ -2,12 +2,12 @@
 
 # add your dependencies here
 
-from . import lnforms_ext
+from . import forms_ext
 
 # add your endpoints here
 
 
-@lnforms_ext.get("/api/v1/test/{test_data}")
-async def api_lnforms(test_data):
+@forms_ext.get("/api/v1/test/{test_data}")
+async def api_forms(test_data):
     # Do some python things and return the data
     return test_data

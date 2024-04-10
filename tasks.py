@@ -1,7 +1,5 @@
 # tasks.py is for asynchronous when invoices get paid
-
 # add your dependencies here
-
 import asyncio
 
 from loguru import logger
@@ -22,8 +20,8 @@ async def wait_for_paid_invoices():
 
 async def on_invoice_paid(payment: Payment) -> None:
     if (
-        payment.extra.get("tag") != "lnforms"
-    ):  # Will grab any payment with the tag "lnforms"
+        payment.extra.get("tag") != "forms"
+    ):  # Will grab any payment with the tag "forms"
         logger.debug(payment)
         # Do something
     return
