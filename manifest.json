@@ -1,9 +1,9 @@
 {
     "repos": [
         {
-            "id": "lnforms",
-            "organisation": "lnbits",
-            "repository": "lnforms"
+            "id": "forms",
+            "organisation": "bolthive",
+            "repository": "forms"
         }
     ]
 }
