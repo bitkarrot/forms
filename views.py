@@ -9,6 +9,8 @@ from . import forms_ext, forms_renderer
 
 templates = Jinja2Templates(directory="templates")
 
+# TODO refactor from invoices to forms
+
 
 @forms_ext.get("/", response_class=HTMLResponse)
 async def index(
