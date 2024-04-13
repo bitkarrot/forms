@@ -29,6 +29,7 @@ async def m001_initial_forms(db):
 
            description TEXT NOT NULL,
            field_type TEXT NOT NULL,
+           field_values TEXT,
 
            FOREIGN KEY(forms_id) REFERENCES {db.references_schema}forms(id)
         );

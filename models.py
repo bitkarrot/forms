@@ -68,8 +68,8 @@ class FormItem(BaseModel):
     id: str
     Form_id: str
     description: str
-    field_type: str
-
+    field_type: str # e.g. dropdown, textarea, checkbox
+    field_values: str # values for dropdown
     class Config:
         orm_mode = True
 
