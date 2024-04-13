@@ -1,19 +1,23 @@
-# tasks.py is for asynchronous when invoices get paid
-# add your dependencies here
-# TODO refactor from invoices to forms
-
 import asyncio
 
-from loguru import logger
-
 from lnbits.core.models import Payment
-from lnbits.helpers import get_current_extension_name
 from lnbits.tasks import register_invoice_listener
+
+from .crud import (
+    create_invoice_payment,
+    get_invoice,
+    get_invoice_items,
+    get_invoice_payments,
+    get_invoice_total,
+    get_payments_total,
+    update_invoice_internal,
+)
+from .models import InvoiceStatusEnum
 
 
 async def wait_for_paid_invoices():
     invoice_queue = asyncio.Queue()
-    register_invoice_listener(invoice_queue, get_current_extension_name())
+    register_invoice_listener(invoice_queue)
 
     while True:
         payment = await invoice_queue.get()
@@ -21,9 +25,28 @@ async def wait_for_paid_invoices():
 
 
 async def on_invoice_paid(payment: Payment) -> None:
-    if (
-        payment.extra.get("tag") != "forms"
-    ):  # Will grab any payment with the tag "forms"
-        logger.debug(payment)
-        # Do something
+    if payment.extra.get("tag") != "invoices":
+        return
+
+    invoice_id = payment.extra.get("invoice_id")
+    assert invoice_id
+
+    amount = payment.extra.get("famount")
+    assert amount
+
+    await create_invoice_payment(invoice_id=invoice_id, amount=amount)
+
+    invoice = await get_invoice(invoice_id)
+    assert invoice
+
+    invoice_items = await get_invoice_items(invoice_id)
+    invoice_total = await get_invoice_total(invoice_items)
+
+    invoice_payments = await get_invoice_payments(invoice_id)
+    payments_total = await get_payments_total(invoice_payments)
+
+    if payments_total >= invoice_total:
+        invoice.status = InvoiceStatusEnum.paid
+        await update_invoice_internal(invoice.wallet, invoice)
+
     return

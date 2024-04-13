@@ -13,18 +13,16 @@ from .models import (
     UpdateInvoiceItemData,
 )
 
-# TODO refactor from invoices to forms
-
 async def get_invoice(invoice_id: str) -> Optional[Invoice]:
     row = await db.fetchone(
-        "SELECT * FROM invoices.invoices WHERE id = ?", (invoice_id,)
+        "SELECT * FROM forms.invoices WHERE id = ?", (invoice_id,)
     )
     return Invoice.from_row(row) if row else None
 
 
 async def get_invoice_items(invoice_id: str) -> List[InvoiceItem]:
     rows = await db.fetchall(
-        "SELECT * FROM invoices.invoice_items WHERE invoice_id = ?", (invoice_id,)
+        "SELECT * FROM forms.invoice_items WHERE invoice_id = ?", (invoice_id,)
     )
 
     return [InvoiceItem.from_row(row) for row in rows]
@@ -32,7 +30,7 @@ async def get_invoice_items(invoice_id: str) -> List[InvoiceItem]:
 
 async def get_invoice_item(item_id: str) -> Optional[InvoiceItem]:
     row = await db.fetchone(
-        "SELECT * FROM invoices.invoice_items WHERE id = ?", (item_id,)
+        "SELECT * FROM forms.invoice_items WHERE id = ?", (item_id,)
     )
     return InvoiceItem.from_row(row) if row else None
 
@@ -47,7 +45,7 @@ async def get_invoices(wallet_ids: Union[str, List[str]]) -> List[Invoice]:
 
     q = ",".join(["?"] * len(wallet_ids))
     rows = await db.fetchall(
-        f"SELECT * FROM invoices.invoices WHERE wallet IN ({q})", (*wallet_ids,)
+        f"SELECT * FROM forms.invoices WHERE wallet IN ({q})", (*wallet_ids,)
     )
 
     return [Invoice.from_row(row) for row in rows]
@@ -55,7 +53,7 @@ async def get_invoices(wallet_ids: Union[str, List[str]]) -> List[Invoice]:
 
 async def get_invoice_payments(invoice_id: str) -> List[Payment]:
     rows = await db.fetchall(
-        "SELECT * FROM invoices.payments WHERE invoice_id = ?", (invoice_id,)
+        "SELECT * FROM forms.payments WHERE invoice_id = ?", (invoice_id,)
     )
 
     return [Payment.from_row(row) for row in rows]
@@ -63,7 +61,7 @@ async def get_invoice_payments(invoice_id: str) -> List[Payment]:
 
 async def get_invoice_payment(payment_id: str) -> Optional[Payment]:
     row = await db.fetchone(
-        "SELECT * FROM invoices.payments WHERE id = ?", (payment_id,)
+        "SELECT * FROM forms.payments WHERE id = ?", (payment_id,)
     )
     return Payment.from_row(row) if row else None
 
@@ -76,7 +74,7 @@ async def create_invoice_internal(wallet_id: str, data: CreateInvoiceData) -> In
     invoice_id = urlsafe_short_hash()
     await db.execute(
         """
-        INSERT INTO invoices.invoices (id, wallet, status, currency, company_name, first_name, last_name, email, phone, address)
+        INSERT INTO forms.invoices (id, wallet, status, currency, company_name, first_name, last_name, email, phone, address)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -105,7 +103,7 @@ async def create_invoice_items(
         item_id = urlsafe_short_hash()
         await db.execute(
             """
-            INSERT INTO invoices.invoice_items (id, invoice_id, description, amount)
+            INSERT INTO forms.invoice_items (id, invoice_id, description, amount)
             VALUES (?, ?, ?, ?)
             """,
             (
@@ -125,7 +123,7 @@ async def update_invoice_internal(
 ) -> Invoice:
     await db.execute(
         """
-        UPDATE invoices.invoices
+        UPDATE forms.invoices
         SET wallet = ?, currency = ?, status = ?, company_name = ?, first_name = ?, last_name = ?, email = ?, phone = ?, address = ?
         WHERE id = ?
         """,
@@ -152,7 +150,7 @@ async def delete_invoice(
 ) -> bool:
     await db.execute(
         f"""
-        DELETE FROM invoices.payments
+        DELETE FROM forms.payments
         WHERE invoice_id = ?
         """,
         (
@@ -161,7 +159,7 @@ async def delete_invoice(
     )
     await db.execute(
         f"""
-        DELETE FROM invoices.invoice_items
+        DELETE FROM forms.invoice_items
         WHERE invoice_id = ?
         """,
         (
@@ -170,7 +168,7 @@ async def delete_invoice(
     )
     await db.execute(
         f"""
-        DELETE FROM invoices.invoices
+        DELETE FROM forms.invoices
         WHERE id = ?
         """,
         (
@@ -189,7 +187,7 @@ async def update_invoice_items(
             updated_items.append(item.id)
             await db.execute(
                 """
-                UPDATE invoices.invoice_items
+                UPDATE forms.invoice_items
                 SET description = ?, amount = ?
                 WHERE id = ?
                 """,
@@ -203,7 +201,7 @@ async def update_invoice_items(
 
     await db.execute(
         f"""
-        DELETE FROM invoices.invoice_items
+        DELETE FROM forms.invoice_items
         WHERE invoice_id = ?
         AND id NOT IN ({placeholders})
         """,
@@ -228,7 +226,7 @@ async def create_invoice_payment(invoice_id: str, amount: int) -> Payment:
     payment_id = urlsafe_short_hash()
     await db.execute(
         """
-        INSERT INTO invoices.payments (id, invoice_id, amount)
+        INSERT INTO forms.payments (id, invoice_id, amount)
         VALUES (?, ?, ?)
         """,
         (

@@ -1,10 +1,10 @@
-async def m001_initial_forms(db):
+async def m001_initial_invoices(db):
 
     # STATUS COLUMN OPTIONS: 'draft', 'open', 'paid', 'canceled'
 
     await db.execute(
         f"""
-       CREATE TABLE forms.forms (
+       CREATE TABLE forms.invoices (
            id TEXT PRIMARY KEY,
            wallet TEXT NOT NULL,
 
@@ -12,8 +12,12 @@ async def m001_initial_forms(db):
 
            currency TEXT NOT NULL,
 
-           form_name TEXT DEFAULT NULL,
-           custom_css TEXT DEFAULT NULL,
+           company_name TEXT DEFAULT NULL,
+           first_name TEXT DEFAULT NULL,
+           last_name TEXT DEFAULT NULL,
+           email TEXT DEFAULT NULL,
+           phone TEXT DEFAULT NULL,
+           address TEXT DEFAULT NULL,
 
 
            time TIMESTAMP NOT NULL DEFAULT {db.timestamp_now}
@@ -23,15 +27,14 @@ async def m001_initial_forms(db):
 
     await db.execute(
         f"""
-       CREATE TABLE forms.forms_items (
+       CREATE TABLE forms.invoice_items (
            id TEXT PRIMARY KEY,
-           forms_id TEXT NOT NULL,
+           invoice_id TEXT NOT NULL,
 
            description TEXT NOT NULL,
-           field_type TEXT NOT NULL,
-           field_values TEXT,
+           amount INTEGER NOT NULL,
 
-           FOREIGN KEY(forms_id) REFERENCES {db.references_schema}forms(id)
+           FOREIGN KEY(invoice_id) REFERENCES {db.references_schema}invoices(id)
         );
    """
     )
@@ -40,13 +43,13 @@ async def m001_initial_forms(db):
         f"""
        CREATE TABLE forms.payments (
            id TEXT PRIMARY KEY,
-           forms_id TEXT NOT NULL,
+           invoice_id TEXT NOT NULL,
 
            amount {db.big_int} NOT NULL,
 
            time TIMESTAMP NOT NULL DEFAULT {db.timestamp_now},
 
-           FOREIGN KEY(forms_id) REFERENCES {db.references_schema}forms(id)
+           FOREIGN KEY(invoice_id) REFERENCES {db.references_schema}invoices(id)
        );
    """
     )

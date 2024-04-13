@@ -1,5 +1,3 @@
-<!-- # TODO refactor from invoices to forms -->
-
 {% extends "public.html" %} {% block toolbar_title %} Invoice
 <q-btn
   flat
@@ -19,7 +17,7 @@
 ></q-btn>
 {% endblock %} {% from "macros.jinja" import window_vars with context %} {%
 block page %}
-<link rel="stylesheet" href="/invoices/static/css/pay.css" />
+<link rel="stylesheet" href="/forms/static/css/pay.css" />
 <div id="invoicePage">
   <div class="row q-gutter-y-md">
     <div class="col-md-6 col-sm-12 col-xs-12">
@@ -361,7 +359,7 @@ block page %}
         var famount = parseInt(formDialog.data.payment_amount * 100)
 
         axios
-          .post('/invoices/api/v1/invoice/' + this.invoice_id + '/payments', null, {
+          .post('/forms/api/v1/invoice/' + this.invoice_id + '/payments', null, {
             params: {
               famount: famount,
             }
@@ -383,7 +381,7 @@ block page %}
             qrCodeDialog.paymentChecker = setInterval(function () {
               axios
                 .get(
-                  '/invoices/api/v1/invoice/' +
+                  '/forms/api/v1/invoice/' +
                     self.invoice_id +
                     '/payments/' +
                     response.data.payment_hash

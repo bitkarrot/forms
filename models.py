@@ -6,81 +6,91 @@ from fastapi import Query
 from pydantic import BaseModel
 
 
-class FormStatusEnum(str, Enum):
+class InvoiceStatusEnum(str, Enum):
     draft = "draft"
     open = "open"
     paid = "paid"
     canceled = "canceled"
 
 
-class CreateFormItemData(BaseModel):
+class CreateInvoiceItemData(BaseModel):
     description: str
     amount: float = Query(..., ge=0.01)
 
 
-class CreateFormData(BaseModel):
-    status: FormStatusEnum = FormStatusEnum.draft
+class CreateInvoiceData(BaseModel):
+    status: InvoiceStatusEnum = InvoiceStatusEnum.draft
     currency: str
-    form_name: Optional[str]
-    custom_css: Optional[str]
-    amount: float = Query(..., ge=0.01)
-    items: List[CreateFormItemData]
+    company_name: Optional[str]
+    first_name: Optional[str]
+    last_name: Optional[str]
+    email: Optional[str]
+    phone: Optional[str]
+    address: Optional[str]
+    items: List[CreateInvoiceItemData]
 
     class Config:
         use_enum_values = True
 
 
-class UpdateFormItemData(BaseModel):
+class UpdateInvoiceItemData(BaseModel):
     id: Optional[str]
     description: str
-    field_type: str
-
-
-class UpdateFormData(BaseModel):
-    id: str
-    wallet: str
-    status: FormStatusEnum = FormStatusEnum.draft
-    currency: str
-    form_name: Optional[str]
-    custom_css: Optional[str]
     amount: float = Query(..., ge=0.01)
-    items: List[UpdateFormItemData]
 
 
-class Form(BaseModel):
+class UpdateInvoiceData(BaseModel):
     id: str
     wallet: str
-    status: FormStatusEnum = FormStatusEnum.draft
+    status: InvoiceStatusEnum = InvoiceStatusEnum.draft
     currency: str
-    form_name: Optional[str]
-    custom_css: Optional[str]
+    company_name: Optional[str]
+    first_name: Optional[str]
+    last_name: Optional[str]
+    email: Optional[str]
+    phone: Optional[str]
+    address: Optional[str]
+    items: List[UpdateInvoiceItemData]
+
+
+class Invoice(BaseModel):
+    id: str
+    wallet: str
+    status: InvoiceStatusEnum = InvoiceStatusEnum.draft
+    currency: str
+    company_name: Optional[str]
+    first_name: Optional[str]
+    last_name: Optional[str]
+    email: Optional[str]
+    phone: Optional[str]
+    address: Optional[str]
     time: int
 
     class Config:
         use_enum_values = True
 
     @classmethod
-    def from_row(cls, row: Row) -> "Form":
+    def from_row(cls, row: Row) -> "Invoice":
         return cls(**dict(row))
 
 
-class FormItem(BaseModel):
+class InvoiceItem(BaseModel):
     id: str
-    Form_id: str
+    invoice_id: str
     description: str
-    field_type: str # e.g. dropdown, textarea, checkbox
-    field_values: str # values for dropdown
+    amount: int
+
     class Config:
         orm_mode = True
 
     @classmethod
-    def from_row(cls, row: Row) -> "FormItem":
+    def from_row(cls, row: Row) -> "InvoiceItem":
         return cls(**dict(row))
 
 
 class Payment(BaseModel):
     id: str
-    Form_id: str
+    invoice_id: str
     amount: int
     time: int
 
@@ -90,5 +100,5 @@ class Payment(BaseModel):
 
 
 class CreatePaymentData(BaseModel):
-    Form_id: str
+    invoice_id: str
     amount: int
