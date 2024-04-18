@@ -72,11 +72,11 @@ block page %}
                     {% if payments_total < invoice_total %}
                     <q-btn
                       unelevated
-                      color="primary"
+                      color="primary"                      
                       @click="formDialog.show = true"
                       v-if="status == 'open'"
                     >
-                      Pay Invoice
+                      Pay Invoice <!-- this should be a submit button at the bottom of the form; modify form Dialog to be redirect to satspay-->
                     </q-btn>
                     {% endif %}
                   </div>
@@ -211,7 +211,7 @@ block page %}
       </div>
     </div>
   </div>
-
+<!-- replace below form Dialog with Satspay server redirection for payments-->
   <q-dialog v-model="formDialog.show" position="top" @hide="closeFormDialog">
     <q-card class="q-pa-lg q-pt-xl lnbits__dialog-card">
       <q-form @submit="createPayment" class="q-gutter-md">
@@ -244,6 +244,7 @@ block page %}
       </q-form>
     </q-card>
   </q-dialog>
+<!-- replace above form Dialog with Satspay server redirection for payments-->
 
   <q-dialog
     v-model="qrCodeDialog.show"
