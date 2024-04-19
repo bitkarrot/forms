@@ -61,7 +61,9 @@ async def api_invoice(invoice_id: str):
 async def api_invoice_create(
     data: CreateInvoiceData, wallet: WalletTypeInfo = Depends(get_key_type)
 ):
+    logger.info(f"Creating invoice for wallet '{wallet.wallet.id}'")
     invoice = await create_invoice_internal(wallet_id=wallet.wallet.id, data=data)
+    logger.info(f"creating invoice items for invoice '{invoice.id}'")
     items = await create_invoice_items(invoice_id=invoice.id, data=data.items)
     invoice_dict = invoice.dict()
     invoice_dict["items"] = items

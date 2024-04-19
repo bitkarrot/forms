@@ -72,7 +72,7 @@ async def create_invoice_internal(wallet_id: str, data: CreateInvoiceData) -> In
     await db.execute(
         """
         INSERT INTO forms.invoices (id, wallet, status, currency, form_name, custom_css)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?)
         """,
         (
             invoice_id,

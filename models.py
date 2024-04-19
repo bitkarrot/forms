@@ -16,11 +16,14 @@ class InvoiceStatusEnum(str, Enum):
 class CreateInvoiceItemData(BaseModel):
     description: str
     amount: float = Query(..., ge=0.01)
-
+    field_type: str
+    field_values: str
 
 class CreateInvoiceData(BaseModel):
     status: InvoiceStatusEnum = InvoiceStatusEnum.draft
     currency: str
+    form_name: Optional[str]
+    custom_css: Optional[str]
 
     items: List[CreateInvoiceItemData]
 
@@ -32,13 +35,17 @@ class UpdateInvoiceItemData(BaseModel):
     id: Optional[str]
     description: str
     amount: float = Query(..., ge=0.01)
-
+    field_type: str
+    field_values: str
 
 class UpdateInvoiceData(BaseModel):
     id: str
     wallet: str
     status: InvoiceStatusEnum = InvoiceStatusEnum.draft
     currency: str
+
+    form_name: Optional[str]
+    custom_css: Optional[str]
 
     items: List[UpdateInvoiceItemData]
 
@@ -48,6 +55,9 @@ class Invoice(BaseModel):
     wallet: str
     status: InvoiceStatusEnum = InvoiceStatusEnum.draft
     currency: str
+
+    form_name: Optional[str]
+    custom_css: Optional[str]
 
     time: int
 
