@@ -24,7 +24,6 @@ async def get_invoice_items(invoice_id: str) -> List[InvoiceItem]:
     rows = await db.fetchall(
         "SELECT * FROM forms.invoice_items WHERE invoice_id = ?", (invoice_id,)
     )
-
     return [InvoiceItem.from_row(row) for row in rows]
 
 
@@ -47,7 +46,6 @@ async def get_invoices(wallet_ids: Union[str, List[str]]) -> List[Invoice]:
     rows = await db.fetchall(
         f"SELECT * FROM forms.invoices WHERE wallet IN ({q})", (*wallet_ids,)
     )
-
     return [Invoice.from_row(row) for row in rows]
 
 
@@ -55,7 +53,6 @@ async def get_invoice_payments(invoice_id: str) -> List[Payment]:
     rows = await db.fetchall(
         "SELECT * FROM forms.payments WHERE invoice_id = ?", (invoice_id,)
     )
-
     return [Payment.from_row(row) for row in rows]
 
 
@@ -74,7 +71,7 @@ async def create_invoice_internal(wallet_id: str, data: CreateInvoiceData) -> In
     invoice_id = urlsafe_short_hash()
     await db.execute(
         """
-        INSERT INTO forms.invoices (id, wallet, status, currency, company_name, first_name, last_name, email, phone, address)
+        INSERT INTO forms.invoices (id, wallet, status, currency, form_name, custom_css)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -82,12 +79,8 @@ async def create_invoice_internal(wallet_id: str, data: CreateInvoiceData) -> In
             wallet_id,
             data.status,
             data.currency,
-            data.company_name,
-            data.first_name,
-            data.last_name,
-            data.email,
-            data.phone,
-            data.address,
+            data.form_name,
+            data.custom_css
         ),
     )
 
@@ -124,19 +117,15 @@ async def update_invoice_internal(
     await db.execute(
         """
         UPDATE forms.invoices
-        SET wallet = ?, currency = ?, status = ?, company_name = ?, first_name = ?, last_name = ?, email = ?, phone = ?, address = ?
+        SET wallet = ?, currency = ?, status = ?, form_name = ?, custom_css = ?
         WHERE id = ?
         """,
         (
             wallet_id,
             data.currency,
             data.status,
-            data.company_name,
-            data.first_name,
-            data.last_name,
-            data.email,
-            data.phone,
-            data.address,
+            data.form_name,
+            data.custom_css,
             data.id,
         ),
     )

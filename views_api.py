@@ -1,5 +1,4 @@
 from . import forms_ext, scheduled_tasks
-# TODO refactor from invoices to forms
 
 from http import HTTPStatus
 

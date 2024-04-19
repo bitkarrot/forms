@@ -21,12 +21,7 @@ class CreateInvoiceItemData(BaseModel):
 class CreateInvoiceData(BaseModel):
     status: InvoiceStatusEnum = InvoiceStatusEnum.draft
     currency: str
-    company_name: Optional[str]
-    first_name: Optional[str]
-    last_name: Optional[str]
-    email: Optional[str]
-    phone: Optional[str]
-    address: Optional[str]
+
     items: List[CreateInvoiceItemData]
 
     class Config:
@@ -44,12 +39,7 @@ class UpdateInvoiceData(BaseModel):
     wallet: str
     status: InvoiceStatusEnum = InvoiceStatusEnum.draft
     currency: str
-    company_name: Optional[str]
-    first_name: Optional[str]
-    last_name: Optional[str]
-    email: Optional[str]
-    phone: Optional[str]
-    address: Optional[str]
+
     items: List[UpdateInvoiceItemData]
 
 
@@ -58,12 +48,7 @@ class Invoice(BaseModel):
     wallet: str
     status: InvoiceStatusEnum = InvoiceStatusEnum.draft
     currency: str
-    company_name: Optional[str]
-    first_name: Optional[str]
-    last_name: Optional[str]
-    email: Optional[str]
-    phone: Optional[str]
-    address: Optional[str]
+
     time: int
 
     class Config:
@@ -79,6 +64,8 @@ class InvoiceItem(BaseModel):
     invoice_id: str
     description: str
     amount: int
+    field_type: str
+    field_values: str
 
     class Config:
         orm_mode = True

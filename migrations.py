@@ -1,6 +1,6 @@
 async def m001_initial_invoices(db):
 
-    # STATUS COLUMN OPTIONS: 'draft', 'open', 'paid', 'canceled'
+    # STATUS COLUMN OPTIONS: 'draft', 'open', 'paid', 'cancelled'
 
     await db.execute(
         f"""
@@ -12,13 +12,8 @@ async def m001_initial_invoices(db):
 
            currency TEXT NOT NULL,
 
-           company_name TEXT DEFAULT NULL,
-           first_name TEXT DEFAULT NULL,
-           last_name TEXT DEFAULT NULL,
-           email TEXT DEFAULT NULL,
-           phone TEXT DEFAULT NULL,
-           address TEXT DEFAULT NULL,
-
+           form_name TEXT DEFAULT NULL,
+           custom_css TEXT DEFAULT NULL,
 
            time TIMESTAMP NOT NULL DEFAULT {db.timestamp_now}
        );
@@ -34,6 +29,9 @@ async def m001_initial_invoices(db):
            description TEXT NOT NULL,
            amount INTEGER NOT NULL,
 
+           field_type TEXT NOT NULL,
+           field_values TEXT NOT NULL,
+        
            FOREIGN KEY(invoice_id) REFERENCES {db.references_schema}invoices(id)
         );
    """
