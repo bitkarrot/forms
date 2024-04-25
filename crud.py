@@ -96,7 +96,7 @@ async def create_invoice_items(
         item_id = urlsafe_short_hash()
         await db.execute(
             """
-            INSERT INTO forms.invoice_items (id, invoice_id, description, amount)
+            INSERT INTO forms.invoice_items (id, invoice_id, description, amount, field_type, field_values)
             VALUES (?, ?, ?, ?)
             """,
             (
@@ -104,6 +104,8 @@ async def create_invoice_items(
                 invoice_id,
                 item.description,
                 int(item.amount * 100),
+                item.field_type,
+                item.field_values
             ),
         )
 
@@ -182,7 +184,7 @@ async def update_invoice_items(
                 """,
                 (item.description, int(item.amount * 100), item.id),
             )
-
+            # TODO UPDATE THIS WITH NEW FIELD VALUES
     placeholders = ",".join("?" for _ in range(len(updated_items)))
     if not placeholders:
         placeholders = "?"
