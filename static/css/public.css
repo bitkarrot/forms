@@ -6,6 +6,10 @@
 .public-page .q-card {
   background-color: color-mix(in srgb, var(--forms-card, #fff) calc(var(--fc-card-op, 1) * 100%), transparent);
 }
+/* Rounded chrome consistent with the form cards */
+.q-dialog__inner:not(.q-dialog__inner--maximized) > div, .q-menu { border-radius: 14px; }
+.q-btn--rectangle { border-radius: 10px; }
+.q-field--outlined .q-field__control { border-radius: 10px; }
 .qr-box { display: flex; justify-content: center; padding: 12px; background: #fff; border-radius: 8px; }
 .pending-row { display: flex; align-items: center; gap: 12px; justify-content: center; }
 .ticket-code { font-family: monospace; letter-spacing: 0.08em; word-break: break-all; }

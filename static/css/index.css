@@ -1,6 +1,13 @@
 .vue-pending { visibility: hidden; }
 .ticket-code { font-family: monospace; letter-spacing: 0.08em; }
 
+/* Consistent rounded chrome — matches the builder canvas cards */
+.q-card, .q-menu { border-radius: 14px; }
+.q-dialog__inner:not(.q-dialog__inner--maximized) > div { border-radius: 14px; }
+.q-table__container { border-radius: 14px; overflow: hidden; }
+.q-btn--rectangle { border-radius: 10px; }
+.q-field--outlined .q-field__control { border-radius: 10px; }
+
 /* Flow dialog — full-screen builder */
 .fp-dialog { display: flex; flex-direction: column; }
 .fp-header {
