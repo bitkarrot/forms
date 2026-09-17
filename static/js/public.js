@@ -51,9 +51,9 @@
         finally { this.loading = false }
       },
       applyTheme() {
-        const preset = ['bitcoin', 'minimal', 'contrast'].includes(this.settings.theme) ? this.settings.theme : 'standard'
+        const preset = ['bitcoin', 'minimal', 'contrast', 'typeform'].includes(this.settings.theme) ? this.settings.theme : 'standard'
         const dark = this.settings.themeMode === 'dark' || (!('themeMode' in this.settings) && this.settings.theme === 'dark')
-        document.body.classList.remove('theme-bitcoin', 'theme-minimal', 'theme-contrast')
+        document.body.classList.remove('theme-bitcoin', 'theme-minimal', 'theme-contrast', 'theme-typeform')
         if (preset !== 'standard') document.body.classList.add(`theme-${preset}`)
         document.body.classList.toggle('body--dark', dark)
         this.$q.dark.set(dark)

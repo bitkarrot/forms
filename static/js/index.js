@@ -5,6 +5,7 @@
     {value: 'bitcoin', label: 'Bitcoin'},
     {value: 'minimal', label: 'Minimal'},
     {value: 'contrast', label: 'High contrast'},
+    {value: 'typeform', label: 'Typeform'},
   ]
   const themeModeOptions = [
     {value: 'light', label: 'Light'},

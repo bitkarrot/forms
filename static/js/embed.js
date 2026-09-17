@@ -20,12 +20,14 @@
     bitcoin: {card: '#ffffff', text: '#1f2937', muted: '#6b7280', primary: '#f7931a', border: 'rgba(0,0,0,0.15)'},
     minimal: {card: '#ffffff', text: '#1f2937', muted: '#6b7280', primary: '#374151', border: 'rgba(0,0,0,0.15)'},
     contrast: {card: '#ffffff', text: '#000000', muted: '#333333', primary: '#0000cc', border: '#000000'},
+    typeform: {card: '#ffffff', text: '#262627', muted: '#73726e', primary: '#4fb0ae', border: 'rgba(38,38,39,0.2)', pill: true},
   };
   var DARK_PRESETS = {
     standard: {card: '#1e1e1e', text: 'rgba(255,255,255,0.9)', muted: 'rgba(255,255,255,0.62)', primary: '#1976d2', border: 'rgba(255,255,255,0.15)'},
     bitcoin: {card: '#241d16', text: 'rgba(255,255,255,0.9)', muted: 'rgba(255,255,255,0.62)', primary: '#f7931a', border: 'rgba(255,255,255,0.15)'},
     minimal: {card: '#1e1e1e', text: 'rgba(255,255,255,0.9)', muted: 'rgba(255,255,255,0.62)', primary: '#d1d5db', border: 'rgba(255,255,255,0.15)'},
     contrast: {card: '#000000', text: '#ffffff', muted: '#cccccc', primary: '#ffd700', border: '#ffffff'},
+    typeform: {card: '#333334', text: 'rgba(255,255,255,0.92)', muted: 'rgba(255,255,255,0.6)', primary: '#4fb0ae', border: 'rgba(255,255,255,0.2)', pill: true},
   };
   function palette() {
     var name = PRESETS[settings.theme] ? settings.theme : 'standard';
@@ -158,6 +160,10 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
       n.style.background = p.primary;
       n.style.color = contrastColor(p.primary);
     });
+    if (p.pill) {
+      card.querySelectorAll('.fm-submit,.fm-btn').forEach(function (n) { n.style.borderRadius = '999px'; });
+      card.querySelectorAll('.fm-input,.fm-textarea,.fm-select').forEach(function (n) { n.style.borderRadius = '12px'; });
+    }
     card.querySelectorAll('.fm-muted,.fm-help,.fm-note').forEach(function (n) { n.style.color = p.muted; });
     card.querySelectorAll('.fm-spin').forEach(function (n) { n.style.borderColor = p.border; n.style.borderTopColor = 'transparent'; });
   }
