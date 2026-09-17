@@ -690,11 +690,23 @@ return function render(_ctx, _cache) {
                             outlined: "",
                             dense: "",
                             type: "textarea",
-                            rows: "4",
+                            rows: "8",
                             modelValue: _ctx.flowDialog.data.customCss,
                             "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.customCss) = $event),
-                            label: "Custom CSS"
-                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"])
+                            label: "Custom CSS",
+                            hint: "Applied to the public page. @import, url() and expression() are stripped for safety.",
+                            "input-style": "font-family:monospace;font-size:0.8rem"
+                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                          _createVNode(_component_q_btn, {
+                            flat: "",
+                            dense: "",
+                            "no-caps": "",
+                            size: "sm",
+                            icon: "auto_fix_high",
+                            label: "Insert example",
+                            class: "q-mt-xs",
+                            onClick: _ctx.insertCssSample
+                          }, null, 8 /* PROPS */, ["onClick"])
                         ])
                       ]),
                       _: 1 /* STABLE */

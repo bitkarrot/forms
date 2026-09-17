@@ -99,6 +99,37 @@
     },
   ]
 
+  const customCssSample = `/* Palette — override the theme variables */
+:root {
+  --q-primary: #7c3aed;        /* buttons & accents */
+  --q-secondary: #4f46e5;
+  --forms-page: #faf5ff;       /* page background */
+  --forms-card: #ffffff;       /* form card */
+  --forms-text: #1e1b4b;       /* main text */
+  --forms-muted: #7a7794;      /* secondary text */
+  --forms-border: rgba(30, 27, 75, 0.16);
+}
+
+/* Form card shape & shadow */
+.q-card {
+  border-radius: 24px;
+  box-shadow: 0 16px 48px rgba(124, 58, 237, 0.15);
+}
+
+/* Question typography (stepper layout) */
+.tf-qlabel { font-family: Georgia, 'Times New Roman', serif; }
+.tf-qnum { color: var(--q-primary); }
+
+/* Buttons */
+.q-btn--unelevated {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Multiple-choice option cards */
+.tf-option:hover { background: rgba(124, 58, 237, 0.07); }
+`
+
   function schemaToFields(schemaJson) {
     try {
       const fields = JSON.parse(schemaJson || '{"fields":[]}').fields || []
@@ -195,6 +226,10 @@
       setView(v) {
         if (v === 'preview') { this.flowDialog.previewStep = -1; this.flowDialog.previewAnswers = {} }
         this.formError = ''
+      },
+      insertCssSample() {
+        const d = this.flowDialog.data
+        d.customCss = d.customCss?.trim() ? `${d.customCss.trimEnd()}\n\n${customCssSample}` : customCssSample
       },
       fieldOptions(field) { return (field.optionsText || '').split(',').map(s => s.trim()).filter(Boolean) },
       previewFieldEmpty(field) { const v = this.flowDialog.previewAnswers[field.id]; return v === undefined || v === null || v === '' },
