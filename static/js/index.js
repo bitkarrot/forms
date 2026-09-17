@@ -1,33 +1,60 @@
 (() => {
   const API = '/api/v1/ext/forms'
   const themeOptions = ['light', 'dark', 'bitcoin', 'minimal', 'contrast']
+  const fieldTypeOptions = [
+    {value: 'text', label: 'Short text'},
+    {value: 'textarea', label: 'Long text'},
+    {value: 'email', label: 'Email'},
+    {value: 'phone', label: 'Phone'},
+    {value: 'number', label: 'Number'},
+    {value: 'date', label: 'Date'},
+    {value: 'select', label: 'Dropdown'},
+    {value: 'radio', label: 'Multiple choice'},
+    {value: 'checkbox', label: 'Checkbox'},
+    {value: 'consent', label: 'Consent'},
+    {value: 'nostr_pubkey', label: 'Nostr pubkey'},
+  ]
 
-  function fieldsToText(schemaJson) {
-    try {
-      const fields = JSON.parse(schemaJson || '{"fields":[]}').fields || []
-      return fields.map(f => [f.id, f.type, f.label, f.required ? 'required' : '', (f.options || []).join(',')].join('|')).join('\n')
-    } catch (_) { return '' }
+  function slugify(s) {
+    return (s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40)
   }
 
-  function textToFields(text) {
-    const fields = []
-    for (const line of (text || '').split('\n')) {
-      const trimmed = line.trim()
-      if (!trimmed) continue
-      const [id, type, label, req, opts] = trimmed.split('|').map(s => (s || '').trim())
-      const field = {id, type, label, required: req === 'required'}
-      if (opts) field.options = opts.split(',').map(s => s.trim()).filter(Boolean)
-      fields.push(field)
-    }
-    return {fields}
+  function newField(type = 'text') {
+    return {id: '', type, label: '', required: false, help: '', optionsText: ''}
+  }
+
+  function schemaToFields(schemaJson) {
+    try {
+      const fields = JSON.parse(schemaJson || '{"fields":[]}').fields || []
+      return fields.map(f => ({...f, optionsText: (f.options || []).join(', ')}))
+    } catch (_) { return [] }
+  }
+
+  function fieldsToSchema(fields) {
+    const seen = new Set()
+    const out = fields.map((f, i) => {
+      const label = (f.label || '').trim()
+      if (!label) throw new Error(`Field ${i + 1} needs a label.`)
+      let id = slugify(f.id) || slugify(label)
+      if (!id) throw new Error(`Field ${i + 1} needs an id (letters or numbers).`)
+      while (seen.has(id)) id = `${id}_${i + 1}`
+      seen.add(id)
+      const field = {id, type: f.type, label, required: Boolean(f.required), help: (f.help || '').trim()}
+      if (['select', 'radio'].includes(f.type)) {
+        field.options = (f.optionsText || '').split(',').map(s => s.trim()).filter(Boolean)
+        if (!field.options.length) throw new Error(`Field "${label}" needs at least one option.`)
+      }
+      return field
+    })
+    return {fields: out}
   }
 
   const app = Vue.createApp({
     render: window.FORMS_INDEX_RENDER(),
     data: () => ({
       flows: [], wallets: [], loading: false, loadError: '', saving: false, formError: '', isDark: false,
-      themeOptions,
-      flowDialog: {show: false, editing: false, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, theme: 'light', fieldsText: 'name|text|Name|required\nemail|email|Email|required', customCss: ''}},
+      themeOptions, fieldTypeOptions,
+      flowDialog: {show: false, editing: false, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, theme: 'light', fields: [], customCss: ''}},
       subsDialog: {show: false, flow: null, rows: []},
     }),
     computed: {
@@ -62,17 +89,28 @@
       openFlowDialog(flow = null) {
         this.formError = ''
         this.flowDialog = flow
-          ? {show: true, editing: true, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, theme: (JSON.parse(flow.settingsJson || '{}').theme) || 'light', fieldsText: fieldsToText(flow.schemaJson), customCss: (JSON.parse(flow.settingsJson || '{}').customCss) || ''}}
-          : {show: true, editing: false, data: {title: '', description: '', walletId: this.wallets[0]?.id || null, amountSat: 0, capacity: 0, theme: 'light', fieldsText: 'name|text|Name|required\nemail|email|Email|required', customCss: ''}}
+          ? {show: true, editing: true, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, theme: (JSON.parse(flow.settingsJson || '{}').theme) || 'light', fields: schemaToFields(flow.schemaJson), customCss: (JSON.parse(flow.settingsJson || '{}').customCss) || ''}}
+          : {show: true, editing: false, data: {title: '', description: '', walletId: this.wallets[0]?.id || null, amountSat: 0, capacity: 0, theme: 'light', fields: [newField('text'), newField('email')], customCss: ''}}
+      },
+      addField() { this.flowDialog.data.fields.push(newField()) },
+      removeField(i) { this.flowDialog.data.fields.splice(i, 1) },
+      moveField(i, dir) {
+        const fields = this.flowDialog.data.fields
+        const j = i + dir
+        if (j < 0 || j >= fields.length) return
+        fields.splice(j, 0, fields.splice(i, 1)[0])
       },
       async saveFlow() {
         if (this.saving) return
         const d = this.flowDialog.data
         if (!d.title?.trim() || (!this.flowDialog.editing && !d.walletId)) { this.formError = 'Title and payout wallet are required.'; return }
+        let schemaJson
+        try { schemaJson = fieldsToSchema(d.fields) }
+        catch (e) { this.formError = e.message; return }
         const payload = {
           title: d.title.trim(), description: d.description || '', capacity: Number(d.capacity) || 0,
           pricingJson: {mode: Number(d.amountSat) > 0 ? 'fixed' : 'free', amountSat: Number(d.amountSat) || 0},
-          schemaJson: textToFields(d.fieldsText),
+          schemaJson,
           settingsJson: {theme: d.theme, customCss: d.customCss || ''},
         }
         this.saving = true; this.formError = ''
@@ -93,8 +131,10 @@
           flow.status = status
         } catch (e) { LNbitsBridge.notify(e.message, 'negative').catch(() => {}) }
       },
+      publicUrl(flow) { return `${location.origin}/ext/forms/f/${flow.id}` },
+      openPublic(flow) { window.open(this.publicUrl(flow), '_blank') },
       copyPublicLink(flow) {
-        const url = `${location.origin}/ext/forms/f/${flow.id}`
+        const url = this.publicUrl(flow)
         try { navigator.clipboard.writeText(url); LNbitsBridge.notify('Public link copied.', 'positive').catch(() => {}) }
         catch (_) { window.prompt('Copy the public link:', url) }
       },

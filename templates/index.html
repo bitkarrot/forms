@@ -27,6 +27,7 @@
       <template #body-cell-price="props"><q-td :props="props">{{priceLabel(props.row)}}</q-td></template>
       <template #body-cell-actions="props"><q-td :props="props">
         <q-btn flat dense no-caps size="sm" icon="link" label="Link" @click="copyPublicLink(props.row)"></q-btn>
+        <q-btn flat dense no-caps size="sm" icon="open_in_new" label="View" @click="openPublic(props.row)"></q-btn>
         <q-btn v-if="props.row.status!=='published'" flat dense no-caps size="sm" color="positive" label="Publish" @click="setStatus(props.row,'published')"></q-btn>
         <q-btn v-if="props.row.status==='published'" flat dense no-caps size="sm" color="warning" label="Close" @click="setStatus(props.row,'closed')"></q-btn>
         <q-btn flat dense no-caps size="sm" icon="edit" label="Edit" @click="openFlowDialog(props.row)"></q-btn>
@@ -44,8 +45,28 @@
         <q-input outlined dense type="number" min="0" v-model.number="flowDialog.data.capacity" label="Capacity (0 = unlimited)"></q-input>
         <q-select outlined dense v-model="flowDialog.data.theme" :options="themeOptions" label="Theme"></q-select>
         <div>
-          <div class="text-subtitle2 q-mb-xs">Fields (one per line: <code>id|type|label|required|options,a,b</code>)</div>
-          <q-input outlined dense type="textarea" rows="6" v-model="flowDialog.data.fieldsText" hint="Types: text, email, phone, textarea, number, date, select, radio, checkbox, consent, nostr_pubkey"></q-input>
+          <div class="row items-center q-mb-xs">
+            <div class="text-subtitle2">Fields</div>
+            <q-space></q-space>
+            <q-btn flat dense no-caps size="sm" icon="add" label="Add field" @click="addField"></q-btn>
+          </div>
+          <div v-if="!flowDialog.data.fields.length" class="text-grey-7 q-mb-sm">No fields — the form will only collect a payment.</div>
+          <div v-for="(field, i) in flowDialog.data.fields" :key="i" class="field-row q-mb-sm q-pa-sm rounded-borders">
+            <div class="row q-col-gutter-sm items-center">
+              <q-select class="col-12 col-sm-4" outlined dense emit-value map-options v-model="field.type" :options="fieldTypeOptions" label="Type" @update:model-value="field.type==='consent'&&(field.required=true)"></q-select>
+              <q-input class="col-12 col-sm-5" outlined dense v-model="field.label" label="Label"></q-input>
+              <div class="col-12 col-sm-3 row items-center justify-end">
+                <q-checkbox dense v-model="field.required" label="Required" :disable="field.type==='consent'"></q-checkbox>
+                <q-btn flat round dense size="sm" icon="arrow_upward" aria-label="Move up" :disable="i===0" @click="moveField(i,-1)"></q-btn>
+                <q-btn flat round dense size="sm" icon="arrow_downward" aria-label="Move down" :disable="i===flowDialog.data.fields.length-1" @click="moveField(i,1)"></q-btn>
+                <q-btn flat round dense size="sm" icon="delete" color="negative" aria-label="Delete field" @click="removeField(i)"></q-btn>
+              </div>
+              <q-input class="col-12 col-sm-6" outlined dense v-model="field.id" label="Field ID" hint="Auto from label if empty"></q-input>
+              <q-input class="col-12 col-sm-6" outlined dense v-model="field.help" label="Help text (optional)"></q-input>
+              <q-input v-if="['select','radio'].includes(field.type)" class="col-12" outlined dense v-model="field.optionsText" label="Options (comma-separated)"></q-input>
+              <div v-if="field.type==='nostr_pubkey'" class="col-12 text-caption text-grey-7">One-click Nostr sign-in only works in the embed widget — on the hosted page attendees paste their npub manually.</div>
+            </div>
+          </div>
         </div>
         <q-input outlined dense type="textarea" rows="3" v-model="flowDialog.data.customCss" label="Custom CSS (optional)"></q-input>
         <div v-if="formError" class="text-negative" role="alert">{{formError}}</div>
