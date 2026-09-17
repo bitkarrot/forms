@@ -266,6 +266,18 @@ fn validate_settings(value: &Value) -> Result<String, String> {
         Some("stepper") => "stepper",
         _ => "compact",
     };
+    let header_image = value
+        .get("headerImage")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .trim()
+        .to_string();
+    if header_image.len() > 500
+        || (!header_image.is_empty()
+            && !(header_image.starts_with("https://") || header_image.starts_with("http://")))
+    {
+        return Err("headerImage must be an http(s) URL under 500 chars".into());
+    }
     serde_json::to_string(&json!({
         "theme": theme,
         "themeMode": theme_mode,
@@ -273,6 +285,7 @@ fn validate_settings(value: &Value) -> Result<String, String> {
         "customCss": custom_css,
         "confirmText": confirm_text,
         "requireApproval": require_approval,
+        "headerImage": header_image,
     }))
     .map_err(|_| "Invalid settingsJson".into())
 }

@@ -24,14 +24,16 @@
           <div class="text-h6 ticket-code">{{submission.ticketCode}}</div>
         </div>
       </q-card>
-      <q-card v-else-if="flow && isStepper && step===-1" class="q-pa-xl text-center tf-welcome">
+      <q-card v-else-if="flow && isStepper && step===-1" class="q-pa-xl text-center tf-welcome overflow-hidden">
+        <div v-if="settings.headerImage" class="form-banner" :style="bannerStyle"></div>
         <h1 class="text-h4 q-mt-none q-mb-sm">{{flow.title}}</h1>
         <p v-if="flow.description" class="text-grey-8">{{flow.description}}</p>
         <div v-if="flow.remaining!==null && flow.remaining!==undefined" class="text-caption q-mb-md">{{flow.remaining}} spot(s) remaining</div>
         <q-btn unelevated no-caps color="primary" size="lg" @click="step=0"><span>Start</span><q-icon name="arrow_forward" class="q-ml-sm"></q-icon></q-btn>
         <div v-if="pricing.mode==='fixed' && pricing.amountSat>0" class="text-caption q-mt-lg">{{formatSats(pricing.amountSat)}} sats to complete</div>
       </q-card>
-      <q-card v-else-if="flow" class="q-pa-lg">
+      <q-card v-else-if="flow" class="q-pa-lg overflow-hidden">
+        <div v-if="settings.headerImage" class="form-banner" :style="bannerStyle"></div>
         <template v-if="!isStepper">
           <h1 class="text-h5 q-mt-none q-mb-sm">{{flow.title}}</h1>
           <p v-if="flow.description" class="text-grey-8">{{flow.description}}</p>

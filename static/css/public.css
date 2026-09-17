@@ -4,6 +4,13 @@
 .pending-row { display: flex; align-items: center; gap: 12px; justify-content: center; }
 .ticket-code { font-family: monospace; letter-spacing: 0.08em; word-break: break-all; }
 
+.form-banner {
+  height: 140px;
+  margin: -2.5rem -2.5rem 1.25rem;
+  background-size: cover;
+  background-position: center;
+}
+
 .tf-q { animation: tf-fadein 0.25s ease; }
 @keyframes tf-fadein { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .tf-qnum { font-size: 0.95rem; font-weight: 600; opacity: 0.75; margin-bottom: 6px; }

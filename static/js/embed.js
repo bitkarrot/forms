@@ -118,6 +118,7 @@
 :host{display:block}
 button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not-allowed}
 .fm-card{max-width:560px;margin:0 auto;padding:1.75rem;border-radius:1rem;background:#fff;color:#1f2937;font:16px/1.5 sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.fm-banner{height:120px;border-radius:.75rem;background-size:cover;background-position:center;margin-bottom:1rem}
 .fm-title{font-size:1.5rem;line-height:1.2;margin-bottom:.5rem;overflow-wrap:anywhere}
 .fm-desc{white-space:pre-wrap;overflow-wrap:anywhere;margin-bottom:1rem}
 .fm-muted{font-size:.85rem;margin-bottom:1rem}
@@ -251,6 +252,10 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     submission = null;
     replaceContents(card);
     var p = palette();
+    if (settings.headerImage) {
+      var banner = element('div', 'fm-banner', null, card);
+      banner.style.backgroundImage = 'url("' + String(settings.headerImage).replace(/"/g, '%22') + '")';
+    }
     element('h1', 'fm-title', flow.title, card);
     if (flow.description) element('p', 'fm-desc', flow.description, card);
     if (flow.remaining !== null && flow.remaining !== undefined) {

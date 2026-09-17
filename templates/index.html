@@ -36,81 +36,106 @@
       </q-td></template>
     </q-table>
 
-    <q-dialog v-model="flowDialog.show"><q-card class="fp-dialog">
-      <div class="fp-header row items-center q-pa-md">
+    <q-dialog v-model="flowDialog.show" maximized transition-show="slide-up" transition-hide="slide-down"><q-card class="fp-dialog column no-wrap">
+      <div class="fp-header row items-center q-py-sm q-px-md">
         <q-icon name="dynamic_form" size="sm" color="primary" class="q-mr-sm"></q-icon>
         <div class="text-h6">{{flowDialog.editing?'Edit flow':'New flow'}}</div>
         <q-space></q-space>
-        <q-btn-toggle v-model="flowDialog.view" no-caps unelevated rounded class="fp-view-toggle" toggle-color="primary" :options="[{value:'edit',label:'Edit',icon:'edit'},{value:'preview',label:'Preview',icon:'visibility'}]" @update:model-value="setView"></q-btn-toggle>
+        <q-btn-toggle v-model="flowDialog.view" no-caps unelevated rounded class="fp-view-toggle" toggle-color="primary" :options="[{value:'edit',label:'Builder',icon:'edit'},{value:'preview',label:'Preview',icon:'visibility'}]" @update:model-value="setView"></q-btn-toggle>
+        <q-space></q-space>
+        <q-btn flat no-caps label="Cancel" @click="flowDialog.show=false"></q-btn>
+        <q-btn unelevated no-caps color="primary" label="Save" :loading="saving" @click="saveFlow"></q-btn>
       </div>
       <q-separator></q-separator>
-      <div class="q-pa-lg">
-      <div v-if="flowDialog.view==='edit'" class="q-gutter-md">
-        <q-select v-if="!flowDialog.editing" outlined dense emit-value map-options v-model="flowDialog.template" :options="flowTemplates.map(t=>({value:t.value,label:t.label}))" label="Start from template" @update:model-value="applyTemplate"></q-select>
-        <q-input outlined dense v-model="flowDialog.data.title" label="Title" :rules="[v=>Boolean(v&&v.trim())||'Required']"></q-input>
-        <q-input outlined dense type="textarea" autogrow v-model="flowDialog.data.description" label="Description"></q-input>
-        <q-select outlined dense v-model="flowDialog.data.walletId" :options="walletOptions" emit-value map-options label="Payout wallet" :disable="flowDialog.editing"></q-select>
-        <q-input outlined dense type="number" min="0" v-model.number="flowDialog.data.amountSat" label="Price (sats, 0 = free)"></q-input>
-        <q-input outlined dense type="number" min="0" v-model.number="flowDialog.data.capacity" label="Capacity (0 = unlimited)"></q-input>
-        <q-checkbox dense v-model="flowDialog.data.requireApproval" label="Require manual approval after payment"></q-checkbox>
-        <div class="row q-col-gutter-sm">
-          <q-select class="col-12 col-sm-4" outlined dense emit-value map-options v-model="flowDialog.data.themePreset" :options="themePresetOptions" label="Theme preset"></q-select>
-          <q-select class="col-6 col-sm-4" outlined dense emit-value map-options v-model="flowDialog.data.themeMode" :options="themeModeOptions" label="Mode"></q-select>
-          <q-select class="col-6 col-sm-4" outlined dense emit-value map-options v-model="flowDialog.data.renderer" :options="rendererOptions" label="Layout"></q-select>
-        </div>
-        <div>
-          <div class="row items-center q-mb-xs">
-            <div class="text-subtitle2">Questions</div>
-            <q-space></q-space>
-            <q-btn unelevated dense no-caps size="sm" color="primary" icon="add" label="Add question">
-              <q-menu anchor="bottom right" self="top right"><q-list dense style="min-width:190px">
-                <q-item v-for="t in fieldTypeOptions" :key="t.value" clickable v-close-popup @click="addField(t.value)">
-                  <q-item-section avatar><q-icon :name="t.icon" size="sm"></q-icon></q-item-section>
-                  <q-item-section>{{t.label}}</q-item-section>
-                </q-item>
-              </q-list></q-menu>
-            </q-btn>
+      <div v-if="flowDialog.view==='edit'" class="fb-layout row no-wrap col">
+        <div class="fb-palette scroll">
+          <div class="fb-pal-group">Inputs</div>
+          <div v-for="t in fieldTypeOptions" :key="t.value" class="fb-pal-item" @click="addField(t.value)">
+            <q-icon :name="t.icon" size="sm" :style="{color:t.color}"></q-icon><span>{{t.label}}</span>
           </div>
-          <div v-if="!flowDialog.data.fields.length" class="text-grey-7 q-mb-sm">No questions — the form will only collect a payment.</div>
-          <div v-else class="row q-col-gutter-md">
-            <div class="col-12 col-sm-5 tf-qlist">
-              <div v-for="(field, i) in flowDialog.data.fields" :key="i" class="tf-qcard" :class="{'tf-active': i===flowDialog.sel}" @click="selectField(i)">
-                <span class="tf-qnum">{{i+1}}</span>
-                <q-icon :name="fieldIcon(field.type)" size="xs" class="tf-qicon"></q-icon>
-                <span class="tf-qcard-label ellipsis">{{field.label||'Untitled question'}}</span>
-                <q-btn flat round dense size="sm" icon="more_vert" aria-label="Question actions" @click.stop>
-                  <q-menu><q-list dense>
-                    <q-item clickable v-close-popup :disable="i===0" @click="moveField(i,-1)"><q-item-section>Move up</q-item-section></q-item>
-                    <q-item clickable v-close-popup :disable="i===flowDialog.data.fields.length-1" @click="moveField(i,1)"><q-item-section>Move down</q-item-section></q-item>
-                    <q-item clickable v-close-popup @click="duplicateField(i)"><q-item-section>Duplicate</q-item-section></q-item>
-                    <q-item clickable v-close-popup @click="removeField(i)"><q-item-section class="text-negative">Delete</q-item-section></q-item>
-                  </q-list></q-menu>
+          <template v-if="!flowDialog.editing">
+            <div class="fb-pal-group q-mt-md">Pre-built</div>
+            <div v-for="t in flowTemplates" :key="t.value" class="fb-pal-item" @click="applyTemplate(t.value)">
+              <q-icon name="dashboard" size="sm" class="fb-pal-tpl"></q-icon><span>{{t.label}}</span>
+            </div>
+          </template>
+        </div>
+        <div class="fb-canvas scroll col">
+          <div class="fb-form">
+            <div class="fb-headerblock">
+              <div class="fb-banner" :style="bannerStyle">
+                <q-btn flat round dense icon="settings" class="fb-gear" aria-label="Header image settings" @click.stop>
+                  <q-menu><div class="q-pa-md" style="width:300px">
+                    <div class="text-subtitle2 q-mb-sm">Header image</div>
+                    <q-input dense outlined v-model="flowDialog.data.headerImage" label="Image URL" placeholder="https://…"></q-input>
+                    <div class="row justify-end q-mt-xs"><q-btn flat dense no-caps size="sm" label="Remove" @click="flowDialog.data.headerImage=''"></q-btn></div>
+                  </div></q-menu>
                 </q-btn>
               </div>
+              <input class="fb-title" v-model="flowDialog.data.title" placeholder="This is the title of your form!">
+              <textarea class="fb-desc" v-model="flowDialog.data.description" placeholder="Add a description — shown under the title" rows="2"></textarea>
             </div>
-            <div class="col-12 col-sm-7" v-if="flowDialog.data.fields[flowDialog.sel]">
-              <div class="q-gutter-sm">
-                <q-select outlined dense emit-value map-options v-model="flowDialog.data.fields[flowDialog.sel].type" :options="fieldTypeOptions" label="Question type" @update:model-value="flowDialog.data.fields[flowDialog.sel].type==='consent'&&(flowDialog.data.fields[flowDialog.sel].required=true)">
-                  <template #option="scope"><q-item v-bind="scope.itemProps"><q-item-section avatar><q-icon :name="scope.opt.icon"></q-icon></q-item-section><q-item-section>{{scope.opt.label}}</q-item-section></q-item></template>
-                </q-select>
-                <q-input outlined dense v-model="flowDialog.data.fields[flowDialog.sel].label" label="Question" placeholder="Your question here"></q-input>
-                <q-input outlined dense v-model="flowDialog.data.fields[flowDialog.sel].help" label="Description (optional)"></q-input>
-                <q-input outlined dense v-model="flowDialog.data.fields[flowDialog.sel].id" label="Field ID" hint="Auto from question if empty"></q-input>
-                <q-input v-if="['select','radio'].includes(flowDialog.data.fields[flowDialog.sel].type)" outlined dense type="textarea" autogrow v-model="flowDialog.data.fields[flowDialog.sel].optionsText" label="Choices (comma-separated)"></q-input>
-                <q-toggle v-model="flowDialog.data.fields[flowDialog.sel].required" label="Required" :disable="flowDialog.data.fields[flowDialog.sel].type==='consent'"></q-toggle>
-                <div v-if="flowDialog.data.fields[flowDialog.sel].type==='nostr_pubkey'" class="text-caption text-grey-7">One-click Nostr sign-in only works in the embed widget — on the hosted page attendees paste their npub manually.</div>
+            <div v-for="(field, i) in flowDialog.data.fields" :key="i" class="fb-card" :class="{active: i===flowDialog.sel}" @click="selectField(i)">
+              <div class="fb-tools">
+                <q-btn flat round dense size="sm" icon="arrow_upward" aria-label="Move up" :disable="i===0" @click.stop="moveField(i,-1)"></q-btn>
+                <q-btn flat round dense size="sm" icon="arrow_downward" aria-label="Move down" :disable="i===flowDialog.data.fields.length-1" @click.stop="moveField(i,1)"></q-btn>
+                <q-btn flat round dense size="sm" :icon="field.required?'star':'star_border'" aria-label="Toggle required" :class="{'fb-star-on':field.required}" @click.stop="toggleRequired(i)"></q-btn>
+                <q-btn flat round dense size="sm" icon="delete" color="negative" aria-label="Delete question" @click.stop="removeField(i)"></q-btn>
+                <q-space></q-space>
+                <span class="fb-type"><q-icon :name="fieldIcon(field.type)" size="xs"></q-icon> {{typeLabel(field.type)}}</span>
+              </div>
+              <input class="fb-qlabel" v-model="field.label" placeholder="Click here to edit" @click.stop>
+              <div v-if="field.help" class="fb-qhelp">{{field.help}}</div>
+              <div class="fb-input">
+                <q-input v-if="['text','email','phone','number','date','nostr_pubkey'].includes(field.type)" outlined dense :type="field.type==='number'?'number':(field.type==='date'?'date':'text')" v-model="flowDialog.previewAnswers['f'+i]" placeholder="Type your answer here"></q-input>
+                <q-input v-else-if="field.type==='textarea'" outlined dense type="textarea" rows="3" v-model="flowDialog.previewAnswers['f'+i]" placeholder="Type your answer here"></q-input>
+                <q-select v-else-if="field.type==='select'" outlined dense :options="fieldOptions(field)" v-model="flowDialog.previewAnswers['f'+i]" placeholder="Choose an option"></q-select>
+                <q-option-group v-else-if="field.type==='radio'" :options="fieldOptions(field).map(o=>({label:o,value:o}))" v-model="flowDialog.previewAnswers['f'+i]" type="radio"></q-option-group>
+                <q-checkbox v-else-if="['checkbox','consent'].includes(field.type)" v-model="flowDialog.previewAnswers['f'+i]" :label="field.type==='consent'?'I accept':'Yes'"></q-checkbox>
               </div>
             </div>
+            <div v-if="!flowDialog.data.fields.length" class="fb-empty">Pick a field type on the left to add your first question — the form can also collect a payment with no questions.</div>
+            <div v-else class="fb-addhint">Click an input type on the left to add another question</div>
           </div>
         </div>
-        <q-input outlined dense type="textarea" rows="3" v-model="flowDialog.data.customCss" label="Custom CSS (optional)"></q-input>
-        <div v-if="formError" class="text-negative" role="alert">{{formError}}</div>
-        <div class="row justify-end q-gutter-sm">
-          <q-btn flat no-caps label="Cancel" @click="flowDialog.show=false"></q-btn>
-          <q-btn unelevated no-caps color="primary" label="Save" :loading="saving" @click="saveFlow"></q-btn>
+        <div class="fb-side scroll">
+          <template v-if="flowDialog.data.fields[flowDialog.sel]">
+            <div class="fb-side-sec">
+              <div class="fb-side-title">Question</div>
+              <q-select outlined dense emit-value map-options v-model="flowDialog.data.fields[flowDialog.sel].type" :options="fieldTypeOptions" label="Type" @update:model-value="flowDialog.data.fields[flowDialog.sel].type==='consent'&&(flowDialog.data.fields[flowDialog.sel].required=true)">
+                <template #option="scope"><q-item v-bind="scope.itemProps"><q-item-section avatar><q-icon :name="scope.opt.icon" :style="{color:scope.opt.color}"></q-icon></q-item-section><q-item-section>{{scope.opt.label}}</q-item-section></q-item></template>
+              </q-select>
+              <q-input class="q-mt-sm" outlined dense v-model="flowDialog.data.fields[flowDialog.sel].help" label="Description (optional)"></q-input>
+              <q-input class="q-mt-sm" outlined dense v-model="flowDialog.data.fields[flowDialog.sel].id" label="Field ID" hint="Auto from question if empty"></q-input>
+              <q-input v-if="['select','radio'].includes(flowDialog.data.fields[flowDialog.sel].type)" class="q-mt-sm" outlined dense type="textarea" autogrow v-model="flowDialog.data.fields[flowDialog.sel].optionsText" label="Choices (comma-separated)"></q-input>
+              <q-toggle class="q-mt-sm" v-model="flowDialog.data.fields[flowDialog.sel].required" label="Required" :disable="flowDialog.data.fields[flowDialog.sel].type==='consent'"></q-toggle>
+              <div v-if="flowDialog.data.fields[flowDialog.sel].type==='nostr_pubkey'" class="text-caption text-grey-7 q-mt-sm">One-click Nostr sign-in only works in the embed widget — on the hosted page attendees paste their npub manually.</div>
+            </div>
+          </template>
+          <q-expansion-item icon="payments" label="Payment" group="fb-side" class="fb-acc">
+            <div class="q-gutter-sm q-pa-sm">
+              <q-select outlined dense v-model="flowDialog.data.walletId" :options="walletOptions" emit-value map-options label="Payout wallet" :disable="flowDialog.editing"></q-select>
+              <q-input outlined dense type="number" min="0" v-model.number="flowDialog.data.amountSat" label="Price (sats, 0 = free)"></q-input>
+              <q-input outlined dense type="number" min="0" v-model.number="flowDialog.data.capacity" label="Capacity (0 = unlimited)"></q-input>
+              <q-checkbox dense v-model="flowDialog.data.requireApproval" label="Require manual approval after payment"></q-checkbox>
+            </div>
+          </q-expansion-item>
+          <q-expansion-item icon="palette" label="Appearance" group="fb-side" class="fb-acc">
+            <div class="q-gutter-sm q-pa-sm">
+              <q-select outlined dense emit-value map-options v-model="flowDialog.data.themePreset" :options="themePresetOptions" label="Theme preset"></q-select>
+              <q-select outlined dense emit-value map-options v-model="flowDialog.data.themeMode" :options="themeModeOptions" label="Mode"></q-select>
+              <q-select outlined dense emit-value map-options v-model="flowDialog.data.renderer" :options="rendererOptions" label="Layout"></q-select>
+              <q-input outlined dense v-model="flowDialog.data.headerImage" label="Header image URL" placeholder="https://…"></q-input>
+              <q-input outlined dense v-model="flowDialog.data.confirmText" label="Confirmation text" hint="Shown after a successful submission"></q-input>
+            </div>
+          </q-expansion-item>
+          <q-expansion-item icon="code" label="Advanced" group="fb-side" class="fb-acc">
+            <div class="q-pa-sm"><q-input outlined dense type="textarea" rows="4" v-model="flowDialog.data.customCss" label="Custom CSS"></q-input></div>
+          </q-expansion-item>
+          <div v-if="formError" class="text-negative q-pa-sm" role="alert">{{formError}}</div>
         </div>
       </div>
-      <div v-else class="form-preview" :class="previewClasses">
+      <div v-else class="col scroll q-pa-lg"><div class="form-preview" :class="previewClasses">
         <q-card class="q-pa-lg fp-preview-card">
           <div v-if="previewStepper && flowDialog.previewStep===-1" class="text-center q-pa-lg">
             <div class="text-h5 q-mt-none q-mb-sm">{{flowDialog.data.title || 'Untitled form'}}</div>

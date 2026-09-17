@@ -1,5 +1,5 @@
 window.FORMS_PUBLIC_RENDER=function(){
-const { resolveComponent: _resolveComponent, createVNode: _createVNode, createElementVNode: _createElementVNode, openBlock: _openBlock, createElementBlock: _createElementBlock, createCommentVNode: _createCommentVNode, toDisplayString: _toDisplayString, withCtx: _withCtx, createBlock: _createBlock, Fragment: _Fragment, renderList: _renderList, createTextVNode: _createTextVNode, normalizeClass: _normalizeClass } = Vue
+const { resolveComponent: _resolveComponent, createVNode: _createVNode, createElementVNode: _createElementVNode, openBlock: _openBlock, createElementBlock: _createElementBlock, createCommentVNode: _createCommentVNode, toDisplayString: _toDisplayString, withCtx: _withCtx, createBlock: _createBlock, normalizeStyle: _normalizeStyle, Fragment: _Fragment, renderList: _renderList, createTextVNode: _createTextVNode, normalizeClass: _normalizeClass } = Vue
 
 return function render(_ctx, _cache) {
   const _component_q_spinner = _resolveComponent("q-spinner")
@@ -77,19 +77,26 @@ return function render(_ctx, _cache) {
             : (_ctx.flow && _ctx.isStepper && _ctx.step===-1)
               ? (_openBlock(), _createBlock(_component_q_card, {
                   key: 3,
-                  class: "q-pa-xl text-center tf-welcome"
+                  class: "q-pa-xl text-center tf-welcome overflow-hidden"
                 }, {
                   default: _withCtx(() => [
+                    (_ctx.settings.headerImage)
+                      ? (_openBlock(), _createElementBlock("div", {
+                          key: 0,
+                          class: "form-banner",
+                          style: _normalizeStyle(_ctx.bannerStyle)
+                        }, null, 4 /* STYLE */))
+                      : _createCommentVNode("v-if", true),
                     _createElementVNode("h1", { class: "text-h4 q-mt-none q-mb-sm" }, _toDisplayString(_ctx.flow.title), 1 /* TEXT */),
                     (_ctx.flow.description)
                       ? (_openBlock(), _createElementBlock("p", {
-                          key: 0,
+                          key: 1,
                           class: "text-grey-8"
                         }, _toDisplayString(_ctx.flow.description), 1 /* TEXT */))
                       : _createCommentVNode("v-if", true),
                     (_ctx.flow.remaining!==null && _ctx.flow.remaining!==undefined)
                       ? (_openBlock(), _createElementBlock("div", {
-                          key: 1,
+                          key: 2,
                           class: "text-caption q-mb-md"
                         }, _toDisplayString(_ctx.flow.remaining) + " spot(s) remaining", 1 /* TEXT */))
                       : _createCommentVNode("v-if", true),
@@ -111,7 +118,7 @@ return function render(_ctx, _cache) {
                     }, 8 /* PROPS */, ["onClick"]),
                     (_ctx.pricing.mode==='fixed' && _ctx.pricing.amountSat>0)
                       ? (_openBlock(), _createElementBlock("div", {
-                          key: 2,
+                          key: 3,
                           class: "text-caption q-mt-lg"
                         }, _toDisplayString(_ctx.formatSats(_ctx.pricing.amountSat)) + " sats to complete", 1 /* TEXT */))
                       : _createCommentVNode("v-if", true)
@@ -121,11 +128,18 @@ return function render(_ctx, _cache) {
               : (_ctx.flow)
                 ? (_openBlock(), _createBlock(_component_q_card, {
                     key: 4,
-                    class: "q-pa-lg"
+                    class: "q-pa-lg overflow-hidden"
                   }, {
                     default: _withCtx(() => [
+                      (_ctx.settings.headerImage)
+                        ? (_openBlock(), _createElementBlock("div", {
+                            key: 0,
+                            class: "form-banner",
+                            style: _normalizeStyle(_ctx.bannerStyle)
+                          }, null, 4 /* STYLE */))
+                        : _createCommentVNode("v-if", true),
                       (!_ctx.isStepper)
-                        ? (_openBlock(), _createElementBlock(_Fragment, { key: 0 }, [
+                        ? (_openBlock(), _createElementBlock(_Fragment, { key: 1 }, [
                             _createElementVNode("h1", { class: "text-h5 q-mt-none q-mb-sm" }, _toDisplayString(_ctx.flow.title), 1 /* TEXT */),
                             (_ctx.flow.description)
                               ? (_openBlock(), _createElementBlock("p", {
@@ -143,7 +157,7 @@ return function render(_ctx, _cache) {
                         : _createCommentVNode("v-if", true),
                       (_ctx.isStepper)
                         ? (_openBlock(), _createBlock(_component_q_linear_progress, {
-                            key: 1,
+                            key: 2,
                             value: _ctx.stepProgress,
                             rounded: "",
                             class: "q-mb-md",
@@ -308,14 +322,14 @@ return function render(_ctx, _cache) {
                       ]),
                       (_ctx.submitError)
                         ? (_openBlock(), _createElementBlock("div", {
-                            key: 2,
+                            key: 3,
                             class: "text-negative q-mt-md",
                             role: "alert"
                           }, _toDisplayString(_ctx.submitError), 1 /* TEXT */))
                         : _createCommentVNode("v-if", true),
                       (_ctx.isStepper)
                         ? (_openBlock(), _createElementBlock("div", {
-                            key: 3,
+                            key: 4,
                             class: "row items-end justify-between q-mt-lg"
                           }, [
                             _createVNode(_component_q_btn, {
@@ -352,7 +366,7 @@ return function render(_ctx, _cache) {
                             ])
                           ]))
                         : (_openBlock(), _createBlock(_component_q_btn, {
-                            key: 4,
+                            key: 5,
                             unelevated: "",
                             "no-caps": "",
                             color: "primary",
@@ -363,7 +377,7 @@ return function render(_ctx, _cache) {
                           }, null, 8 /* PROPS */, ["loading", "label", "onClick"])),
                       (_ctx.hasNostrField)
                         ? (_openBlock(), _createElementBlock("div", {
-                            key: 5,
+                            key: 6,
                             class: "text-caption text-grey-7 q-mt-sm"
                           }, "Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login."))
                         : _createCommentVNode("v-if", true)

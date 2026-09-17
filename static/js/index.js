@@ -24,17 +24,17 @@
     return {preset: themePresetOptions.some(o => o.value === theme) ? theme : 'standard', mode: settings.themeMode === 'dark' ? 'dark' : 'light'}
   }
   const fieldTypeOptions = [
-    {value: 'text', label: 'Short text', icon: 'text_fields'},
-    {value: 'textarea', label: 'Long text', icon: 'subject'},
-    {value: 'email', label: 'Email', icon: 'mail_outline'},
-    {value: 'phone', label: 'Phone', icon: 'phone'},
-    {value: 'number', label: 'Number', icon: 'tag'},
-    {value: 'date', label: 'Date', icon: 'event'},
-    {value: 'select', label: 'Dropdown', icon: 'arrow_drop_down_circle'},
-    {value: 'radio', label: 'Multiple choice', icon: 'radio_button_checked'},
-    {value: 'checkbox', label: 'Checkbox', icon: 'check_box'},
-    {value: 'consent', label: 'Consent', icon: 'gavel'},
-    {value: 'nostr_pubkey', label: 'Nostr pubkey', icon: 'key'},
+    {value: 'text', label: 'Short answer', icon: 'text_fields', color: '#8b5cf6'},
+    {value: 'textarea', label: 'Paragraph', icon: 'subject', color: '#65a30d'},
+    {value: 'email', label: 'Email', icon: 'mail_outline', color: '#f59e0b'},
+    {value: 'phone', label: 'Phone', icon: 'phone', color: '#0ea5e9'},
+    {value: 'number', label: 'Number', icon: 'tag', color: '#eab308'},
+    {value: 'date', label: 'Date', icon: 'event', color: '#ef4444'},
+    {value: 'select', label: 'Dropdown', icon: 'arrow_drop_down_circle', color: '#22c55e'},
+    {value: 'radio', label: 'Multiple choice', icon: 'radio_button_checked', color: '#14b8a6'},
+    {value: 'checkbox', label: 'Checkbox', icon: 'check_box', color: '#3b82f6'},
+    {value: 'consent', label: 'Consent', icon: 'gavel', color: '#a855f7'},
+    {value: 'nostr_pubkey', label: 'Nostr pubkey', icon: 'key', color: '#8e30eb'},
   ]
 
   function fieldIcon(type) {
@@ -130,7 +130,7 @@
     data: () => ({
       flows: [], wallets: [], loading: false, loadError: '', saving: false, formError: '', isDark: false,
       themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions, flowTemplates,
-      flowDialog: {show: false, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: ''}},
+      flowDialog: {show: false, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: '', headerImage: '', confirmText: ''}},
       subsDialog: {show: false, flow: null, rows: []},
       csvDialog: {show: false, filename: '', content: ''},
       subsFilter: '', subsStatusFilter: null,
@@ -172,6 +172,11 @@
       previewSubmitLabel() {
         const amount = Number(this.flowDialog.data.amountSat) || 0
         return amount > 0 ? `Pay ${amount.toLocaleString()} sats` : 'Submit'
+      },
+      bannerStyle() {
+        const url = (this.flowDialog.data.headerImage || '').trim()
+        if (url) return {backgroundImage: `url("${url.replace(/"/g, '%22')}")`, backgroundSize: 'cover', backgroundPosition: 'center'}
+        return {background: 'linear-gradient(120deg, color-mix(in srgb, var(--q-primary) 28%, transparent), color-mix(in srgb, var(--q-secondary, var(--q-primary)) 14%, transparent))'}
       },
     },
     methods: {
@@ -215,10 +220,10 @@
         if (flow) {
           const settings = JSON.parse(flow.settingsJson || '{}')
           const {preset, mode} = themeSettings(settings)
-          this.flowDialog = {show: true, editing: true, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || ''}}
+          this.flowDialog = {show: true, editing: true, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || '', headerImage: settings.headerImage || '', confirmText: settings.confirmText || ''}}
         } else {
           const blank = flowTemplates[0].data
-          this.flowDialog = {show: true, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: ''}}
+          this.flowDialog = {show: true, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: '', headerImage: '', confirmText: ''}}
         }
       },
       applyTemplate(value) {
@@ -233,7 +238,13 @@
         this.flowDialog.sel = 0
       },
       fieldIcon,
+      typeLabel(type) { return (fieldTypeOptions.find(t => t.value === type) || {}).label || type },
       selectField(i) { this.flowDialog.sel = i },
+      toggleRequired(i) {
+        const f = this.flowDialog.data.fields[i]
+        if (f.type === 'consent') { f.required = true; return }
+        f.required = !f.required
+      },
       addField(type = 'text') {
         const fields = this.flowDialog.data.fields
         fields.push(newField(type))
@@ -267,7 +278,7 @@
           title: d.title.trim(), description: d.description || '', capacity: Number(d.capacity) || 0,
           pricingJson: {mode: Number(d.amountSat) > 0 ? 'fixed' : 'free', amountSat: Number(d.amountSat) || 0},
           schemaJson,
-          settingsJson: {theme: d.themePreset, themeMode: d.themeMode, renderer: d.renderer, requireApproval: Boolean(d.requireApproval), customCss: d.customCss || ''},
+          settingsJson: {theme: d.themePreset, themeMode: d.themeMode, renderer: d.renderer, requireApproval: Boolean(d.requireApproval), customCss: d.customCss || '', headerImage: d.headerImage || '', confirmText: d.confirmText || ''},
         }
         this.saving = true; this.formError = ''
         try {

@@ -33,6 +33,10 @@
           ? `Pay ${this.formatSats(this.pricing.amountSat)} sats`
           : 'Submit'
       },
+      bannerStyle() {
+        const u = this.settings.headerImage
+        return u ? {backgroundImage: `url("${String(u).replace(/"/g, '%22')}")`} : {}
+      },
     },
     methods: {
       async api(method, path, body) { const result = await LNbitsBridge.callApi(method, API + path, body); if (result && result.error) throw new Error(result.error); return result },

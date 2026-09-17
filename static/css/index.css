@@ -1,13 +1,8 @@
 .vue-pending { visibility: hidden; }
 .ticket-code { font-family: monospace; letter-spacing: 0.08em; }
-.field-row { border: 1px solid rgba(128, 128, 128, 0.3); }
 
-/* Flow dialog — LNbits rounded + gradient accents */
-.fp-dialog {
-  min-width: min(94vw, 880px);
-  border-radius: 16px;
-  overflow: hidden;
-}
+/* Flow dialog — full-screen builder */
+.fp-dialog { display: flex; flex-direction: column; }
 .fp-header {
   background: linear-gradient(
     135deg,
@@ -21,39 +16,161 @@
   padding: 3px;
 }
 .fp-view-toggle .q-btn { border-radius: 999px; padding: 0 14px; }
-.tf-qlist { max-height: 420px; overflow-y: auto; }
-.tf-qcard {
+
+/* Builder 3-column layout */
+.fb-layout { min-height: 0; }
+.fb-palette {
+  width: 210px;
+  min-width: 210px;
+  border-right: 1px solid rgba(128, 128, 128, 0.25);
+  padding: 14px 10px;
+  overflow-y: auto;
+}
+.fb-pal-group {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+  margin: 4px 8px 8px;
+}
+.fb-pal-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 6px 9px 10px;
-  margin-bottom: 6px;
-  border: 1px solid rgba(128, 128, 128, 0.3);
-  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 2px;
+  border-radius: 8px;
+  font-size: 0.92rem;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  transition: background 0.12s;
 }
-.tf-qcard:hover { background: color-mix(in srgb, var(--q-primary) 6%, transparent); }
-.tf-qcard.tf-active {
-  border-color: var(--q-primary);
-  background: color-mix(in srgb, var(--q-primary) 8%, transparent);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+.fb-pal-item:hover { background: rgba(128, 128, 128, 0.12); }
+.fb-pal-tpl { color: var(--q-primary); }
+
+.fb-canvas { background: rgba(128, 128, 128, 0.09); overflow-y: auto; }
+.fb-form { max-width: 680px; margin: 0 auto; padding: 28px 20px 60px; }
+
+/* Header block — banner + inline title/description */
+.fb-headerblock { margin-bottom: 18px; }
+.fb-banner {
+  position: relative;
+  height: 150px;
+  border-radius: 14px;
+  background: rgba(128, 128, 128, 0.15);
+  margin-bottom: 14px;
 }
-.tf-qnum {
+.fb-gear {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #333;
+}
+body.body--dark .fb-gear { background: rgba(30, 30, 30, 0.85); color: #eee; }
+.fb-title {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.25;
+  padding: 4px 6px;
+  border-radius: 8px;
+  color: inherit;
+}
+.fb-desc {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 1rem;
+  opacity: 0.75;
+  padding: 4px 6px;
+  border-radius: 8px;
+  resize: vertical;
+  color: inherit;
+}
+.fb-title:hover, .fb-desc:hover { background: rgba(128, 128, 128, 0.08); }
+.fb-title:focus, .fb-desc:focus { outline: 2px solid color-mix(in srgb, var(--q-primary) 50%, transparent); background: transparent; opacity: 1; }
+
+/* Question cards on the canvas */
+.fb-card {
+  background: var(--forms-card, #fff);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+  padding: 14px 18px 18px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.fb-card:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); }
+.fb-card.active { border-color: var(--q-primary); }
+.fb-tools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: -4px -8px 8px;
+  opacity: 0.75;
+}
+.fb-star-on { color: var(--q-primary); }
+.fb-type {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  height: 24px;
-  padding: 0 4px;
-  border-radius: 6px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  background: color-mix(in srgb, var(--q-primary) 12%, transparent);
-  color: var(--q-primary);
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.6;
 }
-.tf-qicon { opacity: 0.6; }
-.tf-qcard-label { flex: 1; font-size: 0.95rem; }
+.fb-qlabel {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  margin-left: -6px;
+  border-radius: 6px;
+  color: inherit;
+}
+.fb-qlabel:hover { background: rgba(128, 128, 128, 0.08); }
+.fb-qlabel:focus { outline: 2px solid color-mix(in srgb, var(--q-primary) 50%, transparent); }
+.fb-qlabel::placeholder { color: inherit; opacity: 0.4; }
+.fb-qhelp { font-size: 0.9rem; opacity: 0.6; margin: 2px 0 4px; }
+.fb-input { margin-top: 10px; }
+.fb-empty, .fb-addhint {
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.55;
+  padding: 18px;
+  border: 1px dashed rgba(128, 128, 128, 0.4);
+  border-radius: 12px;
+}
+.fb-addhint { border: none; padding: 10px; }
+
+/* Right settings panel */
+.fb-side {
+  width: 300px;
+  min-width: 300px;
+  border-left: 1px solid rgba(128, 128, 128, 0.25);
+  padding: 14px;
+  overflow-y: auto;
+}
+.fb-side-sec { padding-bottom: 14px; border-bottom: 1px solid rgba(128, 128, 128, 0.25); margin-bottom: 10px; }
+.fb-side-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+  margin-bottom: 10px;
+}
 
 /* Live preview */
 .form-preview {
@@ -68,7 +185,9 @@
 /* Stepper question chrome (shared with public page) */
 .tf-q { animation: tf-fadein 0.25s ease; }
 @keyframes tf-fadein { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.tf-qnum { font-size: 0.95rem; font-weight: 600; opacity: 0.75; margin-bottom: 6px; }
 .tf-qlabel { font-size: 1.6rem; font-weight: 700; line-height: 1.25; margin-bottom: 4px; }
+.tf-opt { font-size: 0.85rem; font-weight: 400; opacity: 0.55; margin-left: 8px; }
 .tf-qhelp { font-size: 1rem; opacity: 0.65; margin-bottom: 14px; }
 .tf-q .q-field, .tf-q .tf-options, .tf-q .q-checkbox { margin-top: 10px; }
 .tf-options { display: flex; flex-direction: column; gap: 8px; }
@@ -100,3 +219,7 @@
 .tf-check { color: var(--q-primary); }
 .tf-hint { font-size: 0.75rem; opacity: 0.55; margin-top: 6px; }
 .tf-hint b { font-weight: 600; }
+
+/* Builder canvas in dark mode */
+body.body--dark .fb-card { background: #1e1e1e; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); }
+body.body--dark .fb-canvas { background: rgba(0, 0, 0, 0.25); }
