@@ -2,24 +2,95 @@
 .ticket-code { font-family: monospace; letter-spacing: 0.08em; }
 .field-row { border: 1px solid rgba(128, 128, 128, 0.3); }
 
+/* Flow dialog — LNbits rounded + gradient accents */
+.fp-dialog {
+  min-width: min(94vw, 880px);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.fp-header {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--q-primary) 10%, transparent),
+    color-mix(in srgb, var(--q-secondary, var(--q-primary)) 5%, transparent)
+  );
+}
 .tf-qlist { max-height: 420px; overflow-y: auto; }
 .tf-qcard {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 6px 10px 12px;
+  gap: 10px;
+  padding: 9px 6px 9px 10px;
   margin-bottom: 6px;
   border: 1px solid rgba(128, 128, 128, 0.3);
-  border-left: 3px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.tf-qcard:hover { background: color-mix(in srgb, var(--q-primary) 6%, transparent); }
+.tf-qcard.tf-active {
+  border-color: var(--q-primary);
+  background: color-mix(in srgb, var(--q-primary) 8%, transparent);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+.tf-qnum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--q-primary) 12%, transparent);
+  color: var(--q-primary);
+}
+.tf-qicon { opacity: 0.6; }
+.tf-qcard-label { flex: 1; font-size: 0.95rem; }
+
+/* Live preview */
+.form-preview {
+  background: var(--forms-page);
+  color: var(--forms-text);
+  border-radius: 14px;
+  padding: 24px 16px;
+  min-height: 320px;
+}
+.fp-preview-card { max-width: 560px; margin: 0 auto; }
+
+/* Stepper question chrome (shared with public page) */
+.tf-q { animation: tf-fadein 0.25s ease; }
+@keyframes tf-fadein { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.tf-qlabel { font-size: 1.6rem; font-weight: 700; line-height: 1.25; margin-bottom: 4px; }
+.tf-qhelp { font-size: 1rem; opacity: 0.65; margin-bottom: 14px; }
+.tf-q .q-field, .tf-q .tf-options, .tf-q .q-checkbox { margin-top: 10px; }
+.tf-options { display: flex; flex-direction: column; gap: 8px; }
+.tf-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(128, 128, 128, 0.35);
   border-radius: 8px;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
 }
-.tf-qcard:hover { background: rgba(128, 128, 128, 0.08); }
-.tf-qcard.tf-active {
-  border-left-color: var(--q-primary);
-  background: rgba(128, 128, 128, 0.08);
+.tf-option:hover { background: rgba(128, 128, 128, 0.08); }
+.tf-option.tf-selected { border-color: var(--q-primary); border-width: 2px; }
+.tf-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 4px;
+  border: 1px solid rgba(128, 128, 128, 0.45);
+  border-radius: 5px;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
-.tf-qnum { font-size: 0.8rem; font-weight: 600; opacity: 0.6; min-width: 1.2em; }
-.tf-qicon { opacity: 0.6; }
-.tf-qcard-label { flex: 1; font-size: 0.95rem; }
+.tf-optext { flex: 1; }
+.tf-check { color: var(--q-primary); }
+.tf-hint { font-size: 0.75rem; opacity: 0.55; margin-top: 6px; }
+.tf-hint b { font-weight: 600; }

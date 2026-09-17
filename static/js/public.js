@@ -57,6 +57,7 @@
         document.body.classList.remove('theme-bitcoin', 'theme-minimal', 'theme-contrast', 'theme-typeform')
         if (preset !== 'standard') document.body.classList.add(`theme-${preset}`)
         document.body.classList.toggle('body--dark', dark)
+        document.body.classList.toggle('theme-dark', dark)
         this.$q.dark.set(dark)
       },
       applyCustomCss() {

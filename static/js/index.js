@@ -130,7 +130,7 @@
     data: () => ({
       flows: [], wallets: [], loading: false, loadError: '', saving: false, formError: '', isDark: false,
       themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions, flowTemplates,
-      flowDialog: {show: false, editing: false, template: 'blank', sel: 0, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: ''}},
+      flowDialog: {show: false, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: ''}},
       subsDialog: {show: false, flow: null, rows: []},
       subsFilter: '', subsStatusFilter: null,
       shareDialog: {show: false, flow: null},
@@ -157,6 +157,21 @@
         if (!q) return rows
         return rows.filter(r => [r.id, r.ticketCode, r.answersJson].some(v => (v || '').toLowerCase().includes(q)))
       },
+      previewStepper() { return this.flowDialog.data.renderer === 'stepper' && this.flowDialog.data.fields.length > 0 },
+      previewClasses() {
+        const d = this.flowDialog.data
+        const preset = ['bitcoin', 'minimal', 'contrast', 'typeform'].includes(d.themePreset) ? `theme-${d.themePreset}` : ''
+        return [preset, d.themeMode === 'dark' ? 'theme-dark' : ''].filter(Boolean).join(' ')
+      },
+      previewProgress() {
+        const n = this.flowDialog.data.fields.length
+        return n ? (this.flowDialog.previewStep + 1) / n : 0
+      },
+      previewLastStep() { return this.flowDialog.previewStep === this.flowDialog.data.fields.length - 1 },
+      previewSubmitLabel() {
+        const amount = Number(this.flowDialog.data.amountSat) || 0
+        return amount > 0 ? `Pay ${amount.toLocaleString()} sats` : 'Submit'
+      },
     },
     methods: {
       async api(method, path, body) { const result = await LNbitsBridge.callApi(method, API + path, body); if (result && result.error) throw new Error(result.error); return result },
@@ -171,15 +186,38 @@
         } catch (e) { this.loadError = e.message || 'Flows could not be loaded.' }
         finally { this.loading = false }
       },
+      setView(v) {
+        if (v === 'preview') { this.flowDialog.previewStep = -1; this.flowDialog.previewAnswers = {} }
+        this.formError = ''
+      },
+      fieldOptions(field) { return (field.optionsText || '').split(',').map(s => s.trim()).filter(Boolean) },
+      previewFieldEmpty(field) { const v = this.flowDialog.previewAnswers[field.id]; return v === undefined || v === null || v === '' },
+      previewOptionKey(i) { return String.fromCharCode(65 + i) },
+      previewChoose(field, opt) {
+        this.flowDialog.previewAnswers[field.id] = opt
+        if (!this.previewLastStep) setTimeout(() => this.previewNext(), 280)
+      },
+      previewNext() {
+        const field = this.flowDialog.data.fields[this.flowDialog.previewStep]
+        if (field && field.required && this.previewFieldEmpty(field)) { this.formError = `"${field.label || 'Untitled question'}" is required.`; return }
+        this.formError = ''
+        if (this.flowDialog.previewStep < this.flowDialog.data.fields.length - 1) this.flowDialog.previewStep += 1
+      },
+      previewPrev() { this.flowDialog.previewStep = Math.max(-1, this.flowDialog.previewStep - 1); this.formError = '' },
+      previewOk() {
+        if (this.flowDialog.previewStep === -1) { this.flowDialog.previewStep = 0; return }
+        if (this.previewLastStep) return
+        this.previewNext()
+      },
       openFlowDialog(flow = null) {
         this.formError = ''
         if (flow) {
           const settings = JSON.parse(flow.settingsJson || '{}')
           const {preset, mode} = themeSettings(settings)
-          this.flowDialog = {show: true, editing: true, template: 'blank', sel: 0, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || ''}}
+          this.flowDialog = {show: true, editing: true, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || ''}}
         } else {
           const blank = flowTemplates[0].data
-          this.flowDialog = {show: true, editing: false, template: 'blank', sel: 0, data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: ''}}
+          this.flowDialog = {show: true, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: ''}}
         }
       },
       applyTemplate(value) {
