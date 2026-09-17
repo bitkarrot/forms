@@ -130,6 +130,15 @@ return function render(_ctx, _cache) {
                       dense: "",
                       "no-caps": "",
                       size: "sm",
+                      icon: "code",
+                      label: "Share",
+                      onClick: $event => (_ctx.openShare(props.row))
+                    }, null, 8 /* PROPS */, ["onClick"]),
+                    _createVNode(_component_q_btn, {
+                      flat: "",
+                      dense: "",
+                      "no-caps": "",
+                      size: "sm",
                       icon: "open_in_new",
                       label: "View",
                       onClick: $event => (_ctx.openPublic(props.row))
@@ -435,6 +444,75 @@ return function render(_ctx, _cache) {
           ]),
           _: 1 /* STABLE */
         })
+      ]),
+      _: 1 /* STABLE */
+    }, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+    _createVNode(_component_q_dialog, {
+      modelValue: _ctx.shareDialog.show,
+      "onUpdate:modelValue": $event => ((_ctx.shareDialog.show) = $event)
+    }, {
+      default: _withCtx(() => [
+        (_ctx.shareDialog.flow)
+          ? (_openBlock(), _createBlock(_component_q_card, {
+              key: 0,
+              class: "q-pa-lg",
+              style: {"min-width":"min(92vw,560px)"}
+            }, {
+              default: _withCtx(() => [
+                _createElementVNode("div", { class: "text-h6 q-mb-md" }, "Share — " + _toDisplayString(_ctx.shareDialog.flow.title), 1 /* TEXT */),
+                _createElementVNode("div", { class: "q-gutter-md" }, [
+                  _createVNode(_component_q_input, {
+                    outlined: "",
+                    readonly: "",
+                    "model-value": _ctx.publicUrl(_ctx.shareDialog.flow),
+                    label: "Public link"
+                  }, {
+                    append: _withCtx(() => [
+                      _createVNode(_component_q_btn, {
+                        flat: "",
+                        round: "",
+                        dense: "",
+                        icon: "content_copy",
+                        "aria-label": "Copy link",
+                        onClick: $event => (_ctx.copyText(_ctx.publicUrl(_ctx.shareDialog.flow),'Public link'))
+                      }, null, 8 /* PROPS */, ["onClick"])
+                    ]),
+                    _: 1 /* STABLE */
+                  }, 8 /* PROPS */, ["model-value"]),
+                  _createVNode(_component_q_input, {
+                    outlined: "",
+                    readonly: "",
+                    type: "textarea",
+                    rows: "3",
+                    "model-value": _ctx.embedSnippet(_ctx.shareDialog.flow),
+                    label: "Embed snippet — paste into any website"
+                  }, {
+                    append: _withCtx(() => [
+                      _createVNode(_component_q_btn, {
+                        flat: "",
+                        round: "",
+                        dense: "",
+                        icon: "content_copy",
+                        "aria-label": "Copy snippet",
+                        onClick: $event => (_ctx.copyText(_ctx.embedSnippet(_ctx.shareDialog.flow),'Embed snippet'))
+                      }, null, 8 /* PROPS */, ["onClick"])
+                    ]),
+                    _: 1 /* STABLE */
+                  }, 8 /* PROPS */, ["model-value"]),
+                  _createElementVNode("div", { class: "text-caption text-grey-7" }, "The embed renders the form on your site and supports one-click Nostr sign-in via the visitor's browser signer (NIP-07) — this does not work on the hosted page. Cross-origin embeds require this LNbits instance to send CORS headers."),
+                  _createElementVNode("div", { class: "row justify-end" }, [
+                    _createVNode(_component_q_btn, {
+                      flat: "",
+                      "no-caps": "",
+                      label: "Close",
+                      onClick: $event => (_ctx.shareDialog.show=false)
+                    }, null, 8 /* PROPS */, ["onClick"])
+                  ])
+                ])
+              ]),
+              _: 1 /* STABLE */
+            }))
+          : _createCommentVNode("v-if", true)
       ]),
       _: 1 /* STABLE */
     }, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),

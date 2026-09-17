@@ -77,6 +77,7 @@
       themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions,
       flowDialog: {show: false, editing: false, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', fields: [], customCss: ''}},
       subsDialog: {show: false, flow: null, rows: []},
+      shareDialog: {show: false, flow: null},
     }),
     computed: {
       walletOptions() { return this.wallets.map(w => ({label: w.name, value: w.id})) },
@@ -157,12 +158,14 @@
         } catch (e) { LNbitsBridge.notify(e.message, 'negative').catch(() => {}) }
       },
       publicUrl(flow) { return `${location.origin}/ext/forms/f/${flow.id}` },
+      embedSnippet(flow) { return `<script src="${location.origin}/ext-assets/forms/js/embed.js" data-flow="${flow.id}" async><\/script>` },
       openPublic(flow) { window.open(this.publicUrl(flow), '_blank') },
-      copyPublicLink(flow) {
-        const url = this.publicUrl(flow)
-        try { navigator.clipboard.writeText(url); LNbitsBridge.notify('Public link copied.', 'positive').catch(() => {}) }
-        catch (_) { window.prompt('Copy the public link:', url) }
+      openShare(flow) { this.shareDialog = {show: true, flow} },
+      copyText(text, label) {
+        try { navigator.clipboard.writeText(text); LNbitsBridge.notify(`${label} copied.`, 'positive').catch(() => {}) }
+        catch (_) { window.prompt(`Copy the ${label.toLowerCase()}:`, text) }
       },
+      copyPublicLink(flow) { this.copyText(this.publicUrl(flow), 'Public link') },
       async openSubmissions(flow) {
         this.subsDialog = {show: true, flow, rows: []}
         try { this.subsDialog.rows = (await this.api('GET', `/flows/${flow.id}/submissions`)).data || [] }

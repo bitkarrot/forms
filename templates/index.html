@@ -27,6 +27,7 @@
       <template #body-cell-price="props"><q-td :props="props">{{priceLabel(props.row)}}</q-td></template>
       <template #body-cell-actions="props"><q-td :props="props">
         <q-btn flat dense no-caps size="sm" icon="link" label="Link" @click="copyPublicLink(props.row)"></q-btn>
+        <q-btn flat dense no-caps size="sm" icon="code" label="Share" @click="openShare(props.row)"></q-btn>
         <q-btn flat dense no-caps size="sm" icon="open_in_new" label="View" @click="openPublic(props.row)"></q-btn>
         <q-btn v-if="props.row.status!=='published'" flat dense no-caps size="sm" color="positive" label="Publish" @click="setStatus(props.row,'published')"></q-btn>
         <q-btn v-if="props.row.status==='published'" flat dense no-caps size="sm" color="warning" label="Close" @click="setStatus(props.row,'closed')"></q-btn>
@@ -78,6 +79,16 @@
           <q-btn flat no-caps label="Cancel" @click="flowDialog.show=false"></q-btn>
           <q-btn unelevated no-caps color="primary" label="Save" :loading="saving" @click="saveFlow"></q-btn>
         </div>
+      </div>
+    </q-card></q-dialog>
+
+    <q-dialog v-model="shareDialog.show"><q-card v-if="shareDialog.flow" class="q-pa-lg" style="min-width:min(92vw,560px)">
+      <div class="text-h6 q-mb-md">Share — {{shareDialog.flow.title}}</div>
+      <div class="q-gutter-md">
+        <q-input outlined readonly :model-value="publicUrl(shareDialog.flow)" label="Public link"><template #append><q-btn flat round dense icon="content_copy" aria-label="Copy link" @click="copyText(publicUrl(shareDialog.flow),'Public link')"></q-btn></template></q-input>
+        <q-input outlined readonly type="textarea" rows="3" :model-value="embedSnippet(shareDialog.flow)" label="Embed snippet — paste into any website"><template #append><q-btn flat round dense icon="content_copy" aria-label="Copy snippet" @click="copyText(embedSnippet(shareDialog.flow),'Embed snippet')"></q-btn></template></q-input>
+        <div class="text-caption text-grey-7">The embed renders the form on your site and supports one-click Nostr sign-in via the visitor's browser signer (NIP-07) — this does not work on the hosted page. Cross-origin embeds require this LNbits instance to send CORS headers.</div>
+        <div class="row justify-end"><q-btn flat no-caps label="Close" @click="shareDialog.show=false"></q-btn></div>
       </div>
     </q-card></q-dialog>
 
