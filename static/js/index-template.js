@@ -21,6 +21,9 @@ return function render(_ctx, _cache) {
   const _component_q_item = _resolveComponent("q-item")
   const _component_q_toggle = _resolveComponent("q-toggle")
   const _component_q_expansion_item = _resolveComponent("q-expansion-item")
+  const _component_q_color = _resolveComponent("q-color")
+  const _component_q_tooltip = _resolveComponent("q-tooltip")
+  const _component_q_slider = _resolveComponent("q-slider")
   const _component_q_linear_progress = _resolveComponent("q-linear-progress")
   const _component_q_dialog = _resolveComponent("q-dialog")
 
@@ -301,7 +304,8 @@ return function render(_ctx, _cache) {
                       : _createCommentVNode("v-if", true)
                   ]),
                   _createElementVNode("div", {
-                    class: _normalizeClass(["fb-canvas scroll col", _ctx.previewClasses])
+                    class: _normalizeClass(["fb-canvas scroll col", _ctx.previewClasses]),
+                    style: _normalizeStyle(_ctx.canvasStyle)
                   }, [
                     _createElementVNode("div", { class: "fb-form" }, [
                       _createElementVNode("div", { class: "fb-headerblock" }, [
@@ -525,7 +529,7 @@ return function render(_ctx, _cache) {
                             class: "fb-addhint"
                           }, "Click an input type on the left to add another question"))
                     ])
-                  ], 2 /* CLASS */),
+                  ], 6 /* CLASS, STYLE */),
                   _createElementVNode("div", { class: "fb-side scroll" }, [
                     (_ctx.flowDialog.data.fields[_ctx.flowDialog.sel])
                       ? (_openBlock(), _createElementBlock("div", {
@@ -699,6 +703,39 @@ return function render(_ctx, _cache) {
                             options: _ctx.rendererOptions,
                             label: "Layout"
                           }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "options"]),
+                          _createElementVNode("div", { class: "fb-side-title" }, "Colors"),
+                          _createElementVNode("div", { class: "row q-gutter-md" }, [
+                            (_openBlock(true), _createElementBlock(_Fragment, null, _renderList(_ctx.colorKeys, (c) => {
+                              return (_openBlock(), _createElementBlock("div", {
+                                key: c.key,
+                                class: "column items-center"
+                              }, [
+                                _createVNode(_component_q_btn, {
+                                  round: "",
+                                  dense: "",
+                                  size: "sm",
+                                  class: "fb-swatch",
+                                  style: _normalizeStyle({background: _ctx.flowDialog.data.colors[c.key] || 'rgba(128,128,128,0.25)'})
+                                }, {
+                                  default: _withCtx(() => [
+                                    _createVNode(_component_q_menu, null, {
+                                      default: _withCtx(() => [
+                                        _createVNode(_component_q_color, {
+                                          modelValue: _ctx.flowDialog.data.colors[c.key],
+                                          "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.colors[c.key]) = $event)
+                                        }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"])
+                                      ]),
+                                      _: 2 /* DYNAMIC */
+                                    }, 1024 /* DYNAMIC_SLOTS */)
+                                  ]),
+                                  _: 2 /* DYNAMIC */
+                                }, 1032 /* PROPS, DYNAMIC_SLOTS */, ["style"]),
+                                _createElementVNode("div", { class: "text-caption q-mt-xs" }, _toDisplayString(c.label), 1 /* TEXT */)
+                              ]))
+                            }), 128 /* KEYED_FRAGMENT */))
+                          ]),
+                          _createElementVNode("div", { class: "text-caption text-grey q-mt-xs" }, "Title, Description and Question fall back to Global if not set."),
+                          _createElementVNode("div", { class: "fb-side-title q-mt-md" }, "Title image"),
                           _createElementVNode("div", { class: "row items-center q-gutter-xs no-wrap" }, [
                             _createVNode(_component_q_input, {
                               outlined: "",
@@ -706,7 +743,6 @@ return function render(_ctx, _cache) {
                               class: "col",
                               modelValue: _ctx.flowDialog.data.headerImage,
                               "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.headerImage) = $event),
-                              label: "Header image URL",
                               placeholder: "/ext-assets/forms/assets/banner.svg"
                             }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
                             _createVNode(_component_q_btn, {
@@ -714,22 +750,99 @@ return function render(_ctx, _cache) {
                               dense: "",
                               "no-caps": "",
                               icon: "upload",
-                              label: "Upload",
-                              onClick: _ctx.pickHeaderImage
-                            }, null, 8 /* PROPS */, ["onClick"])
+                              onClick: $event => (_ctx.pickImage('headerImage'))
+                            }, {
+                              default: _withCtx(() => [
+                                _createVNode(_component_q_tooltip, null, {
+                                  default: _withCtx(() => [
+                                    _createTextVNode("Upload image")
+                                  ]),
+                                  _: 1 /* STABLE */
+                                })
+                              ]),
+                              _: 1 /* STABLE */
+                            }, 8 /* PROPS */, ["onClick"])
                           ]),
-                          (_ctx.isExternalHeader)
+                          _createElementVNode("div", { class: "fb-side-title q-mt-sm" }, "Background image"),
+                          _createElementVNode("div", { class: "row items-center q-gutter-xs no-wrap" }, [
+                            _createVNode(_component_q_input, {
+                              outlined: "",
+                              dense: "",
+                              class: "col",
+                              modelValue: _ctx.flowDialog.data.bgImage,
+                              "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.bgImage) = $event),
+                              placeholder: "/ext-assets/forms/assets/banner.svg"
+                            }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                            _createVNode(_component_q_btn, {
+                              flat: "",
+                              dense: "",
+                              "no-caps": "",
+                              icon: "upload",
+                              onClick: $event => (_ctx.pickImage('bgImage'))
+                            }, {
+                              default: _withCtx(() => [
+                                _createVNode(_component_q_tooltip, null, {
+                                  default: _withCtx(() => [
+                                    _createTextVNode("Upload image")
+                                  ]),
+                                  _: 1 /* STABLE */
+                                })
+                              ]),
+                              _: 1 /* STABLE */
+                            }, 8 /* PROPS */, ["onClick"])
+                          ]),
+                          _createElementVNode("div", { class: "fb-side-title q-mt-sm" }, "Thank you screen image"),
+                          _createElementVNode("div", { class: "row items-center q-gutter-xs no-wrap" }, [
+                            _createVNode(_component_q_input, {
+                              outlined: "",
+                              dense: "",
+                              class: "col",
+                              modelValue: _ctx.flowDialog.data.endImage,
+                              "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.endImage) = $event),
+                              placeholder: "/ext-assets/forms/assets/banner.svg"
+                            }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                            _createVNode(_component_q_btn, {
+                              flat: "",
+                              dense: "",
+                              "no-caps": "",
+                              icon: "upload",
+                              onClick: $event => (_ctx.pickImage('endImage'))
+                            }, {
+                              default: _withCtx(() => [
+                                _createVNode(_component_q_tooltip, null, {
+                                  default: _withCtx(() => [
+                                    _createTextVNode("Upload image")
+                                  ]),
+                                  _: 1 /* STABLE */
+                                })
+                              ]),
+                              _: 1 /* STABLE */
+                            }, 8 /* PROPS */, ["onClick"])
+                          ]),
+                          (_ctx.isExtImg(_ctx.flowDialog.data.headerImage) || _ctx.isExtImg(_ctx.flowDialog.data.bgImage) || _ctx.isExtImg(_ctx.flowDialog.data.endImage))
                             ? (_openBlock(), _createElementBlock("div", {
                                 key: 0,
                                 class: "text-caption text-warning q-mt-xs"
-                              }, "External URLs are blocked by the LNbits frame CSP — this won't show on hosted pages, only in the embed widget."))
+                              }, "External URLs are blocked by the LNbits frame CSP — they won't show on hosted pages, only in the embed widget. Upload an image or use /ext-assets/ paths instead."))
                             : (_openBlock(), _createElementBlock("div", {
                                 key: 1,
                                 class: "text-caption text-grey q-mt-xs"
-                              }, "Hosted pages only render /ext-assets/forms/ paths or data:image/ URIs (LNbits frame CSP). Upload inlines a file automatically.")),
+                              }, "Hosted pages only render /ext-assets/forms/ paths or data:image/ URIs. Upload inlines a file automatically.")),
+                          _createElementVNode("div", { class: "fb-side-title q-mt-md" }, "Card transparency"),
+                          _createVNode(_component_q_slider, {
+                            modelValue: _ctx.flowDialog.data.cardOpacity,
+                            "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.cardOpacity) = $event),
+                            min: 0,
+                            max: 1,
+                            step: 0.05,
+                            label: "",
+                            "label-always": ""
+                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                          _createElementVNode("div", { class: "text-caption text-grey" }, "Transparency of form cards (0 = fully transparent, 1 = opaque)."),
                           _createVNode(_component_q_input, {
                             outlined: "",
                             dense: "",
+                            class: "q-mt-sm",
                             modelValue: _ctx.flowDialog.data.confirmText,
                             "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.confirmText) = $event),
                             label: "Confirmation text",
@@ -787,7 +900,8 @@ return function render(_ctx, _cache) {
                   class: "col scroll q-pa-lg"
                 }, [
                   _createElementVNode("div", {
-                    class: _normalizeClass(["form-preview", _ctx.previewClasses])
+                    class: _normalizeClass(["form-preview", _ctx.previewClasses]),
+                    style: _normalizeStyle(_ctx.canvasStyle)
                   }, [
                     _createVNode(_component_q_card, { class: "q-pa-lg fp-preview-card overflow-hidden" }, {
                       default: _withCtx(() => [
@@ -1064,7 +1178,7 @@ return function render(_ctx, _cache) {
                       _: 1 /* STABLE */
                     }),
                     _createElementVNode("div", { class: "text-center text-caption text-grey-7 q-mt-sm" }, "Preview — answers aren't submitted")
-                  ], 2 /* CLASS */)
+                  ], 6 /* CLASS, STYLE */)
                 ]))
           ]),
           _: 1 /* STABLE */

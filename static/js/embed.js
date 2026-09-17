@@ -167,6 +167,28 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     }
     card.querySelectorAll('.fm-muted,.fm-help,.fm-note').forEach(function (n) { n.style.color = p.muted; });
     card.querySelectorAll('.fm-spin').forEach(function (n) { n.style.borderColor = p.border; n.style.borderTopColor = 'transparent'; });
+    applyCustom(p);
+  }
+
+  function applyCustom(p) {
+    var c = settings.colors || {};
+    var global = c.global || '';
+    if (global) card.style.color = global;
+    if (c.title) card.querySelectorAll('.fm-title').forEach(function (n) { n.style.color = c.title; });
+    if (c.description) card.querySelectorAll('.fm-desc').forEach(function (n) { n.style.color = c.description; });
+    var q = c.question || global;
+    if (q) card.querySelectorAll('.fm-label').forEach(function (n) { n.style.color = q; });
+    var op = Number(settings.cardOpacity);
+    if (!isNaN(op) && op < 1) {
+      card.style.background = 'color-mix(in srgb, ' + p.card + ' ' + (op * 100) + '%, transparent)';
+    }
+    var bg = (settings.bgImage || '').trim();
+    if (bg) {
+      container.style.backgroundImage = 'url("' + bg.replace(/"/g, '%22') + '")';
+      container.style.backgroundSize = 'cover';
+      container.style.backgroundPosition = 'center';
+      container.style.padding = '2rem 1rem';
+    }
   }
 
   function parseJson(text, fallback) {
@@ -395,6 +417,10 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
   function renderConfirmed(view) {
     stopTimers();
     replaceContents(card);
+    if (settings.endImage) {
+      var endBanner = element('div', 'fm-banner', null, card);
+      endBanner.style.backgroundImage = 'url("' + String(settings.endImage).replace(/"/g, '%22') + '")';
+    }
     var box = element('div', 'fm-center', null, card);
     element('div', 'fm-title', settings.confirmText || 'Registration confirmed', box);
     var code = view && view.ticketCode;

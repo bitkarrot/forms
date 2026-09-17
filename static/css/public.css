@@ -1,5 +1,11 @@
 .vue-pending { visibility: hidden; }
 .public-page { min-height: 100vh; }
+.public-page h1 { color: var(--fc-title, var(--fc-global, inherit)); }
+.public-page p { color: var(--fc-desc, var(--fc-global, inherit)); }
+.public-page .tf-qlabel, .public-page .q-field__label, .public-page .text-subtitle2 { color: var(--fc-question, var(--fc-global, inherit)); }
+.public-page .q-card {
+  background-color: color-mix(in srgb, var(--forms-card, #fff) calc(var(--fc-card-op, 1) * 100%), transparent);
+}
 .qr-box { display: flex; justify-content: center; padding: 12px; background: #fff; border-radius: 8px; }
 .pending-row { display: flex; align-items: center; gap: 12px; justify-content: center; }
 .ticket-code { font-family: monospace; letter-spacing: 0.08em; word-break: break-all; }

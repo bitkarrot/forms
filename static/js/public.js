@@ -37,6 +37,21 @@
         const u = this.settings.headerImage
         return u ? {backgroundImage: `url("${String(u).replace(/"/g, '%22')}")`} : {}
       },
+      endBannerStyle() {
+        const u = this.settings.endImage
+        return u ? {backgroundImage: `url("${String(u).replace(/"/g, '%22')}")`} : {}
+      },
+      pageStyle() {
+        const c = this.settings.colors || {}
+        const vars = {'--fc-card-op': this.settings.cardOpacity ?? 1}
+        if (c.global) vars['--fc-global'] = c.global
+        if (c.title) vars['--fc-title'] = c.title
+        if (c.description) vars['--fc-desc'] = c.description
+        if (c.question) vars['--fc-question'] = c.question
+        const bg = (this.settings.bgImage || '').trim()
+        if (bg) Object.assign(vars, {backgroundImage: `url("${bg.replace(/"/g, '%22')}")`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed'})
+        return vars
+      },
     },
     methods: {
       async api(method, path, body) { const result = await LNbitsBridge.callApi(method, API + path, body); if (result && result.error) throw new Error(result.error); return result },

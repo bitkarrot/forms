@@ -283,18 +283,46 @@ fn validate_settings(value: &Value) -> Result<String, String> {
     // The sandboxed frame CSP only allows images from /ext-assets/<id>/ and
     // data: URIs; http(s) still works in the external embed widget.
     // data: URIs carry an inlined file so they get a larger cap.
-    let is_data_uri = header_image.starts_with("data:image/");
-    let cap = if is_data_uri { MAX_IMG_DATA_URI } else { 500 };
-    if header_image.len() > cap
-        || (!header_image.is_empty()
-            && !(header_image.starts_with("https://")
-                || header_image.starts_with("http://")
-                || header_image.starts_with("/ext-assets/")
-                || is_data_uri))
-    {
+    let valid_image_ref = |v: &str| -> bool {
+        let is_data = v.starts_with("data:image/");
+        let cap = if is_data { MAX_IMG_DATA_URI } else { 500 };
+        v.len() <= cap
+            && (v.starts_with("https://")
+                || v.starts_with("http://")
+                || v.starts_with("/ext-assets/")
+                || is_data)
+    };
+    if !header_image.is_empty() && !valid_image_ref(&header_image) {
         return Err(
             "headerImage must be an http(s) URL, /ext-assets/ path or data:image/ URI".into(),
         );
+    }
+    for key in ["bgImage", "endImage"] {
+        let v = value.get(key).and_then(Value::as_str).unwrap_or("").trim();
+        if !v.is_empty() && !valid_image_ref(v) {
+            return Err(format!("{key} must be an http(s) URL, /ext-assets/ path or data:image/ URI"));
+        }
+    }
+    let bg_image = value.get("bgImage").and_then(Value::as_str).unwrap_or("").trim().to_string();
+    let end_image = value.get("endImage").and_then(Value::as_str).unwrap_or("").trim().to_string();
+    let card_opacity = value
+        .get("cardOpacity")
+        .and_then(Value::as_f64)
+        .map(|v| (v.clamp(0.0, 1.0) * 100.0).round() / 100.0)
+        .unwrap_or(1.0);
+    let mut colors_out = serde_json::Map::new();
+    if let Some(obj) = value.get("colors").and_then(Value::as_object) {
+        for key in ["global", "title", "description", "question"] {
+            if let Some(c) = obj.get(key).and_then(Value::as_str).map(str::trim) {
+                if c.len() >= 4
+                    && c.len() <= 9
+                    && c.starts_with('#')
+                    && c[1..].chars().all(|ch| ch.is_ascii_hexdigit())
+                {
+                    colors_out.insert(key.to_string(), json!(c));
+                }
+            }
+        }
     }
     serde_json::to_string(&json!({
         "theme": theme,
@@ -304,6 +332,10 @@ fn validate_settings(value: &Value) -> Result<String, String> {
         "confirmText": confirm_text,
         "requireApproval": require_approval,
         "headerImage": header_image,
+        "bgImage": bg_image,
+        "endImage": end_image,
+        "cardOpacity": card_opacity,
+        "colors": Value::Object(colors_out),
     }))
     .map_err(|_| "Invalid settingsJson".into())
 }

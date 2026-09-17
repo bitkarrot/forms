@@ -61,7 +61,7 @@
             </div>
           </template>
         </div>
-        <div class="fb-canvas scroll col" :class="previewClasses">
+        <div class="fb-canvas scroll col" :class="previewClasses" :style="canvasStyle">
           <div class="fb-form">
             <div class="fb-headerblock">
               <div class="fb-banner" :style="bannerStyle">
@@ -128,13 +128,37 @@
               <q-select outlined dense emit-value map-options v-model="flowDialog.data.themePreset" :options="themePresetOptions" label="Theme preset"></q-select>
               <q-select outlined dense emit-value map-options v-model="flowDialog.data.themeMode" :options="themeModeOptions" label="Mode"></q-select>
               <q-select outlined dense emit-value map-options v-model="flowDialog.data.renderer" :options="rendererOptions" label="Layout"></q-select>
-              <div class="row items-center q-gutter-xs no-wrap">
-                <q-input outlined dense class="col" v-model="flowDialog.data.headerImage" label="Header image URL" placeholder="/ext-assets/forms/assets/banner.svg"></q-input>
-                <q-btn flat dense no-caps icon="upload" label="Upload" @click="pickHeaderImage"></q-btn>
+              <div class="fb-side-title">Colors</div>
+              <div class="row q-gutter-md">
+                <div v-for="c in colorKeys" :key="c.key" class="column items-center">
+                  <q-btn round dense size="sm" class="fb-swatch" :style="{background: flowDialog.data.colors[c.key] || 'rgba(128,128,128,0.25)'}">
+                    <q-menu><q-color v-model="flowDialog.data.colors[c.key]"></q-color></q-menu>
+                  </q-btn>
+                  <div class="text-caption q-mt-xs">{{c.label}}</div>
+                </div>
               </div>
-              <div v-if="isExternalHeader" class="text-caption text-warning q-mt-xs">External URLs are blocked by the LNbits frame CSP — this won't show on hosted pages, only in the embed widget.</div>
-              <div v-else class="text-caption text-grey q-mt-xs">Hosted pages only render /ext-assets/forms/ paths or data:image/ URIs (LNbits frame CSP). Upload inlines a file automatically.</div>
-              <q-input outlined dense v-model="flowDialog.data.confirmText" label="Confirmation text" hint="Shown after a successful submission"></q-input>
+              <div class="text-caption text-grey q-mt-xs">Title, Description and Question fall back to Global if not set.</div>
+              <div class="fb-side-title q-mt-md">Title image</div>
+              <div class="row items-center q-gutter-xs no-wrap">
+                <q-input outlined dense class="col" v-model="flowDialog.data.headerImage" placeholder="/ext-assets/forms/assets/banner.svg"></q-input>
+                <q-btn flat dense no-caps icon="upload" @click="pickImage('headerImage')"><q-tooltip>Upload image</q-tooltip></q-btn>
+              </div>
+              <div class="fb-side-title q-mt-sm">Background image</div>
+              <div class="row items-center q-gutter-xs no-wrap">
+                <q-input outlined dense class="col" v-model="flowDialog.data.bgImage" placeholder="/ext-assets/forms/assets/banner.svg"></q-input>
+                <q-btn flat dense no-caps icon="upload" @click="pickImage('bgImage')"><q-tooltip>Upload image</q-tooltip></q-btn>
+              </div>
+              <div class="fb-side-title q-mt-sm">Thank you screen image</div>
+              <div class="row items-center q-gutter-xs no-wrap">
+                <q-input outlined dense class="col" v-model="flowDialog.data.endImage" placeholder="/ext-assets/forms/assets/banner.svg"></q-input>
+                <q-btn flat dense no-caps icon="upload" @click="pickImage('endImage')"><q-tooltip>Upload image</q-tooltip></q-btn>
+              </div>
+              <div v-if="isExtImg(flowDialog.data.headerImage) || isExtImg(flowDialog.data.bgImage) || isExtImg(flowDialog.data.endImage)" class="text-caption text-warning q-mt-xs">External URLs are blocked by the LNbits frame CSP — they won't show on hosted pages, only in the embed widget. Upload an image or use /ext-assets/ paths instead.</div>
+              <div v-else class="text-caption text-grey q-mt-xs">Hosted pages only render /ext-assets/forms/ paths or data:image/ URIs. Upload inlines a file automatically.</div>
+              <div class="fb-side-title q-mt-md">Card transparency</div>
+              <q-slider v-model="flowDialog.data.cardOpacity" :min="0" :max="1" :step="0.05" label label-always></q-slider>
+              <div class="text-caption text-grey">Transparency of form cards (0 = fully transparent, 1 = opaque).</div>
+              <q-input outlined dense class="q-mt-sm" v-model="flowDialog.data.confirmText" label="Confirmation text" hint="Shown after a successful submission"></q-input>
             </div>
           </q-expansion-item>
           <q-expansion-item icon="code" label="Advanced" group="fb-side" class="fb-acc">
@@ -146,7 +170,7 @@
           <div v-if="formError" class="text-negative q-pa-sm" role="alert">{{formError}}</div>
         </div>
       </div>
-      <div v-else class="col scroll q-pa-lg"><div class="form-preview" :class="previewClasses">
+      <div v-else class="col scroll q-pa-lg"><div class="form-preview" :class="previewClasses" :style="canvasStyle">
         <q-card class="q-pa-lg fp-preview-card overflow-hidden">
           <div v-if="flowDialog.data.headerImage" class="form-banner" :style="bannerStyle"></div>
           <div v-if="previewStepper && flowDialog.previewStep===-1" class="text-center q-pa-lg">

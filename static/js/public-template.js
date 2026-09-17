@@ -15,7 +15,10 @@ return function render(_ctx, _cache) {
   const _component_q_spinner_dots = _resolveComponent("q-spinner-dots")
   const _component_q_dialog = _resolveComponent("q-dialog")
 
-  return (_openBlock(), _createElementBlock("div", { class: "public-page row justify-center q-py-md q-py-sm-xl" }, [
+  return (_openBlock(), _createElementBlock("div", {
+    class: "public-page row justify-center q-py-md q-py-sm-xl",
+    style: _normalizeStyle(_ctx.pageStyle)
+  }, [
     _createElementVNode("div", { class: "col-12 col-sm-9 col-md-7 col-lg-5" }, [
       (_ctx.loading)
         ? (_openBlock(), _createElementBlock("div", {
@@ -53,9 +56,16 @@ return function render(_ctx, _cache) {
           : (_ctx.flow && _ctx.confirmed)
             ? (_openBlock(), _createBlock(_component_q_card, {
                 key: 2,
-                class: "q-pa-lg text-center"
+                class: "q-pa-lg text-center overflow-hidden"
               }, {
                 default: _withCtx(() => [
+                  (_ctx.settings.endImage)
+                    ? (_openBlock(), _createElementBlock("div", {
+                        key: 0,
+                        class: "form-banner",
+                        style: _normalizeStyle(_ctx.endBannerStyle)
+                      }, null, 4 /* STYLE */))
+                    : _createCommentVNode("v-if", true),
                   _createVNode(_component_q_icon, {
                     name: "check_circle",
                     color: "positive",
@@ -64,7 +74,7 @@ return function render(_ctx, _cache) {
                   _createElementVNode("div", { class: "text-h5 q-mt-md" }, _toDisplayString(_ctx.settings.confirmText || 'Registration confirmed'), 1 /* TEXT */),
                   (_ctx.submission && _ctx.submission.ticketCode)
                     ? (_openBlock(), _createElementBlock("div", {
-                        key: 0,
+                        key: 1,
                         class: "q-mt-lg"
                       }, [
                         _createElementVNode("div", { class: "text-caption text-grey-7" }, "Your confirmation code"),
@@ -460,6 +470,6 @@ return function render(_ctx, _cache) {
       ]),
       _: 1 /* STABLE */
     }, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"])
-  ]))
+  ], 4 /* STYLE */))
 }
 }
