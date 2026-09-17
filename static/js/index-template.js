@@ -527,8 +527,31 @@ return function render(_ctx, _cache) {
         }, {
           default: _withCtx(() => [
             _createElementVNode("div", { class: "text-h6 q-mb-md" }, "Submissions — " + _toDisplayString(_ctx.subsDialog.flow&&_ctx.subsDialog.flow.title), 1 /* TEXT */),
+            _createElementVNode("div", { class: "row q-col-gutter-sm q-mb-sm" }, [
+              _createVNode(_component_q_input, {
+                class: "col-12 col-sm-7",
+                outlined: "",
+                dense: "",
+                clearable: "",
+                modelValue: _ctx.subsFilter,
+                "onUpdate:modelValue": $event => ((_ctx.subsFilter) = $event),
+                label: "Search id, ticket, answers"
+              }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+              _createVNode(_component_q_select, {
+                class: "col-12 col-sm-5",
+                outlined: "",
+                dense: "",
+                clearable: "",
+                "emit-value": "",
+                "map-options": "",
+                modelValue: _ctx.subsStatusFilter,
+                "onUpdate:modelValue": $event => ((_ctx.subsStatusFilter) = $event),
+                options: ['pending_payment','paid','confirmed','approved','rejected','cancelled','expired'].map(s=>({value:s,label:s})),
+                label: "Status"
+              }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "options"])
+            ]),
             _createVNode(_component_q_table, {
-              rows: _ctx.subsDialog.rows,
+              rows: _ctx.filteredSubs,
               columns: _ctx.subColumns,
               "row-key": "id",
               flat: "",
@@ -546,6 +569,14 @@ return function render(_ctx, _cache) {
                       ]),
                       _: 2 /* DYNAMIC */
                     }, 1032 /* PROPS, DYNAMIC_SLOTS */, ["color"])
+                  ]),
+                  _: 2 /* DYNAMIC */
+                }, 1032 /* PROPS, DYNAMIC_SLOTS */, ["props"])
+              ]),
+              "body-cell-answers": _withCtx((props) => [
+                _createVNode(_component_q_td, { props: props }, {
+                  default: _withCtx(() => [
+                    _createElementVNode("span", { class: "text-caption" }, _toDisplayString(_ctx.answersPreview(props.row)), 1 /* TEXT */)
                   ]),
                   _: 2 /* DYNAMIC */
                 }, 1032 /* PROPS, DYNAMIC_SLOTS */, ["props"])

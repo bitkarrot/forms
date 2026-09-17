@@ -77,6 +77,7 @@
       themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions,
       flowDialog: {show: false, editing: false, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', fields: [], customCss: ''}},
       subsDialog: {show: false, flow: null, rows: []},
+      subsFilter: '', subsStatusFilter: null,
       shareDialog: {show: false, flow: null},
     }),
     computed: {
@@ -91,9 +92,16 @@
         {name: 'id', label: 'ID', field: 'id', align: 'left'},
         {name: 'status', label: 'Status', field: 'status', align: 'left'},
         {name: 'amount', label: 'Sats', field: 'amountSat', align: 'right'},
+        {name: 'answers', label: 'Answers', field: 'answersJson', align: 'left'},
         {name: 'ticket', label: 'Ticket', field: 'ticketCode', align: 'left'},
         {name: 'actions', label: '', field: 'id', align: 'right'},
       ] },
+      filteredSubs() {
+        const q = (this.subsFilter || '').toLowerCase().trim()
+        const rows = this.subsStatusFilter ? this.subsDialog.rows.filter(r => r.status === this.subsStatusFilter) : this.subsDialog.rows
+        if (!q) return rows
+        return rows.filter(r => [r.id, r.ticketCode, r.answersJson].some(v => (v || '').toLowerCase().includes(q)))
+      },
     },
     methods: {
       async api(method, path, body) { const result = await LNbitsBridge.callApi(method, API + path, body); if (result && result.error) throw new Error(result.error); return result },
@@ -188,6 +196,12 @@
         } catch (e) { LNbitsBridge.notify(e.message, 'negative').catch(() => {}) }
       },
       statusColor(s) { return {draft: 'grey', published: 'positive', closed: 'warning', archived: 'grey-6', pending_payment: 'orange', paid: 'positive', confirmed: 'positive', approved: 'teal', rejected: 'negative', cancelled: 'grey', expired: 'grey-6'}[s] || 'grey' },
+      answersPreview(row) {
+        try {
+          const a = JSON.parse(row.answersJson || '{}')
+          return Object.entries(a).map(([k, v]) => `${k}: ${v === true ? 'yes' : v === false ? 'no' : v}`).join(' · ')
+        } catch (_) { return row.answersJson || '' }
+      },
       priceLabel(flow) { try { const p = JSON.parse(flow.pricingJson || '{}'); return p.mode === 'fixed' ? `${p.amountSat} sats` : 'free' } catch (_) { return 'free' } },
       formatSats(v) { return Number(v || 0).toLocaleString() },
     },

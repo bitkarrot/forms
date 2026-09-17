@@ -94,8 +94,13 @@
 
     <q-dialog v-model="subsDialog.show"><q-card class="q-pa-lg" style="min-width:min(92vw,720px)">
       <div class="text-h6 q-mb-md">Submissions — {{subsDialog.flow&&subsDialog.flow.title}}</div>
-      <q-table :rows="subsDialog.rows" :columns="subColumns" row-key="id" flat dense :pagination="{rowsPerPage:10}">
+      <div class="row q-col-gutter-sm q-mb-sm">
+        <q-input class="col-12 col-sm-7" outlined dense clearable v-model="subsFilter" label="Search id, ticket, answers"></q-input>
+        <q-select class="col-12 col-sm-5" outlined dense clearable emit-value map-options v-model="subsStatusFilter" :options="['pending_payment','paid','confirmed','approved','rejected','cancelled','expired'].map(s=>({value:s,label:s}))" label="Status"></q-select>
+      </div>
+      <q-table :rows="filteredSubs" :columns="subColumns" row-key="id" flat dense :pagination="{rowsPerPage:10}">
         <template #body-cell-status="props"><q-td :props="props"><q-badge :color="statusColor(props.row.status)">{{props.row.status}}</q-badge></q-td></template>
+        <template #body-cell-answers="props"><q-td :props="props"><span class="text-caption">{{answersPreview(props.row)}}</span></q-td></template>
         <template #body-cell-actions="props"><q-td :props="props">
           <q-btn v-if="['paid','confirmed'].includes(props.row.status)" flat dense no-caps size="sm" label="Approve" @click="moderate(props.row,'approved')"></q-btn>
           <q-btn v-if="['paid','confirmed'].includes(props.row.status)" flat dense no-caps size="sm" color="negative" label="Reject" @click="moderate(props.row,'rejected')"></q-btn>

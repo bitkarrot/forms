@@ -2,4 +2,8 @@ Third-party assets loaded at runtime from the LNbits core vendor bundle
 (/ext-assets/forms/_lnbits/): Vue.js (MIT), Quasar Framework (MIT),
 qrcode.vue (MIT), Material Icons (Apache-2.0).
 
-No third-party code is vendored into this repository at this time.
+Vendored into this repository:
+
+- static/js/qr.js — qrcode-generator 1.4.4 by Kazuhiko Arase (MIT),
+  adapted from zapgoalswasm's vendored copy with a FormsQR global.
+  Upstream: https://github.com/kazuhikoarase/qrcode-generator
