@@ -181,6 +181,12 @@ body.body--dark .fb-gear { background: rgba(30, 30, 30, 0.85); color: #eee; }
   min-height: 320px;
 }
 .fp-preview-card { max-width: 560px; margin: 0 auto; }
+.form-banner {
+  height: 140px;
+  margin: -2.5rem -2.5rem 1.25rem;
+  background-size: cover;
+  background-position: center;
+}
 
 /* Stepper question chrome (shared with public page) */
 .tf-q { animation: tf-fadein 0.25s ease; }

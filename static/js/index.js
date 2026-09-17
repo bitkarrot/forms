@@ -160,7 +160,7 @@
     render: window.FORMS_INDEX_RENDER(),
     data: () => ({
       flows: [], wallets: [], loading: false, loadError: '', saving: false, formError: '', isDark: false,
-      themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions, flowTemplates,
+      themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions, flowTemplates, customCssSample,
       flowDialog: {show: false, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: '', headerImage: '', confirmText: ''}},
       subsDialog: {show: false, flow: null, rows: []},
       csvDialog: {show: false, filename: '', content: ''},

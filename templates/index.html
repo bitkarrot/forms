@@ -131,7 +131,7 @@
           </q-expansion-item>
           <q-expansion-item icon="code" label="Advanced" group="fb-side" class="fb-acc">
             <div class="q-pa-sm">
-              <q-input outlined dense type="textarea" rows="8" v-model="flowDialog.data.customCss" label="Custom CSS" hint="Applied to the public page. @import, url() and expression() are stripped for safety." input-style="font-family:monospace;font-size:0.8rem"></q-input>
+              <q-input outlined dense type="textarea" rows="8" v-model="flowDialog.data.customCss" label="Custom CSS" :placeholder="customCssSample" hint="Applied to the public page. @import, url() and expression() are stripped for safety." input-style="font-family:monospace;font-size:0.8rem"></q-input>
               <q-btn flat dense no-caps size="sm" icon="auto_fix_high" label="Insert example" class="q-mt-xs" @click="insertCssSample"></q-btn>
             </div>
           </q-expansion-item>
@@ -139,7 +139,8 @@
         </div>
       </div>
       <div v-else class="col scroll q-pa-lg"><div class="form-preview" :class="previewClasses">
-        <q-card class="q-pa-lg fp-preview-card">
+        <q-card class="q-pa-lg fp-preview-card overflow-hidden">
+          <div v-if="flowDialog.data.headerImage" class="form-banner" :style="bannerStyle"></div>
           <div v-if="previewStepper && flowDialog.previewStep===-1" class="text-center q-pa-lg">
             <div class="text-h5 q-mt-none q-mb-sm">{{flowDialog.data.title || 'Untitled form'}}</div>
             <p v-if="flowDialog.data.description" class="text-grey-8">{{flowDialog.data.description}}</p>

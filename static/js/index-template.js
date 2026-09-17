@@ -694,9 +694,10 @@ return function render(_ctx, _cache) {
                             modelValue: _ctx.flowDialog.data.customCss,
                             "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.customCss) = $event),
                             label: "Custom CSS",
+                            placeholder: _ctx.customCssSample,
                             hint: "Applied to the public page. @import, url() and expression() are stripped for safety.",
                             "input-style": "font-family:monospace;font-size:0.8rem"
-                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "placeholder"]),
                           _createVNode(_component_q_btn, {
                             flat: "",
                             dense: "",
@@ -727,11 +728,18 @@ return function render(_ctx, _cache) {
                   _createElementVNode("div", {
                     class: _normalizeClass(["form-preview", _ctx.previewClasses])
                   }, [
-                    _createVNode(_component_q_card, { class: "q-pa-lg fp-preview-card" }, {
+                    _createVNode(_component_q_card, { class: "q-pa-lg fp-preview-card overflow-hidden" }, {
                       default: _withCtx(() => [
-                        (_ctx.previewStepper && _ctx.flowDialog.previewStep===-1)
+                        (_ctx.flowDialog.data.headerImage)
                           ? (_openBlock(), _createElementBlock("div", {
                               key: 0,
+                              class: "form-banner",
+                              style: _normalizeStyle(_ctx.bannerStyle)
+                            }, null, 4 /* STYLE */))
+                          : _createCommentVNode("v-if", true),
+                        (_ctx.previewStepper && _ctx.flowDialog.previewStep===-1)
+                          ? (_openBlock(), _createElementBlock("div", {
+                              key: 1,
                               class: "text-center q-pa-lg"
                             }, [
                               _createElementVNode("div", { class: "text-h5 q-mt-none q-mb-sm" }, _toDisplayString(_ctx.flowDialog.data.title || 'Untitled form'), 1 /* TEXT */),
@@ -764,7 +772,7 @@ return function render(_ctx, _cache) {
                                   }, _toDisplayString(Number(_ctx.flowDialog.data.amountSat).toLocaleString()) + " sats to complete", 1 /* TEXT */))
                                 : _createCommentVNode("v-if", true)
                             ]))
-                          : (_openBlock(), _createElementBlock(_Fragment, { key: 1 }, [
+                          : (_openBlock(), _createElementBlock(_Fragment, { key: 2 }, [
                               (!_ctx.previewStepper)
                                 ? (_openBlock(), _createElementBlock(_Fragment, { key: 0 }, [
                                     _createElementVNode("div", { class: "text-h5 q-mt-none q-mb-sm" }, _toDisplayString(_ctx.flowDialog.data.title || 'Untitled form'), 1 /* TEXT */),
