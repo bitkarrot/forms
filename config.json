@@ -14,7 +14,11 @@
   "contributors": [{"name": "bitkarrot", "uri": "https://github.com/bitkarrot", "role": "Creator"}],
   "images": [
     {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/admin-flows.png"},
+    {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/builder.png"},
     {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/public-hosted.png"},
+    {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/public-filled.png"},
+    {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/payment.png"},
+    {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/confirmation.png"},
     {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/embed-widget.png"}
   ],
   "wasm": {
