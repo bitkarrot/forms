@@ -193,7 +193,20 @@ return function render(_ctx, _cache) {
                       icon: "list",
                       label: "Submissions",
                       onClick: $event => (_ctx.openSubmissions(props.row))
-                    }, null, 8 /* PROPS */, ["onClick"])
+                    }, null, 8 /* PROPS */, ["onClick"]),
+                    (props.row.status!=='published')
+                      ? (_openBlock(), _createBlock(_component_q_btn, {
+                          key: 2,
+                          flat: "",
+                          dense: "",
+                          "no-caps": "",
+                          size: "sm",
+                          icon: "delete",
+                          color: "negative",
+                          label: "Delete",
+                          onClick: $event => (_ctx.confirmDelete(props.row))
+                        }, null, 8 /* PROPS */, ["onClick"]))
+                      : _createCommentVNode("v-if", true)
                   ]),
                   _: 2 /* DYNAMIC */
                 }, 1032 /* PROPS, DYNAMIC_SLOTS */, ["props"])

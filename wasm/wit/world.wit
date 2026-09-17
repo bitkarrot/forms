@@ -8,6 +8,9 @@ interface host {
   record storage-set-request { table: string, data-json: option<string> }
   record storage-set-response { ok: bool }
   storage-set: func(req: storage-set-request) -> storage-set-response;
+  record storage-delete-request { table: string, id: string }
+  record storage-delete-response { ok: bool }
+  storage-delete: func(req: storage-delete-request) -> storage-delete-response;
   record storage-paginated-request { table: string, filters-json: option<string>, search: option<string>, search-fields-json: option<string>, sort-by: option<string>, descending: bool, limit: u32, offset: u32 }
   record storage-paginated-response { rows-json: string, total: u32 }
   storage-get-paginated: func(req: storage-paginated-request) -> storage-paginated-response;
@@ -33,6 +36,7 @@ world forms {
   export get-flow: func(payload: string) -> string;
   export update-flow: func(payload: string) -> string;
   export set-flow-status: func(payload: string) -> string;
+  export delete-flow: func(payload: string) -> string;
   export list-submissions: func(payload: string) -> string;
   export update-submission: func(payload: string) -> string;
   export export-submissions: func(payload: string) -> string;

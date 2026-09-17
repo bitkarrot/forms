@@ -33,6 +33,7 @@
         <q-btn v-if="props.row.status==='published'" flat dense no-caps size="sm" color="warning" label="Close" @click="setStatus(props.row,'closed')"></q-btn>
         <q-btn flat dense no-caps size="sm" icon="edit" label="Edit" @click="openFlowDialog(props.row)"></q-btn>
         <q-btn flat dense no-caps size="sm" icon="list" label="Submissions" @click="openSubmissions(props.row)"></q-btn>
+        <q-btn v-if="props.row.status!=='published'" flat dense no-caps size="sm" icon="delete" color="negative" label="Delete" @click="confirmDelete(props.row)"></q-btn>
       </q-td></template>
     </q-table>
 

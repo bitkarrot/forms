@@ -121,6 +121,29 @@ pub unsafe fn __post_return_set_flow_status<T: Guest>(arg0: *mut u8) {
 }
 #[doc(hidden)]
 #[allow(non_snake_case)]
+pub unsafe fn _export_delete_flow_cabi<T: Guest>(arg0: *mut u8, arg1: usize) -> *mut u8 {
+    #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
+    let len0 = arg1;
+    let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+    let result1 = T::delete_flow(_rt::string_lift(bytes0));
+    let ptr2 = (&raw mut _RET_AREA.0).cast::<u8>();
+    let vec3 = (result1.into_bytes()).into_boxed_slice();
+    let ptr3 = vec3.as_ptr().cast::<u8>();
+    let len3 = vec3.len();
+    ::core::mem::forget(vec3);
+    *ptr2.add(::core::mem::size_of::<*const u8>()).cast::<usize>() = len3;
+    *ptr2.add(0).cast::<*mut u8>() = ptr3.cast_mut();
+    ptr2
+}
+#[doc(hidden)]
+#[allow(non_snake_case)]
+pub unsafe fn __post_return_delete_flow<T: Guest>(arg0: *mut u8) {
+    let l0 = *arg0.add(0).cast::<*mut u8>();
+    let l1 = *arg0.add(::core::mem::size_of::<*const u8>()).cast::<usize>();
+    _rt::cabi_dealloc(l0, l1, 1);
+}
+#[doc(hidden)]
+#[allow(non_snake_case)]
 pub unsafe fn _export_list_submissions_cabi<T: Guest>(
     arg0: *mut u8,
     arg1: usize,
@@ -333,6 +356,7 @@ pub trait Guest {
     fn get_flow(payload: _rt::String) -> _rt::String;
     fn update_flow(payload: _rt::String) -> _rt::String;
     fn set_flow_status(payload: _rt::String) -> _rt::String;
+    fn delete_flow(payload: _rt::String) -> _rt::String;
     fn list_submissions(payload: _rt::String) -> _rt::String;
     fn update_submission(payload: _rt::String) -> _rt::String;
     fn export_submissions(payload: _rt::String) -> _rt::String;
@@ -373,10 +397,15 @@ macro_rules! __export_world_forms_cabi {
         "cabi_post_set-flow-status")] unsafe extern "C" fn
         _post_return_set_flow_status(arg0 : * mut u8,) { unsafe { $($path_to_types)*::
         __post_return_set_flow_status::<$ty > (arg0) } } #[unsafe (export_name =
-        "list-submissions")] unsafe extern "C" fn export_list_submissions(arg0 : * mut
-        u8, arg1 : usize,) -> * mut u8 { unsafe { $($path_to_types)*::
-        _export_list_submissions_cabi::<$ty > (arg0, arg1) } } #[unsafe (export_name =
-        "cabi_post_list-submissions")] unsafe extern "C" fn
+        "delete-flow")] unsafe extern "C" fn export_delete_flow(arg0 : * mut u8, arg1 :
+        usize,) -> * mut u8 { unsafe { $($path_to_types)*::
+        _export_delete_flow_cabi::<$ty > (arg0, arg1) } } #[unsafe (export_name =
+        "cabi_post_delete-flow")] unsafe extern "C" fn _post_return_delete_flow(arg0 : *
+        mut u8,) { unsafe { $($path_to_types)*:: __post_return_delete_flow::<$ty > (arg0)
+        } } #[unsafe (export_name = "list-submissions")] unsafe extern "C" fn
+        export_list_submissions(arg0 : * mut u8, arg1 : usize,) -> * mut u8 { unsafe {
+        $($path_to_types)*:: _export_list_submissions_cabi::<$ty > (arg0, arg1) } }
+        #[unsafe (export_name = "cabi_post_list-submissions")] unsafe extern "C" fn
         _post_return_list_submissions(arg0 : * mut u8,) { unsafe { $($path_to_types)*::
         __post_return_list_submissions::<$ty > (arg0) } } #[unsafe (export_name =
         "update-submission")] unsafe extern "C" fn export_update_submission(arg0 : * mut
@@ -512,6 +541,37 @@ pub mod lnbits {
                     f: &mut ::core::fmt::Formatter<'_>,
                 ) -> ::core::fmt::Result {
                     f.debug_struct("StorageSetResponse").field("ok", &self.ok).finish()
+                }
+            }
+            #[derive(Clone)]
+            pub struct StorageDeleteRequest {
+                pub table: _rt::String,
+                pub id: _rt::String,
+            }
+            impl ::core::fmt::Debug for StorageDeleteRequest {
+                fn fmt(
+                    &self,
+                    f: &mut ::core::fmt::Formatter<'_>,
+                ) -> ::core::fmt::Result {
+                    f.debug_struct("StorageDeleteRequest")
+                        .field("table", &self.table)
+                        .field("id", &self.id)
+                        .finish()
+                }
+            }
+            #[repr(C)]
+            #[derive(Clone, Copy)]
+            pub struct StorageDeleteResponse {
+                pub ok: bool,
+            }
+            impl ::core::fmt::Debug for StorageDeleteResponse {
+                fn fmt(
+                    &self,
+                    f: &mut ::core::fmt::Formatter<'_>,
+                ) -> ::core::fmt::Result {
+                    f.debug_struct("StorageDeleteResponse")
+                        .field("ok", &self.ok)
+                        .finish()
                 }
             }
             #[derive(Clone)]
@@ -900,6 +960,44 @@ pub mod lnbits {
                         )
                     };
                     StorageSetResponse {
+                        ok: _rt::bool_lift(ret as u8),
+                    }
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn storage_delete(req: &StorageDeleteRequest) -> StorageDeleteResponse {
+                unsafe {
+                    let StorageDeleteRequest { table: table0, id: id0 } = req;
+                    let vec1 = table0;
+                    let ptr1 = vec1.as_ptr().cast::<u8>();
+                    let len1 = vec1.len();
+                    let vec2 = id0;
+                    let ptr2 = vec2.as_ptr().cast::<u8>();
+                    let len2 = vec2.len();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "lnbits:extension/host")]
+                    unsafe extern "C" {
+                        #[link_name = "storage-delete"]
+                        fn wit_import3(
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                        ) -> i32;
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unsafe extern "C" fn wit_import3(
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                    ) -> i32 {
+                        unreachable!()
+                    }
+                    let ret = unsafe {
+                        wit_import3(ptr1.cast_mut(), len1, ptr2.cast_mut(), len2)
+                    };
+                    StorageDeleteResponse {
                         ok: _rt::bool_lift(ret as u8),
                     }
                 }
@@ -1567,38 +1665,40 @@ pub(crate) use __export_forms_impl as export;
 )]
 #[doc(hidden)]
 #[allow(clippy::octal_escapes)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1472] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xc4\x0a\x01A\x02\x01\
-A\x10\x01B6\x01r\x02\x05tables\x02ids\x04\0\x13storage-get-request\x03\0\0\x01ks\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1595] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xbf\x0b\x01A\x02\x01\
+A\x11\x01B<\x01r\x02\x05tables\x02ids\x04\0\x13storage-get-request\x03\0\0\x01ks\
 \x01r\x01\x09data-json\x02\x04\0\x14storage-get-response\x03\0\x03\x01r\x02\x05t\
 ables\x02ids\x04\0\x1astorage-get-public-request\x03\0\x05\x01r\x02\x05tables\x09\
 data-json\x02\x04\0\x13storage-set-request\x03\0\x07\x01r\x01\x02ok\x7f\x04\0\x14\
-storage-set-response\x03\0\x09\x01r\x08\x05tables\x0cfilters-json\x02\x06search\x02\
-\x12search-fields-json\x02\x07sort-by\x02\x0adescending\x7f\x05limity\x06offsety\
-\x04\0\x19storage-paginated-request\x03\0\x0b\x01r\x02\x09rows-jsons\x05totaly\x04\
-\0\x1astorage-paginated-response\x03\0\x0d\x01o\x02ss\x01p\x0f\x01r\x05\x09sourc\
-e-ids\x06amountw\x08currencys\x04memos\x05extra\x10\x04\0\x1dcreate-invoice-publ\
-ic-request\x03\0\x11\x01r\x03\x0cpayment-hashs\x0fpayment-requests\x0bchecking-i\
-ds\x04\0\x17create-invoice-response\x03\0\x13\x01r\x03\x02ids\x04names\x08curren\
-cy\x02\x04\0\x0ewallet-summary\x03\0\x15\x01p\x16\x01r\x01\x07wallets\x17\x04\0\x15\
-list-wallets-response\x03\0\x18\x01r\x01\x09timestampw\x04\0\x0cnow-response\x03\
-\0\x1a\x01r\x01\x06prefixs\x04\0\x11random-id-request\x03\0\x1c\x01r\x01\x02ids\x04\
-\0\x12random-id-response\x03\0\x1e\x01r\x02\x05levels\x07messages\x04\0\x0blog-r\
-equest\x03\0\x20\x01r\x01\x02ok\x7f\x04\0\x0clog-response\x03\0\"\x01@\x01\x03re\
-q\x01\0\x04\x04\0\x0bstorage-get\x01$\x01@\x01\x03req\x06\0\x04\x04\0\x12storage\
--get-public\x01%\x01@\x01\x03req\x08\0\x0a\x04\0\x0bstorage-set\x01&\x01@\x01\x03\
-req\x0c\0\x0e\x04\0\x15storage-get-paginated\x01'\x01@\x01\x03req\x12\0\x14\x04\0\
-\x15create-invoice-public\x01(\x01@\0\0\x19\x04\0\x11list-user-wallets\x01)\x01@\
-\0\0\x1b\x04\0\x03now\x01*\x01@\x01\x03req\x1d\0\x1f\x04\0\x09random-id\x01+\x01\
-@\x01\x03req!\0#\x04\0\x03log\x01,\x03\0\x15lnbits:extension/host\x05\0\x01@\x01\
-\x07payloads\0s\x04\0\x0alist-flows\x01\x01\x04\0\x0bcreate-flow\x01\x01\x04\0\x08\
-get-flow\x01\x01\x04\0\x0bupdate-flow\x01\x01\x04\0\x0fset-flow-status\x01\x01\x04\
-\0\x10list-submissions\x01\x01\x04\0\x11update-submission\x01\x01\x04\0\x12expor\
-t-submissions\x01\x01\x04\0\x0clist-wallets\x01\x01\x04\0\x0fpublic-get-flow\x01\
-\x01\x04\0\x0dpublic-submit\x01\x01\x04\0\x15public-get-submission\x01\x01\x04\0\
-\x0fon-invoice-paid\x01\x01\x04\0\x16lnbits:extension/forms\x04\0\x0b\x0b\x01\0\x05\
-forms\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.227.\
-1\x10wit-bindgen-rust\x060.41.0";
+storage-set-response\x03\0\x09\x01r\x02\x05tables\x02ids\x04\0\x16storage-delete\
+-request\x03\0\x0b\x01r\x01\x02ok\x7f\x04\0\x17storage-delete-response\x03\0\x0d\
+\x01r\x08\x05tables\x0cfilters-json\x02\x06search\x02\x12search-fields-json\x02\x07\
+sort-by\x02\x0adescending\x7f\x05limity\x06offsety\x04\0\x19storage-paginated-re\
+quest\x03\0\x0f\x01r\x02\x09rows-jsons\x05totaly\x04\0\x1astorage-paginated-resp\
+onse\x03\0\x11\x01o\x02ss\x01p\x13\x01r\x05\x09source-ids\x06amountw\x08currency\
+s\x04memos\x05extra\x14\x04\0\x1dcreate-invoice-public-request\x03\0\x15\x01r\x03\
+\x0cpayment-hashs\x0fpayment-requests\x0bchecking-ids\x04\0\x17create-invoice-re\
+sponse\x03\0\x17\x01r\x03\x02ids\x04names\x08currency\x02\x04\0\x0ewallet-summar\
+y\x03\0\x19\x01p\x1a\x01r\x01\x07wallets\x1b\x04\0\x15list-wallets-response\x03\0\
+\x1c\x01r\x01\x09timestampw\x04\0\x0cnow-response\x03\0\x1e\x01r\x01\x06prefixs\x04\
+\0\x11random-id-request\x03\0\x20\x01r\x01\x02ids\x04\0\x12random-id-response\x03\
+\0\"\x01r\x02\x05levels\x07messages\x04\0\x0blog-request\x03\0$\x01r\x01\x02ok\x7f\
+\x04\0\x0clog-response\x03\0&\x01@\x01\x03req\x01\0\x04\x04\0\x0bstorage-get\x01\
+(\x01@\x01\x03req\x06\0\x04\x04\0\x12storage-get-public\x01)\x01@\x01\x03req\x08\
+\0\x0a\x04\0\x0bstorage-set\x01*\x01@\x01\x03req\x0c\0\x0e\x04\0\x0estorage-dele\
+te\x01+\x01@\x01\x03req\x10\0\x12\x04\0\x15storage-get-paginated\x01,\x01@\x01\x03\
+req\x16\0\x18\x04\0\x15create-invoice-public\x01-\x01@\0\0\x1d\x04\0\x11list-use\
+r-wallets\x01.\x01@\0\0\x1f\x04\0\x03now\x01/\x01@\x01\x03req!\0#\x04\0\x09rando\
+m-id\x010\x01@\x01\x03req%\0'\x04\0\x03log\x011\x03\0\x15lnbits:extension/host\x05\
+\0\x01@\x01\x07payloads\0s\x04\0\x0alist-flows\x01\x01\x04\0\x0bcreate-flow\x01\x01\
+\x04\0\x08get-flow\x01\x01\x04\0\x0bupdate-flow\x01\x01\x04\0\x0fset-flow-status\
+\x01\x01\x04\0\x0bdelete-flow\x01\x01\x04\0\x10list-submissions\x01\x01\x04\0\x11\
+update-submission\x01\x01\x04\0\x12export-submissions\x01\x01\x04\0\x0clist-wall\
+ets\x01\x01\x04\0\x0fpublic-get-flow\x01\x01\x04\0\x0dpublic-submit\x01\x01\x04\0\
+\x15public-get-submission\x01\x01\x04\0\x0fon-invoice-paid\x01\x01\x04\0\x16lnbi\
+ts:extension/forms\x04\0\x0b\x0b\x01\0\x05forms\x03\0\0\0G\x09producers\x01\x0cp\
+rocessed-by\x02\x0dwit-component\x070.227.1\x10wit-bindgen-rust\x060.41.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

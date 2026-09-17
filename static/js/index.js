@@ -352,6 +352,22 @@
       publicUrl(flow) { return `${location.origin}/ext/forms/f/${flow.id}` },
       embedSnippet(flow) { return `<script src="${location.origin}/ext-assets/forms/js/embed.js" data-flow="${flow.id}" async><\/script>` },
       openPublic(flow) { LNbitsBridge.openInNewTab(this.publicUrl(flow)) },
+      confirmDelete(flow) {
+        this.$q.dialog({
+          title: 'Delete flow?',
+          message: `"${flow.title || 'Untitled'}" and all of its submissions will be permanently deleted. This cannot be undone.`,
+          cancel: {flat: true, noCaps: true, label: 'Cancel'},
+          ok: {unelevated: true, noCaps: true, color: 'negative', label: 'Delete'},
+          persistent: true,
+        }).onOk(() => this.deleteFlow(flow))
+      },
+      async deleteFlow(flow) {
+        try {
+          await this.api('DELETE', `/flows/${flow.id}`)
+          this.flows = this.flows.filter(f => f.id !== flow.id)
+          LNbitsBridge.notify('Flow deleted.', 'positive').catch(() => {})
+        } catch (e) { LNbitsBridge.notify(e.message, 'negative').catch(() => {}) }
+      },
       openShare(flow) { this.shareDialog = {show: true, flow} },
       copyText(text, label) {
         try { navigator.clipboard.writeText(text); LNbitsBridge.notify(`${label} copied.`, 'positive').catch(() => {}) }

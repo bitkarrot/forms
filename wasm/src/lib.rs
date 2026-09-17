@@ -78,6 +78,13 @@ fn set(table: &str, value: &Value) -> bool {
     })
     .ok
 }
+fn del(table: &str, id: &str) -> bool {
+    host::storage_delete(&host::StorageDeleteRequest {
+        table: table.into(),
+        id: id.into(),
+    })
+    .ok
+}
 fn rows(table: &str, filters: Option<Value>) -> Result<Vec<Value>, String> {
     let mut out = Vec::new();
     let mut offset = 0u32;
@@ -627,6 +634,33 @@ impl Guest for Component {
             return err("Could not update flow status");
         }
         ok(json!({"id": flow_id, "status": status}))
+    }
+
+    fn delete_flow(payload: String) -> String {
+        let req = match parse(&payload) {
+            Ok(v) => v,
+            Err(e) => return err(&e),
+        };
+        let flow_id = req.get("flowId").and_then(Value::as_str).unwrap_or("");
+        if get("flows", flow_id, false).is_none() {
+            return err("Flow not found");
+        }
+        let subs = match rows("submissions", Some(json!({"flowId": flow_id}))) {
+            Ok(v) => v,
+            Err(e) => return err(&e),
+        };
+        let mut removed = 0u32;
+        for sub in &subs {
+            if let Some(sid) = sub.get("id").and_then(Value::as_str) {
+                if del("submissions", sid) {
+                    removed += 1;
+                }
+            }
+        }
+        if !del("flows", flow_id) {
+            return err("Could not delete flow");
+        }
+        ok(json!({"id": flow_id, "deleted": true, "submissionsRemoved": removed}))
     }
 
     fn list_submissions(payload: String) -> String {
