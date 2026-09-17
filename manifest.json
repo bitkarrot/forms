@@ -14,5 +14,8 @@
       "html_url": "https://github.com/bitkarrot/forms/releases/tag/v0.1.0",
       "extension_type": "wasm"
     }
-  ]
+  ],
+  "categories": {
+    "merchant": ["forms"]
+  }
 }
