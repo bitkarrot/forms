@@ -272,11 +272,19 @@ fn validate_settings(value: &Value) -> Result<String, String> {
         .unwrap_or("")
         .trim()
         .to_string();
+    // The sandboxed frame CSP only allows images from /ext-assets/<id>/ and
+    // data: URIs; http(s) still works in the external embed widget.
     if header_image.len() > 500
         || (!header_image.is_empty()
-            && !(header_image.starts_with("https://") || header_image.starts_with("http://")))
+            && !(header_image.starts_with("https://")
+                || header_image.starts_with("http://")
+                || header_image.starts_with("/ext-assets/")
+                || header_image.starts_with("data:image/")))
     {
-        return Err("headerImage must be an http(s) URL under 500 chars".into());
+        return Err(
+            "headerImage must be an http(s) URL, /ext-assets/ path or data:image/ URI under 500 chars"
+                .into(),
+        );
     }
     serde_json::to_string(&json!({
         "theme": theme,

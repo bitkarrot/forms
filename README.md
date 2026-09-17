@@ -20,7 +20,20 @@ metadata.
 Verified against LNbits 1.6.2rc1: `tests/e2e_local.py` drives the full
 install → create → publish → submit → invoice → pay → ticket loop, and
 `tests/backend` runs 18 native mock-host tests covering capacity, expiry,
-quarantine, idempotency, and approval flows.
+quarantine, idempotency, and approval flows. `tests/e2e_ui.mjs` is a
+Playwright browser test that drives the real admin builder and hosted page
+inside their sandboxed iframes (requires `npm i playwright` in a scratch
+dir — it is not a package dependency).
+
+## Header images and the frame CSP
+
+LNbits serves every WASM extension inside a sandboxed iframe whose CSP only
+allows images from `/ext-assets/<ext-id>/` and `data:` URIs. A form's
+`headerImage` therefore only renders on hosted/admin pages when it points at
+an extension asset — a sample ships at
+`/ext-assets/forms/assets/banner.svg` — or a `data:image/` URI. External
+`https://` URLs are accepted and work in the cross-origin embed widget, which
+runs on the host page with no such CSP.
 
 Layout and conventions follow
 [zapgoalswasm](https://github.com/bitkarrot/zapgoalswasm), a registry-included

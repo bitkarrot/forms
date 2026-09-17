@@ -60,15 +60,16 @@
             </div>
           </template>
         </div>
-        <div class="fb-canvas scroll col">
+        <div class="fb-canvas scroll col" :class="previewClasses">
           <div class="fb-form">
             <div class="fb-headerblock">
               <div class="fb-banner" :style="bannerStyle">
                 <q-btn flat round dense icon="settings" class="fb-gear" aria-label="Header image settings" @click.stop>
                   <q-menu><div class="q-pa-md" style="width:300px">
                     <div class="text-subtitle2 q-mb-sm">Header image</div>
-                    <q-input dense outlined v-model="flowDialog.data.headerImage" label="Image URL" placeholder="https://…"></q-input>
-                    <div class="row justify-end q-mt-xs"><q-btn flat dense no-caps size="sm" label="Remove" @click="flowDialog.data.headerImage=''"></q-btn></div>
+                    <q-input dense outlined v-model="flowDialog.data.headerImage" label="Image URL" placeholder="/ext-assets/forms/assets/banner.svg"></q-input>
+                    <div class="text-caption text-grey q-mt-xs">Hosted pages only render images under /ext-assets/forms/ or data:image/ URIs (LNbits frame CSP). External https URLs work in the embed widget.</div>
+                    <div class="row justify-end q-mt-xs"><q-btn flat dense no-caps size="sm" label="Use sample" @click="flowDialog.data.headerImage='/ext-assets/forms/assets/banner.svg'"></q-btn><q-btn flat dense no-caps size="sm" label="Remove" @click="flowDialog.data.headerImage=''"></q-btn></div>
                   </div></q-menu>
                 </q-btn>
               </div>
@@ -125,7 +126,7 @@
               <q-select outlined dense emit-value map-options v-model="flowDialog.data.themePreset" :options="themePresetOptions" label="Theme preset"></q-select>
               <q-select outlined dense emit-value map-options v-model="flowDialog.data.themeMode" :options="themeModeOptions" label="Mode"></q-select>
               <q-select outlined dense emit-value map-options v-model="flowDialog.data.renderer" :options="rendererOptions" label="Layout"></q-select>
-              <q-input outlined dense v-model="flowDialog.data.headerImage" label="Header image URL" placeholder="https://…"></q-input>
+              <q-input outlined dense v-model="flowDialog.data.headerImage" label="Header image URL" placeholder="/ext-assets/forms/assets/banner.svg" hint="Hosted pages: /ext-assets/forms/… or data:image/ URIs only. External URLs work in the embed."></q-input>
               <q-input outlined dense v-model="flowDialog.data.confirmText" label="Confirmation text" hint="Shown after a successful submission"></q-input>
             </div>
           </q-expansion-item>

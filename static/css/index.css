@@ -48,7 +48,7 @@
 .fb-pal-item:hover { background: rgba(128, 128, 128, 0.12); }
 .fb-pal-tpl { color: var(--q-primary); }
 
-.fb-canvas { background: rgba(128, 128, 128, 0.09); overflow-y: auto; }
+.fb-canvas { background: var(--forms-page, rgba(128, 128, 128, 0.09)); color: var(--forms-text, inherit); overflow-y: auto; }
 .fb-form { max-width: 680px; margin: 0 auto; padding: 28px 20px 60px; }
 
 /* Header block — banner + inline title/description */

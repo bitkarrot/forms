@@ -287,7 +287,9 @@ return function render(_ctx, _cache) {
                         ], 64 /* STABLE_FRAGMENT */))
                       : _createCommentVNode("v-if", true)
                   ]),
-                  _createElementVNode("div", { class: "fb-canvas scroll col" }, [
+                  _createElementVNode("div", {
+                    class: _normalizeClass(["fb-canvas scroll col", _ctx.previewClasses])
+                  }, [
                     _createElementVNode("div", { class: "fb-form" }, [
                       _createElementVNode("div", { class: "fb-headerblock" }, [
                         _createElementVNode("div", {
@@ -317,9 +319,18 @@ return function render(_ctx, _cache) {
                                       modelValue: _ctx.flowDialog.data.headerImage,
                                       "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.headerImage) = $event),
                                       label: "Image URL",
-                                      placeholder: "https://…"
+                                      placeholder: "/ext-assets/forms/assets/banner.svg"
                                     }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                                    _createElementVNode("div", { class: "text-caption text-grey q-mt-xs" }, "Hosted pages only render images under /ext-assets/forms/ or data:image/ URIs (LNbits frame CSP). External https URLs work in the embed widget."),
                                     _createElementVNode("div", { class: "row justify-end q-mt-xs" }, [
+                                      _createVNode(_component_q_btn, {
+                                        flat: "",
+                                        dense: "",
+                                        "no-caps": "",
+                                        size: "sm",
+                                        label: "Use sample",
+                                        onClick: $event => (_ctx.flowDialog.data.headerImage='/ext-assets/forms/assets/banner.svg')
+                                      }, null, 8 /* PROPS */, ["onClick"]),
                                       _createVNode(_component_q_btn, {
                                         flat: "",
                                         dense: "",
@@ -484,7 +495,7 @@ return function render(_ctx, _cache) {
                             class: "fb-addhint"
                           }, "Click an input type on the left to add another question"))
                     ])
-                  ]),
+                  ], 2 /* CLASS */),
                   _createElementVNode("div", { class: "fb-side scroll" }, [
                     (_ctx.flowDialog.data.fields[_ctx.flowDialog.sel])
                       ? (_openBlock(), _createElementBlock("div", {
@@ -664,7 +675,8 @@ return function render(_ctx, _cache) {
                             modelValue: _ctx.flowDialog.data.headerImage,
                             "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.headerImage) = $event),
                             label: "Header image URL",
-                            placeholder: "https://…"
+                            placeholder: "/ext-assets/forms/assets/banner.svg",
+                            hint: "Hosted pages: /ext-assets/forms/… or data:image/ URIs only. External URLs work in the embed."
                           }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
                           _createVNode(_component_q_input, {
                             outlined: "",
