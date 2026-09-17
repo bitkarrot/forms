@@ -7,6 +7,16 @@
   "min_lnbits_version": "1.6.0",
   "extension_type": "wasm",
   "license": "MIT",
+  "repo": "https://github.com/bitkarrot/forms",
+  "description_md": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/description.md",
+  "tile": "/ext-assets/forms/assets/icon.png",
+  "tags": ["Forms", "Payments", "Lightning", "WASM"],
+  "contributors": [{"name": "bitkarrot", "uri": "https://github.com/bitkarrot", "role": "Creator"}],
+  "images": [
+    {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/admin-flows.png"},
+    {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/public-hosted.png"},
+    {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/embed-widget.png"}
+  ],
   "wasm": {
     "module": "wasm/module.wasm",
     "wit": "wasm/wit/world.wit",
