@@ -21,6 +21,7 @@ const MAX_FIELDS: usize = 64;
 const MAX_ANSWER_LEN: usize = 4_000;
 const MAX_OPTIONS: usize = 64;
 const MAX_CSS_LEN: usize = 16_000;
+const MAX_IMG_DATA_URI: usize = 200_000;
 const INVOICE_EXPIRY_SECS: u64 = 900;
 const PAGE: u32 = 1000;
 
@@ -274,16 +275,18 @@ fn validate_settings(value: &Value) -> Result<String, String> {
         .to_string();
     // The sandboxed frame CSP only allows images from /ext-assets/<id>/ and
     // data: URIs; http(s) still works in the external embed widget.
-    if header_image.len() > 500
+    // data: URIs carry an inlined file so they get a larger cap.
+    let is_data_uri = header_image.starts_with("data:image/");
+    let cap = if is_data_uri { MAX_IMG_DATA_URI } else { 500 };
+    if header_image.len() > cap
         || (!header_image.is_empty()
             && !(header_image.starts_with("https://")
                 || header_image.starts_with("http://")
                 || header_image.starts_with("/ext-assets/")
-                || header_image.starts_with("data:image/")))
+                || is_data_uri))
     {
         return Err(
-            "headerImage must be an http(s) URL, /ext-assets/ path or data:image/ URI under 500 chars"
-                .into(),
+            "headerImage must be an http(s) URL, /ext-assets/ path or data:image/ URI".into(),
         );
     }
     serde_json::to_string(&json!({

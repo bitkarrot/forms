@@ -321,8 +321,25 @@ return function render(_ctx, _cache) {
                                       label: "Image URL",
                                       placeholder: "/ext-assets/forms/assets/banner.svg"
                                     }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
-                                    _createElementVNode("div", { class: "text-caption text-grey q-mt-xs" }, "Hosted pages only render images under /ext-assets/forms/ or data:image/ URIs (LNbits frame CSP). External https URLs work in the embed widget."),
+                                    (_ctx.isExternalHeader)
+                                      ? (_openBlock(), _createElementBlock("div", {
+                                          key: 0,
+                                          class: "text-caption text-warning q-mt-xs"
+                                        }, "External URLs are blocked by the LNbits frame CSP — this won't show on hosted pages, only in the embed widget. Upload an image or use an /ext-assets/ path instead."))
+                                      : (_openBlock(), _createElementBlock("div", {
+                                          key: 1,
+                                          class: "text-caption text-grey q-mt-xs"
+                                        }, "Hosted pages only render /ext-assets/forms/ paths or data:image/ URIs (LNbits frame CSP).")),
                                     _createElementVNode("div", { class: "row justify-end q-mt-xs" }, [
+                                      _createVNode(_component_q_btn, {
+                                        flat: "",
+                                        dense: "",
+                                        "no-caps": "",
+                                        size: "sm",
+                                        icon: "upload",
+                                        label: "Upload",
+                                        onClick: _ctx.pickHeaderImage
+                                      }, null, 8 /* PROPS */, ["onClick"]),
                                       _createVNode(_component_q_btn, {
                                         flat: "",
                                         dense: "",
@@ -669,15 +686,34 @@ return function render(_ctx, _cache) {
                             options: _ctx.rendererOptions,
                             label: "Layout"
                           }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "options"]),
-                          _createVNode(_component_q_input, {
-                            outlined: "",
-                            dense: "",
-                            modelValue: _ctx.flowDialog.data.headerImage,
-                            "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.headerImage) = $event),
-                            label: "Header image URL",
-                            placeholder: "/ext-assets/forms/assets/banner.svg",
-                            hint: "Hosted pages: /ext-assets/forms/… or data:image/ URIs only. External URLs work in the embed."
-                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                          _createElementVNode("div", { class: "row items-center q-gutter-xs no-wrap" }, [
+                            _createVNode(_component_q_input, {
+                              outlined: "",
+                              dense: "",
+                              class: "col",
+                              modelValue: _ctx.flowDialog.data.headerImage,
+                              "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.headerImage) = $event),
+                              label: "Header image URL",
+                              placeholder: "/ext-assets/forms/assets/banner.svg"
+                            }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                            _createVNode(_component_q_btn, {
+                              flat: "",
+                              dense: "",
+                              "no-caps": "",
+                              icon: "upload",
+                              label: "Upload",
+                              onClick: _ctx.pickHeaderImage
+                            }, null, 8 /* PROPS */, ["onClick"])
+                          ]),
+                          (_ctx.isExternalHeader)
+                            ? (_openBlock(), _createElementBlock("div", {
+                                key: 0,
+                                class: "text-caption text-warning q-mt-xs"
+                              }, "External URLs are blocked by the LNbits frame CSP — this won't show on hosted pages, only in the embed widget."))
+                            : (_openBlock(), _createElementBlock("div", {
+                                key: 1,
+                                class: "text-caption text-grey q-mt-xs"
+                              }, "Hosted pages only render /ext-assets/forms/ paths or data:image/ URIs (LNbits frame CSP). Upload inlines a file automatically.")),
                           _createVNode(_component_q_input, {
                             outlined: "",
                             dense: "",

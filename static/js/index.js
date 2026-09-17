@@ -209,6 +209,7 @@
         if (url) return {backgroundImage: `url("${url.replace(/"/g, '%22')}")`, backgroundSize: 'cover', backgroundPosition: 'center'}
         return {background: 'linear-gradient(120deg, color-mix(in srgb, var(--q-primary) 28%, transparent), color-mix(in srgb, var(--q-secondary, var(--q-primary)) 14%, transparent))'}
       },
+      isExternalHeader() { return /^https?:\/\//.test(this.flowDialog.data.headerImage || '') },
     },
     methods: {
       async api(method, path, body) { const result = await LNbitsBridge.callApi(method, API + path, body); if (result && result.error) throw new Error(result.error); return result },
@@ -226,6 +227,21 @@
       setView(v) {
         if (v === 'preview') { this.flowDialog.previewStep = -1; this.flowDialog.previewAnswers = {} }
         this.formError = ''
+      },
+      pickHeaderImage() {
+        const inp = document.createElement('input')
+        inp.type = 'file'; inp.accept = 'image/*'
+        inp.onchange = () => this.onHeaderFile(inp)
+        inp.click()
+      },
+      onHeaderFile(inp) {
+        const f = inp.files && inp.files[0]
+        if (!f) return
+        if (f.size > 145000) { this.formError = 'Header image too large — pick one under ~140 KB (data URIs are ~33% bigger than the file).'; return }
+        const r = new FileReader()
+        r.onload = () => { this.flowDialog.data.headerImage = String(r.result || ''); this.formError = '' }
+        r.onerror = () => { this.formError = 'Could not read that image file.' }
+        r.readAsDataURL(f)
       },
       insertCssSample() {
         const d = this.flowDialog.data

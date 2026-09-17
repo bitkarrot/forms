@@ -68,8 +68,9 @@
                   <q-menu><div class="q-pa-md" style="width:300px">
                     <div class="text-subtitle2 q-mb-sm">Header image</div>
                     <q-input dense outlined v-model="flowDialog.data.headerImage" label="Image URL" placeholder="/ext-assets/forms/assets/banner.svg"></q-input>
-                    <div class="text-caption text-grey q-mt-xs">Hosted pages only render images under /ext-assets/forms/ or data:image/ URIs (LNbits frame CSP). External https URLs work in the embed widget.</div>
-                    <div class="row justify-end q-mt-xs"><q-btn flat dense no-caps size="sm" label="Use sample" @click="flowDialog.data.headerImage='/ext-assets/forms/assets/banner.svg'"></q-btn><q-btn flat dense no-caps size="sm" label="Remove" @click="flowDialog.data.headerImage=''"></q-btn></div>
+                    <div v-if="isExternalHeader" class="text-caption text-warning q-mt-xs">External URLs are blocked by the LNbits frame CSP — this won't show on hosted pages, only in the embed widget. Upload an image or use an /ext-assets/ path instead.</div>
+                    <div v-else class="text-caption text-grey q-mt-xs">Hosted pages only render /ext-assets/forms/ paths or data:image/ URIs (LNbits frame CSP).</div>
+                    <div class="row justify-end q-mt-xs"><q-btn flat dense no-caps size="sm" icon="upload" label="Upload" @click="pickHeaderImage"></q-btn><q-btn flat dense no-caps size="sm" label="Use sample" @click="flowDialog.data.headerImage='/ext-assets/forms/assets/banner.svg'"></q-btn><q-btn flat dense no-caps size="sm" label="Remove" @click="flowDialog.data.headerImage=''"></q-btn></div>
                   </div></q-menu>
                 </q-btn>
               </div>
@@ -126,7 +127,12 @@
               <q-select outlined dense emit-value map-options v-model="flowDialog.data.themePreset" :options="themePresetOptions" label="Theme preset"></q-select>
               <q-select outlined dense emit-value map-options v-model="flowDialog.data.themeMode" :options="themeModeOptions" label="Mode"></q-select>
               <q-select outlined dense emit-value map-options v-model="flowDialog.data.renderer" :options="rendererOptions" label="Layout"></q-select>
-              <q-input outlined dense v-model="flowDialog.data.headerImage" label="Header image URL" placeholder="/ext-assets/forms/assets/banner.svg" hint="Hosted pages: /ext-assets/forms/… or data:image/ URIs only. External URLs work in the embed."></q-input>
+              <div class="row items-center q-gutter-xs no-wrap">
+                <q-input outlined dense class="col" v-model="flowDialog.data.headerImage" label="Header image URL" placeholder="/ext-assets/forms/assets/banner.svg"></q-input>
+                <q-btn flat dense no-caps icon="upload" label="Upload" @click="pickHeaderImage"></q-btn>
+              </div>
+              <div v-if="isExternalHeader" class="text-caption text-warning q-mt-xs">External URLs are blocked by the LNbits frame CSP — this won't show on hosted pages, only in the embed widget.</div>
+              <div v-else class="text-caption text-grey q-mt-xs">Hosted pages only render /ext-assets/forms/ paths or data:image/ URIs (LNbits frame CSP). Upload inlines a file automatically.</div>
               <q-input outlined dense v-model="flowDialog.data.confirmText" label="Confirmation text" hint="Shown after a successful submission"></q-input>
             </div>
           </q-expansion-item>
