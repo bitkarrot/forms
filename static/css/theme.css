@@ -1,2 +1,73 @@
-body { background: #f6f7f9; }
-body.body--dark { background: #121212; }
+:root {
+  --forms-page: #f6f7f9;
+  --forms-card: #ffffff;
+  --forms-text: #1f2937;
+  --forms-muted: #6b7280;
+  --forms-border: rgba(0, 0, 0, 0.12);
+}
+body {
+  background: var(--forms-page);
+  color: var(--forms-text);
+}
+.q-card { background: var(--forms-card); color: var(--forms-text); }
+.q-separator { background: var(--forms-border); }
+
+body.body--dark {
+  --forms-page: #121212;
+  --forms-card: #1e1e1e;
+  --forms-text: rgba(255, 255, 255, 0.9);
+  --forms-muted: rgba(255, 255, 255, 0.62);
+  --forms-border: rgba(255, 255, 255, 0.1);
+}
+body.body--dark .q-card,
+body.body--dark .q-dialog .q-card,
+body.body--dark .q-menu {
+  background: var(--forms-card);
+  color: var(--forms-text);
+}
+body.body--dark .q-field__native,
+body.body--dark .q-field__input,
+body.body--dark .q-field__label,
+body.body--dark .q-field__marginal {
+  color: var(--forms-text);
+}
+body.body--dark .text-grey-6,
+body.body--dark .text-grey-7,
+body.body--dark .text-grey-8 {
+  color: var(--forms-muted) !important;
+}
+
+body.theme-bitcoin {
+  --q-primary: #f7931a;
+  --q-secondary: #4a4a4a;
+}
+body.theme-bitcoin:not(.body--dark) { --forms-page: #fdf6ec; }
+body.theme-bitcoin.body--dark { --forms-page: #171310; --forms-card: #241d16; }
+
+body.theme-minimal {
+  --q-primary: #374151;
+  --q-secondary: #6b7280;
+  --forms-card: #ffffff;
+}
+body.theme-minimal .q-card { box-shadow: none; border: 1px solid var(--forms-border); }
+body.theme-minimal.body--dark { --q-primary: #d1d5db; --forms-card: #1e1e1e; }
+
+body.theme-contrast {
+  --q-primary: #0000cc;
+  --q-secondary: #000000;
+  --forms-page: #ffffff;
+  --forms-card: #ffffff;
+  --forms-text: #000000;
+  --forms-muted: #333333;
+  --forms-border: #000000;
+}
+body.theme-contrast.body--dark {
+  --q-primary: #ffd700;
+  --q-secondary: #ffffff;
+  --forms-page: #000000;
+  --forms-card: #000000;
+  --forms-text: #ffffff;
+  --forms-muted: #cccccc;
+  --forms-border: #ffffff;
+}
+body.theme-contrast .q-card { border: 2px solid var(--forms-border); box-shadow: none; }

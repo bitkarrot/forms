@@ -43,7 +43,11 @@
         <q-select outlined dense v-model="flowDialog.data.walletId" :options="walletOptions" emit-value map-options label="Payout wallet" :disable="flowDialog.editing"></q-select>
         <q-input outlined dense type="number" min="0" v-model.number="flowDialog.data.amountSat" label="Price (sats, 0 = free)"></q-input>
         <q-input outlined dense type="number" min="0" v-model.number="flowDialog.data.capacity" label="Capacity (0 = unlimited)"></q-input>
-        <q-select outlined dense v-model="flowDialog.data.theme" :options="themeOptions" label="Theme"></q-select>
+        <div class="row q-col-gutter-sm">
+          <q-select class="col-12 col-sm-4" outlined dense emit-value map-options v-model="flowDialog.data.themePreset" :options="themePresetOptions" label="Theme preset"></q-select>
+          <q-select class="col-6 col-sm-4" outlined dense emit-value map-options v-model="flowDialog.data.themeMode" :options="themeModeOptions" label="Mode"></q-select>
+          <q-select class="col-6 col-sm-4" outlined dense emit-value map-options v-model="flowDialog.data.renderer" :options="rendererOptions" label="Layout"></q-select>
+        </div>
         <div>
           <div class="row items-center q-mb-xs">
             <div class="text-subtitle2">Fields</div>

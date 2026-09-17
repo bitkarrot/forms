@@ -28,9 +28,10 @@
         <h1 class="text-h5 q-mt-none q-mb-sm">{{flow.title}}</h1>
         <p v-if="flow.description" class="text-grey-8">{{flow.description}}</p>
         <div v-if="flow.remaining!==null && flow.remaining!==undefined" class="text-caption q-mb-md">{{flow.remaining}} spot(s) remaining</div>
+        <q-linear-progress v-if="isStepper" :value="stepProgress" rounded class="q-mb-md" aria-label="Form progress"></q-linear-progress>
         <div class="q-gutter-md">
-          <div v-for="field in formFields" :key="field.id">
-            <q-input v-if="['text','email','phone','number','date','nostr_pubkey'].includes(field.type)" outlined dense :type="field.type==='textarea'?'textarea':'text'" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')" :hint="field.help"></q-input>
+          <div v-for="(field, i) in formFields" :key="field.id" v-show="!isStepper || i===step">
+            <q-input v-if="['text','email','phone','number','date','nostr_pubkey'].includes(field.type)" outlined dense :type="field.type==='number'?'number':(field.type==='date'?'date':'text')" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')" :hint="field.help"></q-input>
             <q-input v-else-if="field.type==='textarea'" outlined type="textarea" rows="3" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')" :hint="field.help"></q-input>
             <q-select v-else-if="field.type==='select'" outlined dense :options="field.options||[]" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')"></q-select>
             <div v-else-if="field.type==='radio'"><div class="text-subtitle2">{{field.label}}<span v-if="field.required"> *</span></div><q-option-group :options="(field.options||[]).map(o=>({label:o,value:o}))" v-model="answers[field.id]" type="radio"></q-option-group></div>
@@ -38,14 +39,21 @@
           </div>
         </div>
         <div v-if="submitError" class="text-negative q-mt-md" role="alert">{{submitError}}</div>
-        <q-btn unelevated no-caps color="primary" class="full-width q-mt-lg" :loading="submitting" :label="submitLabel" @click="submit"></q-btn>
+        <div v-if="isStepper" class="row justify-between q-mt-lg">
+          <q-btn flat no-caps label="Back" :disable="step===0" @click="step=Math.max(0,step-1);submitError=''"></q-btn>
+          <q-btn v-if="step<formFields.length-1" unelevated no-caps color="primary" label="Next" @click="nextStep"></q-btn>
+          <q-btn v-else unelevated no-caps color="primary" :loading="submitting" :label="submitLabel" @click="submit"></q-btn>
+        </div>
+        <q-btn v-else unelevated no-caps color="primary" class="full-width q-mt-lg" :loading="submitting" :label="submitLabel" @click="submit"></q-btn>
         <div v-if="hasNostrField" class="text-caption text-grey-7 q-mt-sm">Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login.</div>
       </q-card>
     </div>
     <q-dialog v-model="invoiceDialog" position="top"><q-card class="q-pa-lg" style="min-width:min(92vw,420px)">
       <div v-if="invoice">
         <div class="text-h6 text-center">Pay {{formatSats(invoice.amountSat)}} sats</div>
+        <div v-if="expiresInText" class="text-center text-caption text-grey-7">Expires in {{expiresInText}}</div>
         <div class="qr-box q-my-md"><qrcode-vue :value="'LIGHTNING:'+invoice.paymentRequest.toUpperCase()" :size="240"></qrcode-vue></div>
+        <div class="row justify-center q-mb-md"><q-btn unelevated no-caps color="primary" icon="bolt" label="Open in wallet" :href="'lightning:'+invoice.paymentRequest"></q-btn></div>
         <q-input outlined readonly type="textarea" autogrow :model-value="invoice.paymentRequest" label="BOLT11 invoice"><template #append><q-btn flat round dense icon="content_copy" aria-label="Copy invoice" @click="copyInvoice"></q-btn></template></q-input>
         <div class="pending-row q-mt-md" aria-live="polite"><q-spinner-dots color="primary" size="2rem"></q-spinner-dots><span>Waiting for verified payment…</span></div>
       </div>

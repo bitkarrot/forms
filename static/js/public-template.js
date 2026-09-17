@@ -1,11 +1,12 @@
 window.FORMS_PUBLIC_RENDER=function(){
-const { resolveComponent: _resolveComponent, createVNode: _createVNode, createElementVNode: _createElementVNode, openBlock: _openBlock, createElementBlock: _createElementBlock, createCommentVNode: _createCommentVNode, toDisplayString: _toDisplayString, withCtx: _withCtx, createBlock: _createBlock, renderList: _renderList, Fragment: _Fragment, createTextVNode: _createTextVNode } = Vue
+const { resolveComponent: _resolveComponent, createVNode: _createVNode, createElementVNode: _createElementVNode, openBlock: _openBlock, createElementBlock: _createElementBlock, createCommentVNode: _createCommentVNode, toDisplayString: _toDisplayString, withCtx: _withCtx, createBlock: _createBlock, renderList: _renderList, Fragment: _Fragment, createTextVNode: _createTextVNode, vShow: _vShow, withDirectives: _withDirectives } = Vue
 
 return function render(_ctx, _cache) {
   const _component_q_spinner = _resolveComponent("q-spinner")
   const _component_q_icon = _resolveComponent("q-icon")
   const _component_q_btn = _resolveComponent("q-btn")
   const _component_q_card = _resolveComponent("q-card")
+  const _component_q_linear_progress = _resolveComponent("q-linear-progress")
   const _component_q_input = _resolveComponent("q-input")
   const _component_q_select = _resolveComponent("q-select")
   const _component_q_option_group = _resolveComponent("q-option-group")
@@ -92,9 +93,18 @@ return function render(_ctx, _cache) {
                           class: "text-caption q-mb-md"
                         }, _toDisplayString(_ctx.flow.remaining) + " spot(s) remaining", 1 /* TEXT */))
                       : _createCommentVNode("v-if", true),
+                    (_ctx.isStepper)
+                      ? (_openBlock(), _createBlock(_component_q_linear_progress, {
+                          key: 2,
+                          value: _ctx.stepProgress,
+                          rounded: "",
+                          class: "q-mb-md",
+                          "aria-label": "Form progress"
+                        }, null, 8 /* PROPS */, ["value"]))
+                      : _createCommentVNode("v-if", true),
                     _createElementVNode("div", { class: "q-gutter-md" }, [
-                      (_openBlock(true), _createElementBlock(_Fragment, null, _renderList(_ctx.formFields, (field) => {
-                        return (_openBlock(), _createElementBlock("div", {
+                      (_openBlock(true), _createElementBlock(_Fragment, null, _renderList(_ctx.formFields, (field, i) => {
+                        return _withDirectives((_openBlock(), _createElementBlock("div", {
                           key: field.id
                         }, [
                           (['text','email','phone','number','date','nostr_pubkey'].includes(field.type))
@@ -102,7 +112,7 @@ return function render(_ctx, _cache) {
                                 key: 0,
                                 outlined: "",
                                 dense: "",
-                                type: field.type==='textarea'?'textarea':'text',
+                                type: field.type==='number'?'number':(field.type==='date'?'date':'text'),
                                 modelValue: _ctx.answers[field.id],
                                 "onUpdate:modelValue": $event => ((_ctx.answers[field.id]) = $event),
                                 label: field.label+(field.required?' *':''),
@@ -152,28 +162,62 @@ return function render(_ctx, _cache) {
                                         label: field.label+(field.required?' *':'')
                                       }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "label"]))
                                     : _createCommentVNode("v-if", true)
-                        ]))
+                        ])), [
+                          [_vShow, !_ctx.isStepper || i===_ctx.step]
+                        ])
                       }), 128 /* KEYED_FRAGMENT */))
                     ]),
                     (_ctx.submitError)
                       ? (_openBlock(), _createElementBlock("div", {
-                          key: 2,
+                          key: 3,
                           class: "text-negative q-mt-md",
                           role: "alert"
                         }, _toDisplayString(_ctx.submitError), 1 /* TEXT */))
                       : _createCommentVNode("v-if", true),
-                    _createVNode(_component_q_btn, {
-                      unelevated: "",
-                      "no-caps": "",
-                      color: "primary",
-                      class: "full-width q-mt-lg",
-                      loading: _ctx.submitting,
-                      label: _ctx.submitLabel,
-                      onClick: _ctx.submit
-                    }, null, 8 /* PROPS */, ["loading", "label", "onClick"]),
+                    (_ctx.isStepper)
+                      ? (_openBlock(), _createElementBlock("div", {
+                          key: 4,
+                          class: "row justify-between q-mt-lg"
+                        }, [
+                          _createVNode(_component_q_btn, {
+                            flat: "",
+                            "no-caps": "",
+                            label: "Back",
+                            disable: _ctx.step===0,
+                            onClick: $event => {_ctx.step=Math.max(0,_ctx.step-1);_ctx.submitError=''}
+                          }, null, 8 /* PROPS */, ["disable", "onClick"]),
+                          (_ctx.step<_ctx.formFields.length-1)
+                            ? (_openBlock(), _createBlock(_component_q_btn, {
+                                key: 0,
+                                unelevated: "",
+                                "no-caps": "",
+                                color: "primary",
+                                label: "Next",
+                                onClick: _ctx.nextStep
+                              }, null, 8 /* PROPS */, ["onClick"]))
+                            : (_openBlock(), _createBlock(_component_q_btn, {
+                                key: 1,
+                                unelevated: "",
+                                "no-caps": "",
+                                color: "primary",
+                                loading: _ctx.submitting,
+                                label: _ctx.submitLabel,
+                                onClick: _ctx.submit
+                              }, null, 8 /* PROPS */, ["loading", "label", "onClick"]))
+                        ]))
+                      : (_openBlock(), _createBlock(_component_q_btn, {
+                          key: 5,
+                          unelevated: "",
+                          "no-caps": "",
+                          color: "primary",
+                          class: "full-width q-mt-lg",
+                          loading: _ctx.submitting,
+                          label: _ctx.submitLabel,
+                          onClick: _ctx.submit
+                        }, null, 8 /* PROPS */, ["loading", "label", "onClick"])),
                     (_ctx.hasNostrField)
                       ? (_openBlock(), _createElementBlock("div", {
-                          key: 3,
+                          key: 6,
                           class: "text-caption text-grey-7 q-mt-sm"
                         }, "Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login."))
                       : _createCommentVNode("v-if", true)
@@ -196,11 +240,27 @@ return function render(_ctx, _cache) {
             (_ctx.invoice)
               ? (_openBlock(), _createElementBlock("div", { key: 0 }, [
                   _createElementVNode("div", { class: "text-h6 text-center" }, "Pay " + _toDisplayString(_ctx.formatSats(_ctx.invoice.amountSat)) + " sats", 1 /* TEXT */),
+                  (_ctx.expiresInText)
+                    ? (_openBlock(), _createElementBlock("div", {
+                        key: 0,
+                        class: "text-center text-caption text-grey-7"
+                      }, "Expires in " + _toDisplayString(_ctx.expiresInText), 1 /* TEXT */))
+                    : _createCommentVNode("v-if", true),
                   _createElementVNode("div", { class: "qr-box q-my-md" }, [
                     _createVNode(_component_qrcode_vue, {
                       value: 'LIGHTNING:'+_ctx.invoice.paymentRequest.toUpperCase(),
                       size: 240
                     }, null, 8 /* PROPS */, ["value"])
+                  ]),
+                  _createElementVNode("div", { class: "row justify-center q-mb-md" }, [
+                    _createVNode(_component_q_btn, {
+                      unelevated: "",
+                      "no-caps": "",
+                      color: "primary",
+                      icon: "bolt",
+                      label: "Open in wallet",
+                      href: 'lightning:'+_ctx.invoice.paymentRequest
+                    }, null, 8 /* PROPS */, ["href"])
                   ]),
                   _createVNode(_component_q_input, {
                     outlined: "",

@@ -1,6 +1,27 @@
 (() => {
   const API = '/api/v1/ext/forms'
-  const themeOptions = ['light', 'dark', 'bitcoin', 'minimal', 'contrast']
+  const themePresetOptions = [
+    {value: 'standard', label: 'Standard'},
+    {value: 'bitcoin', label: 'Bitcoin'},
+    {value: 'minimal', label: 'Minimal'},
+    {value: 'contrast', label: 'High contrast'},
+  ]
+  const themeModeOptions = [
+    {value: 'light', label: 'Light'},
+    {value: 'dark', label: 'Dark'},
+  ]
+  const rendererOptions = [
+    {value: 'compact', label: 'All on one page'},
+    {value: 'stepper', label: 'Step by step'},
+  ]
+
+  // Old flows stored a single theme value: light|dark|bitcoin|minimal|contrast.
+  function themeSettings(settings) {
+    const theme = settings.theme || 'standard'
+    if (theme === 'dark') return {preset: 'standard', mode: 'dark'}
+    if (theme === 'light') return {preset: 'standard', mode: 'light'}
+    return {preset: themePresetOptions.some(o => o.value === theme) ? theme : 'standard', mode: settings.themeMode === 'dark' ? 'dark' : 'light'}
+  }
   const fieldTypeOptions = [
     {value: 'text', label: 'Short text'},
     {value: 'textarea', label: 'Long text'},
@@ -53,8 +74,8 @@
     render: window.FORMS_INDEX_RENDER(),
     data: () => ({
       flows: [], wallets: [], loading: false, loadError: '', saving: false, formError: '', isDark: false,
-      themeOptions, fieldTypeOptions,
-      flowDialog: {show: false, editing: false, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, theme: 'light', fields: [], customCss: ''}},
+      themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions,
+      flowDialog: {show: false, editing: false, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', fields: [], customCss: ''}},
       subsDialog: {show: false, flow: null, rows: []},
     }),
     computed: {
@@ -88,9 +109,13 @@
       },
       openFlowDialog(flow = null) {
         this.formError = ''
-        this.flowDialog = flow
-          ? {show: true, editing: true, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, theme: (JSON.parse(flow.settingsJson || '{}').theme) || 'light', fields: schemaToFields(flow.schemaJson), customCss: (JSON.parse(flow.settingsJson || '{}').customCss) || ''}}
-          : {show: true, editing: false, data: {title: '', description: '', walletId: this.wallets[0]?.id || null, amountSat: 0, capacity: 0, theme: 'light', fields: [newField('text'), newField('email')], customCss: ''}}
+        if (flow) {
+          const settings = JSON.parse(flow.settingsJson || '{}')
+          const {preset, mode} = themeSettings(settings)
+          this.flowDialog = {show: true, editing: true, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || ''}}
+        } else {
+          this.flowDialog = {show: true, editing: false, data: {title: '', description: '', walletId: this.wallets[0]?.id || null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', fields: [newField('text'), newField('email')], customCss: ''}}
+        }
       },
       addField() { this.flowDialog.data.fields.push(newField()) },
       removeField(i) { this.flowDialog.data.fields.splice(i, 1) },
@@ -111,7 +136,7 @@
           title: d.title.trim(), description: d.description || '', capacity: Number(d.capacity) || 0,
           pricingJson: {mode: Number(d.amountSat) > 0 ? 'fixed' : 'free', amountSat: Number(d.amountSat) || 0},
           schemaJson,
-          settingsJson: {theme: d.theme, customCss: d.customCss || ''},
+          settingsJson: {theme: d.themePreset, themeMode: d.themeMode, renderer: d.renderer, customCss: d.customCss || ''},
         }
         this.saving = true; this.formError = ''
         try {

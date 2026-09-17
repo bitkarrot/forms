@@ -242,14 +242,41 @@ return function render(_ctx, _cache) {
                 modelModifiers: { number: true },
                 label: "Capacity (0 = unlimited)"
               }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
-              _createVNode(_component_q_select, {
-                outlined: "",
-                dense: "",
-                modelValue: _ctx.flowDialog.data.theme,
-                "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.theme) = $event),
-                options: _ctx.themeOptions,
-                label: "Theme"
-              }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "options"]),
+              _createElementVNode("div", { class: "row q-col-gutter-sm" }, [
+                _createVNode(_component_q_select, {
+                  class: "col-12 col-sm-4",
+                  outlined: "",
+                  dense: "",
+                  "emit-value": "",
+                  "map-options": "",
+                  modelValue: _ctx.flowDialog.data.themePreset,
+                  "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.themePreset) = $event),
+                  options: _ctx.themePresetOptions,
+                  label: "Theme preset"
+                }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "options"]),
+                _createVNode(_component_q_select, {
+                  class: "col-6 col-sm-4",
+                  outlined: "",
+                  dense: "",
+                  "emit-value": "",
+                  "map-options": "",
+                  modelValue: _ctx.flowDialog.data.themeMode,
+                  "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.themeMode) = $event),
+                  options: _ctx.themeModeOptions,
+                  label: "Mode"
+                }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "options"]),
+                _createVNode(_component_q_select, {
+                  class: "col-6 col-sm-4",
+                  outlined: "",
+                  dense: "",
+                  "emit-value": "",
+                  "map-options": "",
+                  modelValue: _ctx.flowDialog.data.renderer,
+                  "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.renderer) = $event),
+                  options: _ctx.rendererOptions,
+                  label: "Layout"
+                }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "options"])
+              ]),
               _createElementVNode("div", null, [
                 _createElementVNode("div", { class: "row items-center q-mb-xs" }, [
                   _createElementVNode("div", { class: "text-subtitle2" }, "Fields"),

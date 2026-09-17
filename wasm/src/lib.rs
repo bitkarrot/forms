@@ -258,8 +258,18 @@ fn validate_settings(value: &Value) -> Result<String, String> {
         .get("requireApproval")
         .and_then(Value::as_bool)
         .unwrap_or(false);
+    let theme_mode = match value.get("themeMode").and_then(Value::as_str) {
+        Some("dark") => "dark",
+        _ => "light",
+    };
+    let renderer = match value.get("renderer").and_then(Value::as_str) {
+        Some("stepper") => "stepper",
+        _ => "compact",
+    };
     serde_json::to_string(&json!({
         "theme": theme,
+        "themeMode": theme_mode,
+        "renderer": renderer,
         "customCss": custom_css,
         "confirmText": confirm_text,
         "requireApproval": require_approval,
