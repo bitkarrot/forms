@@ -228,11 +228,11 @@
       },
       publicUrl(flow) { return `${location.origin}/ext/forms/f/${flow.id}` },
       embedSnippet(flow) { return `<script src="${location.origin}/ext-assets/forms/js/embed.js" data-flow="${flow.id}" async><\/script>` },
-      openPublic(flow) { window.open(this.publicUrl(flow), '_blank') },
+      openPublic(flow) { LNbitsBridge.openInNewTab(this.publicUrl(flow)) },
       openShare(flow) { this.shareDialog = {show: true, flow} },
       copyText(text, label) {
         try { navigator.clipboard.writeText(text); LNbitsBridge.notify(`${label} copied.`, 'positive').catch(() => {}) }
-        catch (_) { window.prompt(`Copy the ${label.toLowerCase()}:`, text) }
+        catch (_) { LNbitsBridge.notify('Clipboard access is unavailable. Copy the text manually.', 'warning').catch(() => {}) }
       },
       copyPublicLink(flow) { this.copyText(this.publicUrl(flow), 'Public link') },
       async openSubmissions(flow) {

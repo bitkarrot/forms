@@ -50,7 +50,7 @@ window.LNbitsBridge = (() => {
   return {
     connect,
     context: () => context,
-    callApi: (method, path, body) => request('api', {method: method.toUpperCase(), path, body}),
+    callApi: (method, path, body) => request('api', {method: method.toUpperCase(), path, body: body == null ? body : JSON.parse(JSON.stringify(body))}),
     notify: (message, level = 'info') => request('ui.notify', {message, level}),
     openInNewTab: url => request('navigation.open_new_tab', {url}),
     replaceRoute: path => request('navigation.replace', {path}),

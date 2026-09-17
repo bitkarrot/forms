@@ -130,7 +130,12 @@
       stopPolling() { if (this.pollTimer) { clearInterval(this.pollTimer); this.pollTimer = null } },
       stopTicking() { if (this.tickTimer) { clearInterval(this.tickTimer); this.tickTimer = null } },
       copyInvoice() {
-        try { navigator.clipboard.writeText(this.invoice.paymentRequest) } catch (_) {}
+        try {
+          navigator.clipboard.writeText(this.invoice.paymentRequest)
+          LNbitsBridge.notify('Invoice copied.', 'positive').catch(() => {})
+        } catch (_) {
+          LNbitsBridge.notify('Clipboard access is unavailable. Copy the invoice text manually.', 'warning').catch(() => {})
+        }
       },
     },
     beforeUnmount() { this.stopPolling(); this.stopTicking() },
