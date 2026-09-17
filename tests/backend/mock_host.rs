@@ -78,6 +78,24 @@ pub struct LogRequest {
 pub struct LogResponse {
     pub ok: bool,
 }
+pub struct StorageDeleteRequest {
+    pub table: String,
+    pub id: String,
+}
+pub struct StorageDeleteResponse {
+    pub ok: bool,
+}
+pub struct HttpRequest {
+    pub method: String,
+    pub url: String,
+    pub headers: Vec<(String, String)>,
+    pub body: Option<String>,
+}
+pub struct HttpResponse {
+    pub status_code: i32,
+    pub headers: Vec<(String, String)>,
+    pub body: String,
+}
 
 pub const FLOW_PUBLIC_FIELDS: &[&str] = &[
     "id",
@@ -104,6 +122,8 @@ pub struct State {
     pub fail_write_once: Option<String>,
     pub settle_during_create: bool,
     pub early_result: Option<Value>,
+    pub http_calls: Vec<(String, String, Option<String>)>,
+    pub http_status: i32,
 }
 thread_local! { static STATE: RefCell<State> = RefCell::new(State::default()); }
 pub fn state<T>(f: impl FnOnce(&mut State) -> T) -> T {
@@ -113,6 +133,7 @@ pub fn reset() {
     state(|s| {
         *s = State {
             timestamp: 1_767_225_600,
+            http_status: 200,
             ..State::default()
         }
     });
@@ -270,4 +291,20 @@ pub fn random_id(req: &RandomIdRequest) -> RandomIdResponse {
 pub fn log(req: &LogRequest) -> LogResponse {
     state(|s| s.logs.push(format!("{}:{}", req.level, req.message)));
     LogResponse { ok: true }
+}
+pub fn storage_delete(req: &StorageDeleteRequest) -> StorageDeleteResponse {
+    let removed = state(|s| s.rows.remove(&(req.table.clone(), req.id.clone())).is_some());
+    StorageDeleteResponse { ok: removed }
+}
+pub fn http_request(req: &HttpRequest) -> HttpResponse {
+    let status = state(|s| {
+        s.http_calls
+            .push((req.method.clone(), req.url.clone(), req.body.clone()));
+        s.http_status
+    });
+    HttpResponse {
+        status_code: status,
+        headers: vec![],
+        body: "{}".into(),
+    }
 }

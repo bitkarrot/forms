@@ -350,6 +350,32 @@ pub unsafe fn __post_return_on_invoice_paid<T: Guest>(arg0: *mut u8) {
     let l1 = *arg0.add(::core::mem::size_of::<*const u8>()).cast::<usize>();
     _rt::cabi_dealloc(l0, l1, 1);
 }
+#[doc(hidden)]
+#[allow(non_snake_case)]
+pub unsafe fn _export_send_test_notification_cabi<T: Guest>(
+    arg0: *mut u8,
+    arg1: usize,
+) -> *mut u8 {
+    #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
+    let len0 = arg1;
+    let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+    let result1 = T::send_test_notification(_rt::string_lift(bytes0));
+    let ptr2 = (&raw mut _RET_AREA.0).cast::<u8>();
+    let vec3 = (result1.into_bytes()).into_boxed_slice();
+    let ptr3 = vec3.as_ptr().cast::<u8>();
+    let len3 = vec3.len();
+    ::core::mem::forget(vec3);
+    *ptr2.add(::core::mem::size_of::<*const u8>()).cast::<usize>() = len3;
+    *ptr2.add(0).cast::<*mut u8>() = ptr3.cast_mut();
+    ptr2
+}
+#[doc(hidden)]
+#[allow(non_snake_case)]
+pub unsafe fn __post_return_send_test_notification<T: Guest>(arg0: *mut u8) {
+    let l0 = *arg0.add(0).cast::<*mut u8>();
+    let l1 = *arg0.add(::core::mem::size_of::<*const u8>()).cast::<usize>();
+    _rt::cabi_dealloc(l0, l1, 1);
+}
 pub trait Guest {
     fn list_flows(payload: _rt::String) -> _rt::String;
     fn create_flow(payload: _rt::String) -> _rt::String;
@@ -365,6 +391,7 @@ pub trait Guest {
     fn public_submit(payload: _rt::String) -> _rt::String;
     fn public_get_submission(payload: _rt::String) -> _rt::String;
     fn on_invoice_paid(payload: _rt::String) -> _rt::String;
+    fn send_test_notification(payload: _rt::String) -> _rt::String;
 }
 #[doc(hidden)]
 macro_rules! __export_world_forms_cabi {
@@ -447,7 +474,13 @@ macro_rules! __export_world_forms_cabi {
         $($path_to_types)*:: _export_on_invoice_paid_cabi::<$ty > (arg0, arg1) } }
         #[unsafe (export_name = "cabi_post_on-invoice-paid")] unsafe extern "C" fn
         _post_return_on_invoice_paid(arg0 : * mut u8,) { unsafe { $($path_to_types)*::
-        __post_return_on_invoice_paid::<$ty > (arg0) } } };
+        __post_return_on_invoice_paid::<$ty > (arg0) } } #[unsafe (export_name =
+        "send-test-notification")] unsafe extern "C" fn
+        export_send_test_notification(arg0 : * mut u8, arg1 : usize,) -> * mut u8 {
+        unsafe { $($path_to_types)*:: _export_send_test_notification_cabi::<$ty > (arg0,
+        arg1) } } #[unsafe (export_name = "cabi_post_send-test-notification")] unsafe
+        extern "C" fn _post_return_send_test_notification(arg0 : * mut u8,) { unsafe {
+        $($path_to_types)*:: __post_return_send_test_notification::<$ty > (arg0) } } };
     };
 }
 #[doc(hidden)]
@@ -758,6 +791,44 @@ pub mod lnbits {
                     f: &mut ::core::fmt::Formatter<'_>,
                 ) -> ::core::fmt::Result {
                     f.debug_struct("LogResponse").field("ok", &self.ok).finish()
+                }
+            }
+            #[derive(Clone)]
+            pub struct HttpCall {
+                pub method: _rt::String,
+                pub url: _rt::String,
+                pub headers: _rt::Vec<(_rt::String, _rt::String)>,
+                pub body: Option<_rt::String>,
+            }
+            impl ::core::fmt::Debug for HttpCall {
+                fn fmt(
+                    &self,
+                    f: &mut ::core::fmt::Formatter<'_>,
+                ) -> ::core::fmt::Result {
+                    f.debug_struct("HttpCall")
+                        .field("method", &self.method)
+                        .field("url", &self.url)
+                        .field("headers", &self.headers)
+                        .field("body", &self.body)
+                        .finish()
+                }
+            }
+            #[derive(Clone)]
+            pub struct HttpResult {
+                pub status_code: i32,
+                pub headers: _rt::Vec<(_rt::String, _rt::String)>,
+                pub body: _rt::String,
+            }
+            impl ::core::fmt::Debug for HttpResult {
+                fn fmt(
+                    &self,
+                    f: &mut ::core::fmt::Formatter<'_>,
+                ) -> ::core::fmt::Result {
+                    f.debug_struct("HttpResult")
+                        .field("status-code", &self.status_code)
+                        .field("headers", &self.headers)
+                        .field("body", &self.body)
+                        .finish()
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
@@ -1501,6 +1572,190 @@ pub mod lnbits {
                     }
                 }
             }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn http_request(req: &HttpCall) -> HttpResult {
+                unsafe {
+                    #[cfg_attr(target_pointer_width = "64", repr(align(8)))]
+                    #[cfg_attr(target_pointer_width = "32", repr(align(4)))]
+                    struct RetArea(
+                        [::core::mem::MaybeUninit<
+                            u8,
+                        >; 5 * ::core::mem::size_of::<*const u8>()],
+                    );
+                    let mut ret_area = RetArea(
+                        [::core::mem::MaybeUninit::uninit(); 5
+                            * ::core::mem::size_of::<*const u8>()],
+                    );
+                    let HttpCall {
+                        method: method0,
+                        url: url0,
+                        headers: headers0,
+                        body: body0,
+                    } = req;
+                    let vec1 = method0;
+                    let ptr1 = vec1.as_ptr().cast::<u8>();
+                    let len1 = vec1.len();
+                    let vec2 = url0;
+                    let ptr2 = vec2.as_ptr().cast::<u8>();
+                    let len2 = vec2.len();
+                    let vec6 = headers0;
+                    let len6 = vec6.len();
+                    let layout6 = _rt::alloc::Layout::from_size_align_unchecked(
+                        vec6.len() * (4 * ::core::mem::size_of::<*const u8>()),
+                        ::core::mem::size_of::<*const u8>(),
+                    );
+                    let result6 = if layout6.size() != 0 {
+                        let ptr = _rt::alloc::alloc(layout6).cast::<u8>();
+                        if ptr.is_null() {
+                            _rt::alloc::handle_alloc_error(layout6);
+                        }
+                        ptr
+                    } else {
+                        ::core::ptr::null_mut()
+                    };
+                    for (i, e) in vec6.into_iter().enumerate() {
+                        let base = result6
+                            .add(i * (4 * ::core::mem::size_of::<*const u8>()));
+                        {
+                            let (t3_0, t3_1) = e;
+                            let vec4 = t3_0;
+                            let ptr4 = vec4.as_ptr().cast::<u8>();
+                            let len4 = vec4.len();
+                            *base
+                                .add(::core::mem::size_of::<*const u8>())
+                                .cast::<usize>() = len4;
+                            *base.add(0).cast::<*mut u8>() = ptr4.cast_mut();
+                            let vec5 = t3_1;
+                            let ptr5 = vec5.as_ptr().cast::<u8>();
+                            let len5 = vec5.len();
+                            *base
+                                .add(3 * ::core::mem::size_of::<*const u8>())
+                                .cast::<usize>() = len5;
+                            *base
+                                .add(2 * ::core::mem::size_of::<*const u8>())
+                                .cast::<*mut u8>() = ptr5.cast_mut();
+                        }
+                    }
+                    let (result8_0, result8_1, result8_2) = match body0 {
+                        Some(e) => {
+                            let vec7 = e;
+                            let ptr7 = vec7.as_ptr().cast::<u8>();
+                            let len7 = vec7.len();
+                            (1i32, ptr7.cast_mut(), len7)
+                        }
+                        None => (0i32, ::core::ptr::null_mut(), 0usize),
+                    };
+                    let ptr9 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "lnbits:extension/host")]
+                    unsafe extern "C" {
+                        #[link_name = "http-request"]
+                        fn wit_import10(
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                            _: usize,
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: *mut u8,
+                        );
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unsafe extern "C" fn wit_import10(
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                        _: usize,
+                        _: i32,
+                        _: *mut u8,
+                        _: usize,
+                        _: *mut u8,
+                    ) {
+                        unreachable!()
+                    }
+                    unsafe {
+                        wit_import10(
+                            ptr1.cast_mut(),
+                            len1,
+                            ptr2.cast_mut(),
+                            len2,
+                            result6,
+                            len6,
+                            result8_0,
+                            result8_1,
+                            result8_2,
+                            ptr9,
+                        )
+                    };
+                    let l11 = *ptr9.add(0).cast::<i32>();
+                    let l12 = *ptr9
+                        .add(::core::mem::size_of::<*const u8>())
+                        .cast::<*mut u8>();
+                    let l13 = *ptr9
+                        .add(2 * ::core::mem::size_of::<*const u8>())
+                        .cast::<usize>();
+                    let base20 = l12;
+                    let len20 = l13;
+                    let mut result20 = _rt::Vec::with_capacity(len20);
+                    for i in 0..len20 {
+                        let base = base20
+                            .add(i * (4 * ::core::mem::size_of::<*const u8>()));
+                        let e20 = {
+                            let l14 = *base.add(0).cast::<*mut u8>();
+                            let l15 = *base
+                                .add(::core::mem::size_of::<*const u8>())
+                                .cast::<usize>();
+                            let len16 = l15;
+                            let bytes16 = _rt::Vec::from_raw_parts(
+                                l14.cast(),
+                                len16,
+                                len16,
+                            );
+                            let l17 = *base
+                                .add(2 * ::core::mem::size_of::<*const u8>())
+                                .cast::<*mut u8>();
+                            let l18 = *base
+                                .add(3 * ::core::mem::size_of::<*const u8>())
+                                .cast::<usize>();
+                            let len19 = l18;
+                            let bytes19 = _rt::Vec::from_raw_parts(
+                                l17.cast(),
+                                len19,
+                                len19,
+                            );
+                            (_rt::string_lift(bytes16), _rt::string_lift(bytes19))
+                        };
+                        result20.push(e20);
+                    }
+                    _rt::cabi_dealloc(
+                        base20,
+                        len20 * (4 * ::core::mem::size_of::<*const u8>()),
+                        ::core::mem::size_of::<*const u8>(),
+                    );
+                    let l21 = *ptr9
+                        .add(3 * ::core::mem::size_of::<*const u8>())
+                        .cast::<*mut u8>();
+                    let l22 = *ptr9
+                        .add(4 * ::core::mem::size_of::<*const u8>())
+                        .cast::<usize>();
+                    let len23 = l22;
+                    let bytes23 = _rt::Vec::from_raw_parts(l21.cast(), len23, len23);
+                    let result24 = HttpResult {
+                        status_code: l11,
+                        headers: result20,
+                        body: _rt::string_lift(bytes23),
+                    };
+                    if layout6.size() != 0 {
+                        _rt::alloc::dealloc(result6.cast(), layout6);
+                    }
+                    result24
+                }
+            }
         }
     }
 }
@@ -1665,9 +1920,9 @@ pub(crate) use __export_forms_impl as export;
 )]
 #[doc(hidden)]
 #[allow(clippy::octal_escapes)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1595] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xbf\x0b\x01A\x02\x01\
-A\x11\x01B<\x01r\x02\x05tables\x02ids\x04\0\x13storage-get-request\x03\0\0\x01ks\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1743] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xd3\x0c\x01A\x02\x01\
+A\x12\x01BB\x01r\x02\x05tables\x02ids\x04\0\x13storage-get-request\x03\0\0\x01ks\
 \x01r\x01\x09data-json\x02\x04\0\x14storage-get-response\x03\0\x03\x01r\x02\x05t\
 ables\x02ids\x04\0\x1astorage-get-public-request\x03\0\x05\x01r\x02\x05tables\x09\
 data-json\x02\x04\0\x13storage-set-request\x03\0\x07\x01r\x01\x02ok\x7f\x04\0\x14\
@@ -1684,21 +1939,24 @@ y\x03\0\x19\x01p\x1a\x01r\x01\x07wallets\x1b\x04\0\x15list-wallets-response\x03\
 \x1c\x01r\x01\x09timestampw\x04\0\x0cnow-response\x03\0\x1e\x01r\x01\x06prefixs\x04\
 \0\x11random-id-request\x03\0\x20\x01r\x01\x02ids\x04\0\x12random-id-response\x03\
 \0\"\x01r\x02\x05levels\x07messages\x04\0\x0blog-request\x03\0$\x01r\x01\x02ok\x7f\
-\x04\0\x0clog-response\x03\0&\x01@\x01\x03req\x01\0\x04\x04\0\x0bstorage-get\x01\
-(\x01@\x01\x03req\x06\0\x04\x04\0\x12storage-get-public\x01)\x01@\x01\x03req\x08\
-\0\x0a\x04\0\x0bstorage-set\x01*\x01@\x01\x03req\x0c\0\x0e\x04\0\x0estorage-dele\
-te\x01+\x01@\x01\x03req\x10\0\x12\x04\0\x15storage-get-paginated\x01,\x01@\x01\x03\
-req\x16\0\x18\x04\0\x15create-invoice-public\x01-\x01@\0\0\x1d\x04\0\x11list-use\
-r-wallets\x01.\x01@\0\0\x1f\x04\0\x03now\x01/\x01@\x01\x03req!\0#\x04\0\x09rando\
-m-id\x010\x01@\x01\x03req%\0'\x04\0\x03log\x011\x03\0\x15lnbits:extension/host\x05\
-\0\x01@\x01\x07payloads\0s\x04\0\x0alist-flows\x01\x01\x04\0\x0bcreate-flow\x01\x01\
-\x04\0\x08get-flow\x01\x01\x04\0\x0bupdate-flow\x01\x01\x04\0\x0fset-flow-status\
-\x01\x01\x04\0\x0bdelete-flow\x01\x01\x04\0\x10list-submissions\x01\x01\x04\0\x11\
-update-submission\x01\x01\x04\0\x12export-submissions\x01\x01\x04\0\x0clist-wall\
-ets\x01\x01\x04\0\x0fpublic-get-flow\x01\x01\x04\0\x0dpublic-submit\x01\x01\x04\0\
-\x15public-get-submission\x01\x01\x04\0\x0fon-invoice-paid\x01\x01\x04\0\x16lnbi\
-ts:extension/forms\x04\0\x0b\x0b\x01\0\x05forms\x03\0\0\0G\x09producers\x01\x0cp\
-rocessed-by\x02\x0dwit-component\x070.227.1\x10wit-bindgen-rust\x060.41.0";
+\x04\0\x0clog-response\x03\0&\x01r\x04\x06methods\x03urls\x07headers\x14\x04body\
+\x02\x04\0\x09http-call\x03\0(\x01r\x03\x0bstatus-codez\x07headers\x14\x04bodys\x04\
+\0\x0bhttp-result\x03\0*\x01@\x01\x03req\x01\0\x04\x04\0\x0bstorage-get\x01,\x01\
+@\x01\x03req\x06\0\x04\x04\0\x12storage-get-public\x01-\x01@\x01\x03req\x08\0\x0a\
+\x04\0\x0bstorage-set\x01.\x01@\x01\x03req\x0c\0\x0e\x04\0\x0estorage-delete\x01\
+/\x01@\x01\x03req\x10\0\x12\x04\0\x15storage-get-paginated\x010\x01@\x01\x03req\x16\
+\0\x18\x04\0\x15create-invoice-public\x011\x01@\0\0\x1d\x04\0\x11list-user-walle\
+ts\x012\x01@\0\0\x1f\x04\0\x03now\x013\x01@\x01\x03req!\0#\x04\0\x09random-id\x01\
+4\x01@\x01\x03req%\0'\x04\0\x03log\x015\x01@\x01\x03req)\0+\x04\0\x0chttp-reques\
+t\x016\x03\0\x15lnbits:extension/host\x05\0\x01@\x01\x07payloads\0s\x04\0\x0alis\
+t-flows\x01\x01\x04\0\x0bcreate-flow\x01\x01\x04\0\x08get-flow\x01\x01\x04\0\x0b\
+update-flow\x01\x01\x04\0\x0fset-flow-status\x01\x01\x04\0\x0bdelete-flow\x01\x01\
+\x04\0\x10list-submissions\x01\x01\x04\0\x11update-submission\x01\x01\x04\0\x12e\
+xport-submissions\x01\x01\x04\0\x0clist-wallets\x01\x01\x04\0\x0fpublic-get-flow\
+\x01\x01\x04\0\x0dpublic-submit\x01\x01\x04\0\x15public-get-submission\x01\x01\x04\
+\0\x0fon-invoice-paid\x01\x01\x04\0\x16send-test-notification\x01\x01\x04\0\x16l\
+nbits:extension/forms\x04\0\x0b\x0b\x01\0\x05forms\x03\0\0\0G\x09producers\x01\x0c\
+processed-by\x02\x0dwit-component\x070.227.1\x10wit-bindgen-rust\x060.41.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

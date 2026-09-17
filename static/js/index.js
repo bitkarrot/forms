@@ -163,7 +163,8 @@
     data: () => ({
       flows: [], wallets: [], loading: false, loadError: '', saving: false, formError: '', isDark: false,
       themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions, flowTemplates, customCssSample, colorKeys,
-      flowDialog: {show: false, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: '', headerImage: '', confirmText: '', bgImage: '', endImage: '', cardOpacity: 1, colors: {global: '', title: '', description: '', question: ''}}},
+      flowDialog: {show: false, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: '', headerImage: '', confirmText: '', bgImage: '', endImage: '', cardOpacity: 1, colors: {global: '', title: '', description: '', question: ''}, notifyUrl: '', notifyKey: '', notifyOnSubmit: true, notifyOnPaid: true}},
+      notifyTesting: false, notifyResult: '', notifyOk: false,
       subsDialog: {show: false, flow: null, rows: []},
       csvDialog: {show: false, filename: '', content: ''},
       subsFilter: '', subsStatusFilter: null,
@@ -265,6 +266,17 @@
         }
         inp.click()
       },
+      async testNotify() {
+        const d = this.flowDialog.data
+        this.notifyTesting = true; this.notifyResult = ''
+        try {
+          const r = await this.api('POST', `/flows/${d.id}/notify-test`, {flowId: d.id, settingsJson: {notifyUrl: d.notifyUrl || '', notifyKey: d.notifyKey || '', notifyOnSubmit: true, notifyOnPaid: true}})
+          this.notifyOk = Boolean(r.sent)
+          this.notifyResult = r.sent ? `Sent — HTTP ${r.statusCode}` : (r.error || 'Failed')
+        } catch (e) {
+          this.notifyOk = false; this.notifyResult = e.message || 'Failed'
+        } finally { this.notifyTesting = false }
+      },
       insertCssSample() {
         const d = this.flowDialog.data
         d.customCss = d.customCss?.trim() ? `${d.customCss.trimEnd()}\n\n${customCssSample}` : customCssSample
@@ -293,11 +305,12 @@
         if (flow) {
           const settings = JSON.parse(flow.settingsJson || '{}')
           const {preset, mode} = themeSettings(settings)
-          this.flowDialog = {show: true, editing: true, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || '', headerImage: settings.headerImage || '', confirmText: settings.confirmText || '', bgImage: settings.bgImage || '', endImage: settings.endImage || '', cardOpacity: settings.cardOpacity ?? 1, colors: Object.assign({global: '', title: '', description: '', question: ''}, settings.colors || {})}}
+          this.flowDialog = {show: true, editing: true, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || '', headerImage: settings.headerImage || '', confirmText: settings.confirmText || '', bgImage: settings.bgImage || '', endImage: settings.endImage || '', cardOpacity: settings.cardOpacity ?? 1, colors: Object.assign({global: '', title: '', description: '', question: ''}, settings.colors || {}), notifyUrl: settings.notifyUrl || '', notifyKey: settings.notifyKey || '', notifyOnSubmit: settings.notifyOnSubmit !== false, notifyOnPaid: settings.notifyOnPaid !== false}}
         } else {
           const blank = flowTemplates[0].data
-          this.flowDialog = {show: true, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: '', headerImage: '', confirmText: '', bgImage: '', endImage: '', cardOpacity: 1, colors: {global: '', title: '', description: '', question: ''}}}
+          this.flowDialog = {show: true, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: '', headerImage: '', confirmText: '', bgImage: '', endImage: '', cardOpacity: 1, colors: {global: '', title: '', description: '', question: ''}, notifyUrl: '', notifyKey: '', notifyOnSubmit: true, notifyOnPaid: true}}
         }
+        this.notifyResult = ''
       },
       applyTemplate(value) {
         const tpl = flowTemplates.find(t => t.value === value)
@@ -351,7 +364,7 @@
           title: d.title.trim(), description: d.description || '', capacity: Number(d.capacity) || 0,
           pricingJson: {mode: Number(d.amountSat) > 0 ? 'fixed' : 'free', amountSat: Number(d.amountSat) || 0},
           schemaJson,
-          settingsJson: {theme: d.themePreset, themeMode: d.themeMode, renderer: d.renderer, requireApproval: Boolean(d.requireApproval), customCss: d.customCss || '', headerImage: d.headerImage || '', confirmText: d.confirmText || '', bgImage: d.bgImage || '', endImage: d.endImage || '', cardOpacity: Number(d.cardOpacity ?? 1), colors: d.colors || {}},
+          settingsJson: {theme: d.themePreset, themeMode: d.themeMode, renderer: d.renderer, requireApproval: Boolean(d.requireApproval), customCss: d.customCss || '', headerImage: d.headerImage || '', confirmText: d.confirmText || '', bgImage: d.bgImage || '', endImage: d.endImage || '', cardOpacity: Number(d.cardOpacity ?? 1), colors: d.colors || {}, notifyUrl: d.notifyUrl || '', notifyKey: d.notifyKey || '', notifyOnSubmit: Boolean(d.notifyOnSubmit), notifyOnPaid: Boolean(d.notifyOnPaid)},
         }
         this.saving = true; this.formError = ''
         try {

@@ -25,6 +25,15 @@ const MAX_IMG_DATA_URI: usize = 200_000;
 const INVOICE_EXPIRY_SECS: u64 = 900;
 const PAGE: u32 = 1000;
 
+const NOTIFY_HOSTS: [&str; 7] = [
+    "api.web3forms.com",
+    "ntfy.sh",
+    "hooks.slack.com",
+    "discord.com",
+    "discordapp.com",
+    "api.telegram.org",
+    "maker.ifttt.com",
+];
 const FIELD_TYPES: [&str; 11] = [
     "text", "email", "phone", "textarea", "number", "date", "select", "radio", "checkbox",
     "consent", "nostr_pubkey",
@@ -146,6 +155,157 @@ fn payment_hash(value: &str) -> Option<String> {
         None
     }
 }
+fn flow_settings(flow: &Value) -> Value {
+    flow.get("settingsJson")
+        .and_then(Value::as_str)
+        .and_then(|s| serde_json::from_str(s).ok())
+        .unwrap_or(json!({}))
+}
+
+// POST a submission summary to the organizer's webhook. The host http.request
+// function is HTTPS-only and restricted to origins granted under the
+// http.request permission. A host-side failure traps this invocation, so
+// callers always persist state BEFORE notifying — a failed webhook can never
+// corrupt a submission, it can only lose a response. Returns the HTTP status
+// code, or None when notifications are not configured for this event.
+fn notify(flow: &Value, sub: &Value, event: &str) -> Option<i32> {
+    let settings = flow_settings(flow);
+    let url = settings
+        .get("notifyUrl")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .trim();
+    if url.is_empty() {
+        return None;
+    }
+    let flag = if event == "paid" { "notifyOnPaid" } else { "notifyOnSubmit" };
+    if !settings.get(flag).and_then(Value::as_bool).unwrap_or(true) {
+        return None;
+    }
+    let flow_id = flow.get("id").and_then(Value::as_str).unwrap_or("");
+    let title = flow.get("title").and_then(Value::as_str).unwrap_or("form");
+    let status = sub.get("status").and_then(Value::as_str).unwrap_or("");
+    // Keep the subject ASCII: it is sent in the Title header and httpx
+    // requires ASCII header values.
+    let title_ascii: String = title.chars().map(|c| if c.is_ascii() { c } else { '?' }).collect();
+    let subject = if event == "paid" {
+        format!("Paid submission - {title_ascii}")
+    } else {
+        format!("New submission - {title_ascii}")
+    };
+    // Render answers with field labels, not raw ids.
+    let mut labels = Map::new();
+    if let Some(fields) = flow
+        .get("schemaJson")
+        .and_then(Value::as_str)
+        .and_then(|s| serde_json::from_str::<Value>(s).ok())
+        .and_then(|v| v.get("fields").and_then(Value::as_array).cloned())
+    {
+        for f in fields {
+            if let (Some(fid), Some(label)) = (
+                f.get("id").and_then(Value::as_str),
+                f.get("label").and_then(Value::as_str),
+            ) {
+                labels.insert(fid.into(), json!(label));
+            }
+        }
+    }
+    let mut answer_obj = Map::new();
+    let mut lines = vec![subject.clone(), String::new()];
+    if let Some(answers) = sub
+        .get("answersJson")
+        .and_then(Value::as_str)
+        .and_then(|s| serde_json::from_str::<Value>(s).ok())
+        .and_then(|v| v.as_object().cloned())
+    {
+        for (key, value) in answers {
+            let label = labels
+                .get(&key)
+                .and_then(Value::as_str)
+                .unwrap_or(&key)
+                .to_string();
+            let text = match value {
+                Value::String(s) => s,
+                other => other.to_string(),
+            };
+            lines.push(format!("{label}: {text}"));
+            answer_obj.insert(label, json!(text));
+        }
+    }
+    let amount = sub.get("amountSat").and_then(Value::as_u64).unwrap_or(0);
+    lines.push(String::new());
+    lines.push(format!("Status: {status}"));
+    if let Some(ticket) = sub
+        .get("ticketCode")
+        .and_then(Value::as_str)
+        .filter(|t| !t.is_empty())
+    {
+        lines.push(format!("Ticket: {ticket}"));
+    }
+    if amount > 0 {
+        lines.push(format!("Amount: {amount} sats"));
+    }
+    lines.push(format!("Submission: {}", sub.get("id").and_then(Value::as_str).unwrap_or("")));
+    let message = lines.join("\n");
+    let key = settings
+        .get("notifyKey")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .trim();
+    // One body shape covers Web3Forms (access_key + arbitrary fields → email),
+    // Slack (text), Discord (content), Telegram (chat_id + text), IFTTT
+    // (value1-3) and generic JSON webhooks (message + structured payload).
+    let is_ntfy = url.contains("ntfy.sh");
+    let body = if is_ntfy {
+        message.clone()
+    } else {
+        json!({
+            "access_key": key,
+            "chat_id": key,
+            "subject": subject,
+            "message": message,
+            "text": message,
+            "content": message,
+            "value1": subject,
+            "value2": message,
+            "value3": sub.get("id").and_then(Value::as_str).unwrap_or(""),
+            "event": event,
+            "flow": {"id": flow_id, "title": title},
+            "submissionId": sub.get("id").and_then(Value::as_str).unwrap_or(""),
+            "status": status,
+            "amountSat": amount,
+            "answers": Value::Object(answer_obj),
+        })
+        .to_string()
+    };
+    let mut headers: Vec<(String, String)> = vec![
+        (
+            "Content-Type".into(),
+            if is_ntfy { "text/plain" } else { "application/json" }.into(),
+        ),
+        ("Title".into(), subject.clone()),
+    ];
+    if !key.is_empty() {
+        headers.push(("Authorization".into(), format!("Bearer {key}")));
+    }
+    let resp = host::http_request(&host::HttpCall {
+        method: "POST".into(),
+        url: url.into(),
+        headers,
+        body: Some(body),
+    });
+    if !(200..300).contains(&resp.status_code) {
+        host::log(&host::LogRequest {
+            level: "warning".into(),
+            message: format!(
+                "Notification webhook for flow {flow_id} returned {}",
+                resp.status_code
+            ),
+        });
+    }
+    Some(resp.status_code)
+}
+
 fn quarantine(reason: &str) -> String {
     host::log(&host::LogRequest {
         level: "warning".into(),
@@ -324,6 +484,44 @@ fn validate_settings(value: &Value) -> Result<String, String> {
             }
         }
     }
+    // Webhook notifications go through the host http.request function, which is
+    // HTTPS-only and limited to origins granted in the http.request permission
+    // policy. The URL and key are stripped from the public flow view.
+    let notify_url = value
+        .get("notifyUrl")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .trim()
+        .to_string();
+    if !notify_url.is_empty() {
+        let host_part = notify_url
+            .strip_prefix("https://")
+            .and_then(|rest| rest.split('/').next())
+            .and_then(|authority| authority.split(':').next())
+            .unwrap_or("");
+        if notify_url.len() > 2048 || !NOTIFY_HOSTS.contains(&host_part) {
+            return Err("notifyUrl must be an https URL on an allowed notification host".into());
+        }
+    }
+    let notify_key = value
+        .get("notifyKey")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .trim()
+        .chars()
+        .take(4096)
+        .collect::<String>();
+    if notify_key.bytes().any(|b| !(0x20..0x7f).contains(&b)) {
+        return Err("notifyKey must contain only printable ASCII characters".into());
+    }
+    let notify_on_submit = value
+        .get("notifyOnSubmit")
+        .and_then(Value::as_bool)
+        .unwrap_or(true);
+    let notify_on_paid = value
+        .get("notifyOnPaid")
+        .and_then(Value::as_bool)
+        .unwrap_or(true);
     serde_json::to_string(&json!({
         "theme": theme,
         "themeMode": theme_mode,
@@ -336,6 +534,10 @@ fn validate_settings(value: &Value) -> Result<String, String> {
         "endImage": end_image,
         "cardOpacity": card_opacity,
         "colors": Value::Object(colors_out),
+        "notifyUrl": notify_url,
+        "notifyKey": notify_key,
+        "notifyOnSubmit": notify_on_submit,
+        "notifyOnPaid": notify_on_paid,
     }))
     .map_err(|_| "Invalid settingsJson".into())
 }
@@ -464,6 +666,19 @@ fn public_flow(flow: &Value) -> Result<Value, String> {
     ] {
         if let Some(value) = flow.get(key) {
             view.insert(key.into(), value.clone());
+        }
+    }
+    // Notification endpoint + secret never leave the owner context.
+    if let Some(settings_str) = view.get("settingsJson").and_then(Value::as_str) {
+        if let Ok(mut settings) = serde_json::from_str::<Value>(settings_str) {
+            if let Some(obj) = settings.as_object_mut() {
+                for secret in ["notifyUrl", "notifyKey"] {
+                    if obj.contains_key(secret) {
+                        obj.insert(secret.into(), json!(""));
+                    }
+                }
+            }
+            view.insert("settingsJson".into(), json!(settings.to_string()));
         }
     }
     view.insert("remaining".into(), remaining_capacity(flow)?);
@@ -844,6 +1059,7 @@ impl Guest for Component {
             return err("Could not save submission");
         }
         if free {
+            notify(&flow, &submission, "submitted");
             return ok(json!({
                 "submissionId": sub_id,
                 "flowId": flow_id,
@@ -882,6 +1098,7 @@ impl Guest for Component {
             return err("Invoice created but submission update failed; check status by submission id");
         }
         let status = stored.get("status").and_then(Value::as_str).unwrap_or("pending_payment");
+        notify(&flow, &stored, "submitted");
         if PAID_STATUSES.contains(&status) {
             return ok(json!({
                 "submissionId": sub_id,
@@ -1012,7 +1229,59 @@ impl Guest for Component {
         if !set("submissions", &sub) {
             return err("Could not record payment");
         }
+        notify(&flow, &sub, "paid");
         ok(json!({"updated": true, "submissionId": sub_id, "amount": amount_sat}))
+    }
+
+    fn send_test_notification(payload: String) -> String {
+        let req = match parse(&payload) {
+            Ok(v) => v,
+            Err(e) => return err(&e),
+        };
+        let flow_id = req.get("flowId").and_then(Value::as_str).unwrap_or("");
+        let mut flow = match get("flows", flow_id, false) {
+            Some(v) => v,
+            None => return err("Flow not found"),
+        };
+        // Allow testing the settings currently in the dialog, before saving.
+        if let Some(settings) = req.get("settingsJson") {
+            match validate_settings(settings) {
+                Ok(v) => flow["settingsJson"] = json!(v),
+                Err(e) => return err(&e),
+            }
+        }
+        if flow_settings(&flow)
+            .get("notifyUrl")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .trim()
+            .is_empty()
+        {
+            return err("Set a notification webhook URL first");
+        }
+        // Test sends regardless of the on-submit/on-paid toggles.
+        let mut forced = flow_settings(&flow);
+        forced["notifyOnSubmit"] = json!(true);
+        forced["notifyOnPaid"] = json!(true);
+        flow["settingsJson"] = json!(forced.to_string());
+        let pricing: Value = serde_json::from_str(
+            flow.get("pricingJson").and_then(Value::as_str).unwrap_or("{}"),
+        )
+        .unwrap_or(json!({}));
+        let test_sub = json!({
+            "id": "sub_test",
+            "status": "paid",
+            "ticketCode": "tkt_TEST",
+            "amountSat": pricing.get("amountSat").and_then(Value::as_u64).unwrap_or(0),
+            "answersJson": "{\"Example field\":\"test answer\"}",
+        });
+        match notify(&flow, &test_sub, "paid") {
+            Some(code) if (200..300).contains(&code) => {
+                ok(json!({"sent": true, "statusCode": code}))
+            }
+            Some(code) => err(&format!("Webhook returned HTTP {code}")),
+            None => err("Notification URL is not configured"),
+        }
     }
 }
 

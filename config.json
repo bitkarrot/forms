@@ -35,7 +35,8 @@
       {"name": "public-get-flow", "visibility": "public"},
       {"name": "public-submit", "visibility": "public"},
       {"name": "public-get-submission", "visibility": "public"},
-      {"name": "on-invoice-paid", "visibility": "event"}
+      {"name": "on-invoice-paid", "visibility": "event"},
+      {"name": "send-test-notification", "visibility": "authenticated"}
     ]
   },
   "ui_routes": [
@@ -59,6 +60,8 @@
     {"method": "PATCH", "path": "/submissions/{subId}", "export": "update-submission", "auth": "user",
      "ownerContext": {"table": "submissions", "idParam": "subId"}},
     {"method": "GET", "path": "/wallets", "export": "list-wallets", "auth": "user"},
+    {"method": "POST", "path": "/flows/{flowId}/notify-test", "export": "send-test-notification", "auth": "user",
+     "ownerContext": {"table": "flows", "idParam": "flowId"}},
     {"method": "GET", "path": "/f/{flowId}", "export": "public-get-flow", "auth": "public",
      "ownerContext": {"table": "flows", "idParam": "flowId"}},
     {"method": "POST", "path": "/f/{flowId}/submit", "export": "public-submit", "auth": "public",
@@ -80,6 +83,16 @@
     {"id": "wallet.create_invoice_public", "description": "Create checkout invoices paid to the organizer's wallet",
      "policies": [{"table": "flows", "wallet_field": "walletId"}]},
     {"id": "wallet.list", "description": "List your wallets for the payout picker"},
-    {"id": "utils.basic", "description": "Currency conversion and invoice utilities"}
+    {"id": "utils.basic", "description": "Currency conversion and invoice utilities"},
+    {"id": "http.request", "description": "Send submission notifications to your webhook endpoint (email via Web3Forms, or ntfy, Slack, Discord, Telegram, IFTTT)",
+     "policies": [
+       {"host": "https://api.web3forms.com"},
+       {"host": "https://ntfy.sh"},
+       {"host": "https://hooks.slack.com"},
+       {"host": "https://discord.com"},
+       {"host": "https://discordapp.com"},
+       {"host": "https://api.telegram.org"},
+       {"host": "https://maker.ifttt.com"}
+     ]}
   ]
 }

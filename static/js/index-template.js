@@ -853,6 +853,78 @@ return function render(_ctx, _cache) {
                       _: 1 /* STABLE */
                     }),
                     _createVNode(_component_q_expansion_item, {
+                      icon: "notifications",
+                      label: "Notifications",
+                      group: "fb-side",
+                      class: "fb-acc"
+                    }, {
+                      default: _withCtx(() => [
+                        _createElementVNode("div", { class: "q-gutter-sm q-pa-sm" }, [
+                          _createElementVNode("div", { class: "text-caption text-grey" }, [
+                            _createTextVNode("POST submission data to a webhook when someone submits or pays. For "),
+                            _createElementVNode("b", null, "email"),
+                            _createTextVNode(" use Web3Forms — free, no signup: get an access key at web3forms.com, use the URL below and paste your key.")
+                          ]),
+                          _createVNode(_component_q_input, {
+                            outlined: "",
+                            dense: "",
+                            modelValue: _ctx.flowDialog.data.notifyUrl,
+                            "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.notifyUrl) = $event),
+                            label: "Webhook URL",
+                            placeholder: "https://api.web3forms.com/submit"
+                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                          _createVNode(_component_q_input, {
+                            outlined: "",
+                            dense: "",
+                            modelValue: _ctx.flowDialog.data.notifyKey,
+                            "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.notifyKey) = $event),
+                            type: "password",
+                            label: "Access key / token",
+                            hint: "Web3Forms access key, Telegram chat_id, or bearer token — kept private"
+                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                          _createVNode(_component_q_checkbox, {
+                            dense: "",
+                            modelValue: _ctx.flowDialog.data.notifyOnSubmit,
+                            "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.notifyOnSubmit) = $event),
+                            label: "Notify on submission"
+                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                          _createVNode(_component_q_checkbox, {
+                            dense: "",
+                            modelValue: _ctx.flowDialog.data.notifyOnPaid,
+                            "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.notifyOnPaid) = $event),
+                            label: "Notify when paid"
+                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                          _createElementVNode("div", { class: "text-caption text-grey" }, "Allowed hosts: api.web3forms.com (email), ntfy.sh (push), hooks.slack.com, discord.com, api.telegram.org (chat_id as key, bot token in URL), maker.ifttt.com."),
+                          _createElementVNode("div", { class: "row items-center q-gutter-sm" }, [
+                            _createVNode(_component_q_btn, {
+                              outline: "",
+                              dense: "",
+                              "no-caps": "",
+                              size: "sm",
+                              icon: "send",
+                              label: "Send test",
+                              disable: !_ctx.flowDialog.editing || !_ctx.flowDialog.data.notifyUrl,
+                              loading: _ctx.notifyTesting,
+                              onClick: _ctx.testNotify
+                            }, null, 8 /* PROPS */, ["disable", "loading", "onClick"]),
+                            (_ctx.notifyResult)
+                              ? (_openBlock(), _createElementBlock("span", {
+                                  key: 0,
+                                  class: _normalizeClass(["text-caption", _ctx.notifyOk ? 'text-positive' : 'text-negative'])
+                                }, _toDisplayString(_ctx.notifyResult), 3 /* TEXT, CLASS */))
+                              : _createCommentVNode("v-if", true)
+                          ]),
+                          (!_ctx.flowDialog.editing)
+                            ? (_openBlock(), _createElementBlock("div", {
+                                key: 0,
+                                class: "text-caption text-grey"
+                              }, "Save the flow first to send a test."))
+                            : _createCommentVNode("v-if", true)
+                        ])
+                      ]),
+                      _: 1 /* STABLE */
+                    }),
+                    _createVNode(_component_q_expansion_item, {
                       icon: "code",
                       label: "Advanced",
                       group: "fb-side",

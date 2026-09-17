@@ -16,6 +16,8 @@ pub(crate) trait Guest {
     fn public_submit(payload: String) -> String;
     fn public_get_submission(payload: String) -> String;
     fn on_invoice_paid(payload: String) -> String;
+    fn delete_flow(payload: String) -> String;
+    fn send_test_notification(payload: String) -> String;
 }
 
 fn decode(s: String) -> Value {
@@ -344,4 +346,59 @@ fn css_sanitization_strips_dangerous_constructs() {
     let settings: Value = serde_json::from_str(flow["settingsJson"].as_str().unwrap()).unwrap();
     assert_eq!(settings["customCss"], "");
     assert_eq!(settings["theme"], "dark");
+}
+
+#[test]
+fn notifications_fire_on_submit_and_payment() {
+    let mut req = create_request();
+    req["settingsJson"] = json!({
+        "notifyUrl": "https://api.web3forms.com/submit",
+        "notifyKey": "test-key-123",
+    });
+    host::reset();
+    let flow = decode(Component::create_flow(req.to_string()));
+    let flow_id = flow["id"].as_str().unwrap();
+    // endpoint + secret are stored but stripped from the public view
+    let stored: Value = serde_json::from_str(
+        host::row("flows", flow_id).unwrap()["settingsJson"].as_str().unwrap(),
+    )
+    .unwrap();
+    assert_eq!(stored["notifyUrl"], "https://api.web3forms.com/submit");
+    assert_eq!(stored["notifyKey"], "test-key-123");
+    publish(flow_id);
+    let public = decode(Component::public_get_flow(
+        json!({"flowId": flow_id}).to_string(),
+    ));
+    let public_settings: Value =
+        serde_json::from_str(public["settingsJson"].as_str().unwrap()).unwrap();
+    assert_eq!(public_settings["notifyUrl"], "");
+    assert_eq!(public_settings["notifyKey"], "");
+    let result = submit(flow_id);
+    assert_eq!(result["status"], "pending_payment", "{result}");
+    // "submitted" notification fired once checkout started
+    assert_eq!(host::state(|s| s.http_calls.len()), 1);
+    let (method, url, body) = &host::state(|s| s.http_calls[0].clone());
+    assert_eq!(method, "POST");
+    assert_eq!(url, "https://api.web3forms.com/submit");
+    let payload: Value = serde_json::from_str(body.as_deref().unwrap()).unwrap();
+    assert_eq!(payload["access_key"], "test-key-123");
+    assert_eq!(payload["event"], "submitted");
+    assert_eq!(payload["answers"]["Email"], "alice@example.com");
+    decode(Component::on_invoice_paid(host::last_event().to_string()));
+    // "paid" notification fired on settlement
+    assert_eq!(host::state(|s| s.http_calls.len()), 2);
+    let paid_body: Value = serde_json::from_str(
+        host::state(|s| s.http_calls[1].2.clone()).as_deref().unwrap(),
+    )
+    .unwrap();
+    assert_eq!(paid_body["event"], "paid");
+}
+
+#[test]
+fn notify_url_rejects_unlisted_hosts() {
+    host::reset();
+    let mut req = create_request();
+    req["settingsJson"] = json!({"notifyUrl": "https://evil.example.com/hook"});
+    let result = decode(Component::create_flow(req.to_string()));
+    assert!(result["error"].as_str().unwrap_or("").contains("notifyUrl"));
 }

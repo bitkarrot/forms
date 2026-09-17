@@ -28,6 +28,9 @@ interface host {
   record log-request { level: string, message: string }
   record log-response { ok: bool }
   log: func(req: log-request) -> log-response;
+  record http-call { method: string, url: string, headers: list<tuple<string, string>>, body: option<string> }
+  record http-result { status-code: s32, headers: list<tuple<string, string>>, body: string }
+  http-request: func(req: http-call) -> http-result;
 }
 world forms {
   import host;
@@ -45,4 +48,5 @@ world forms {
   export public-submit: func(payload: string) -> string;
   export public-get-submission: func(payload: string) -> string;
   export on-invoice-paid: func(payload: string) -> string;
+  export send-test-notification: func(payload: string) -> string;
 }
