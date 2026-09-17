@@ -68,10 +68,10 @@
                 <q-btn flat round dense icon="settings" class="fb-gear" aria-label="Header image settings" @click.stop>
                   <q-menu><div class="q-pa-md" style="width:300px">
                     <div class="text-subtitle2 q-mb-sm">Header image</div>
-                    <q-input dense outlined v-model="flowDialog.data.headerImage" label="Image URL" placeholder="/ext-assets/forms/assets/banner.svg"></q-input>
+                    <q-input dense outlined v-model="flowDialog.data.headerImage" label="Image URL" placeholder="/ext-assets/forms/assets/banner.png"></q-input>
                     <div v-if="isExternalHeader" class="text-caption text-warning q-mt-xs">External URLs are blocked by the LNbits frame CSP — this won't show on hosted pages, only in the embed widget. Upload an image or use an /ext-assets/ path instead.</div>
                     <div v-else class="text-caption text-grey q-mt-xs">Hosted pages only render /ext-assets/forms/ paths or data:image/ URIs (LNbits frame CSP).</div>
-                    <div class="row justify-end q-mt-xs"><q-btn flat dense no-caps size="sm" icon="upload" label="Upload" @click="pickHeaderImage"></q-btn><q-btn flat dense no-caps size="sm" label="Use sample" @click="flowDialog.data.headerImage='/ext-assets/forms/assets/banner.svg'"></q-btn><q-btn flat dense no-caps size="sm" label="Remove" @click="flowDialog.data.headerImage=''"></q-btn></div>
+                    <div class="row justify-end q-mt-xs"><q-btn flat dense no-caps size="sm" icon="upload" label="Upload" @click="pickHeaderImage"></q-btn><q-btn flat dense no-caps size="sm" label="Use sample" @click="flowDialog.data.headerImage='/ext-assets/forms/assets/banner.png'"></q-btn><q-btn flat dense no-caps size="sm" label="Remove" @click="flowDialog.data.headerImage=''"></q-btn></div>
                   </div></q-menu>
                 </q-btn>
               </div>
@@ -140,17 +140,17 @@
               <div class="text-caption text-grey q-mt-xs">Title, Description and Question fall back to Global if not set.</div>
               <div class="fb-side-title q-mt-md">Title image</div>
               <div class="row items-center q-gutter-xs no-wrap">
-                <q-input outlined dense class="col" v-model="flowDialog.data.headerImage" placeholder="/ext-assets/forms/assets/banner.svg"></q-input>
+                <q-input outlined dense class="col" v-model="flowDialog.data.headerImage" placeholder="/ext-assets/forms/assets/banner.png"></q-input>
                 <q-btn flat dense no-caps icon="upload" @click="pickImage('headerImage')"><q-tooltip>Upload image</q-tooltip></q-btn>
               </div>
               <div class="fb-side-title q-mt-sm">Background image</div>
               <div class="row items-center q-gutter-xs no-wrap">
-                <q-input outlined dense class="col" v-model="flowDialog.data.bgImage" placeholder="/ext-assets/forms/assets/banner.svg"></q-input>
+                <q-input outlined dense class="col" v-model="flowDialog.data.bgImage" placeholder="/ext-assets/forms/assets/banner.png"></q-input>
                 <q-btn flat dense no-caps icon="upload" @click="pickImage('bgImage')"><q-tooltip>Upload image</q-tooltip></q-btn>
               </div>
               <div class="fb-side-title q-mt-sm">Thank you screen image</div>
               <div class="row items-center q-gutter-xs no-wrap">
-                <q-input outlined dense class="col" v-model="flowDialog.data.endImage" placeholder="/ext-assets/forms/assets/banner.svg"></q-input>
+                <q-input outlined dense class="col" v-model="flowDialog.data.endImage" placeholder="/ext-assets/forms/assets/banner.png"></q-input>
                 <q-btn flat dense no-caps icon="upload" @click="pickImage('endImage')"><q-tooltip>Upload image</q-tooltip></q-btn>
               </div>
               <div v-if="isExtImg(flowDialog.data.headerImage) || isExtImg(flowDialog.data.bgImage) || isExtImg(flowDialog.data.endImage)" class="text-caption text-warning q-mt-xs">External URLs are blocked by the LNbits frame CSP — they won't show on hosted pages, only in the embed widget. Upload an image or use /ext-assets/ paths instead.</div>

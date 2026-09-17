@@ -99,17 +99,17 @@ if (cardRadius !== '20px') fail(`typeform card radius not applied: ${cardRadius}
 say('theme change reflected live on canvas')
 
 say('set header image to bundled sample')
-await admin.locator('.fb-acc:has-text("Appearance") input[placeholder*="/ext-assets"]').fill('/ext-assets/forms/assets/banner.svg')
+await admin.locator('.fb-acc:has-text("Appearance") input[placeholder*="/ext-assets"]').first().fill('/ext-assets/forms/assets/banner.png')
 await sleep(300)
 const bannerBg = await admin.locator('.fb-banner').evaluate(el => getComputedStyle(el).backgroundImage)
-if (!bannerBg.includes('banner.svg')) fail(`canvas banner not set: ${bannerBg}`)
+if (!bannerBg.includes('banner.png')) fail(`canvas banner not set: ${bannerBg}`)
 say('canvas banner shows sample image')
 
 say('switch to Preview — banner + typeform styling')
 await admin.locator('.fp-view-toggle .q-btn:has-text("Preview")').click()
 await admin.waitForSelector('.fp-preview-card', {timeout: 8000})
 const pvBanner = await admin.locator('.fp-preview-card .form-banner').evaluate(el => getComputedStyle(el).backgroundImage).catch(() => 'none')
-if (!pvBanner.includes('banner.svg')) fail(`preview banner missing: ${pvBanner}`)
+if (!pvBanner.includes('banner.png')) fail(`preview banner missing: ${pvBanner}`)
 say('preview shows banner image')
 const hasStart = await admin.locator('.fp-preview-card .q-btn:has-text("Start"), .fp-preview-card .q-btn:has(i:has-text("arrow_forward"))').count()
 say(`preview stepper welcome: ${hasStart ? 'yes' : 'no'}`)
@@ -150,23 +150,23 @@ say('flow published')
 say('walk the public hosted page')
 const pub = await ctx.newPage()
 await pub.goto(`${BASE}/ext/forms/f/${publicId}`, {waitUntil: 'domcontentloaded'})
-const pf = await waitFrame(pub, '.tf-start, .q-btn:has-text("Start"), .q-card')
+const pf = await waitFrame(pub, '.pf-card, .pf-form')
 if (!pf) fail('public iframe never rendered')
 say('public page rendered')
 
-const pubBanner = await pf.locator('.form-banner, .fb-banner').first().evaluate(el => getComputedStyle(el).backgroundImage).catch(() => 'none')
+const pubBanner = await pf.locator('.pf-banner').first().evaluate(el => getComputedStyle(el).backgroundImage).catch(() => 'none')
 console.log('   public banner:', pubBanner.slice(0, 80))
 
 const startBtn = pf.locator('.q-btn:has-text("Start")').first()
 if (await startBtn.count()) { await startBtn.click(); await sleep(700) }
 
 say('fill all fields (compact layout)')
-// text-ish inputs — fill per .q-field block keyed by its label
-const fields = pf.locator('.q-field:visible')
+// text-ish inputs — fill per .pf-card block keyed by its .pf-qlabel
+const fields = pf.locator('.pf-card:visible')
 for (let i = 0; i < await fields.count(); i++) {
   const block = fields.nth(i)
-  const label = ((await block.locator('.q-field__label').innerText().catch(() => '')) || '').toLowerCase()
-  const inp = block.locator('input:not([type="checkbox"]):not([type="radio"])').first()
+  const label = ((await block.locator('.pf-qlabel, .tf-qlabel').first().innerText().catch(() => '')) || '').toLowerCase()
+  const inp = block.locator('input:not([type="checkbox"]):not([type="radio"]), textarea').first()
   if (!(await inp.count())) continue
   const type = (await inp.getAttribute('type')) || 'text'
   let val
@@ -179,14 +179,10 @@ for (let i = 0; i < await fields.count(); i++) {
   else val = 'UI E2E'
   await inp.fill(val).catch(() => {})
 }
-// each radio option group → first option (stepper .tf-option + compact .q-radio)
-const groups = pf.locator('.tf-options')
+// radio option cards → first option (both stepper and compact use .tf-option now)
+const groups = pf.locator('.tf-options:visible')
 for (let i = 0; i < await groups.count(); i++) {
   await groups.nth(i).locator('.tf-option').first().click().catch(() => {})
-}
-const radioGroups = pf.locator('.q-option-group')
-for (let i = 0; i < await radioGroups.count(); i++) {
-  await radioGroups.nth(i).locator('.q-radio').first().click().catch(() => {})
 }
 // dropdowns
 const selects = pf.locator('.q-select:visible')

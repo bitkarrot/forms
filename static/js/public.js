@@ -108,6 +108,7 @@
         this.nextStep()
       },
       optionKey(i) { return String.fromCharCode(65 + i) },
+      isOptionalLabel(field) { return /optional/i.test(field?.label || '') },
       chooseOption(field, opt) {
         this.answers[field.id] = opt
         if (!this.isLastStep) setTimeout(() => this.nextStep(), 280)

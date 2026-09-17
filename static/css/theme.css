@@ -58,7 +58,7 @@ body.body--dark .text-grey-8,
   --q-secondary: #6b7280;
   --forms-card: #ffffff;
 }
-.theme-minimal .q-card, .theme-minimal .fb-card { box-shadow: none; border: 1px solid var(--forms-border); }
+.theme-minimal .q-card, .theme-minimal .fb-card, .theme-minimal .pf-card { box-shadow: none; border: 1px solid var(--forms-border); }
 .theme-minimal.theme-dark, body.theme-minimal.body--dark { --q-primary: #d1d5db; --forms-card: #1e1e1e; }
 
 .theme-contrast {
@@ -79,7 +79,7 @@ body.body--dark .text-grey-8,
   --forms-muted: #cccccc;
   --forms-border: #ffffff;
 }
-.theme-contrast .q-card, .theme-contrast .fb-card { border: 2px solid var(--forms-border); box-shadow: none; }
+.theme-contrast .q-card, .theme-contrast .fb-card, .theme-contrast .pf-card { border: 2px solid var(--forms-border); box-shadow: none; }
 
 .theme-typeform {
   --q-primary: #4fb0ae;
@@ -90,11 +90,12 @@ body.body--dark .text-grey-8,
   --forms-muted: #73726e;
   --forms-border: rgba(38, 38, 39, 0.18);
 }
-.theme-typeform .q-card, .theme-typeform .fb-card {
+.theme-typeform .q-card, .theme-typeform .fb-card, .theme-typeform .pf-card {
   border-radius: 20px;
   box-shadow: 0 24px 60px -24px rgba(38, 38, 39, 0.25);
 }
 body.theme-typeform .q-card { padding: 2.25rem; }
+body.theme-typeform .pf-card { padding: 2.25rem; }
 .theme-typeform h1.text-h5 {
   font-size: 1.9rem;
   line-height: 1.25;

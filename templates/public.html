@@ -12,37 +12,37 @@
 </head>
 <body>
 <div id="q-app" class="vue-pending">
-  <div class="public-page row justify-center q-py-md q-py-sm-xl" :style="pageStyle">
-    <div class="col-12 col-sm-9 col-md-7 col-lg-5">
+  <div class="public-page" :style="pageStyle">
+    <div class="pf-form">
       <div v-if="loading" class="text-center q-pa-xl"><q-spinner color="primary" size="3rem"></q-spinner><div class="q-mt-md">Loading…</div></div>
-      <q-card v-else-if="loadError" class="q-pa-lg text-center"><q-icon name="error_outline" color="negative" size="3rem"></q-icon><div class="text-h6 q-mt-md">{{loadError}}</div><q-btn outline color="primary" class="q-mt-md" label="Retry" @click="loadFlow()"></q-btn></q-card>
-      <q-card v-else-if="flow && confirmed" class="q-pa-lg text-center overflow-hidden">
-        <div v-if="settings.endImage" class="form-banner" :style="endBannerStyle"></div>
-        <q-icon name="check_circle" color="positive" size="3rem"></q-icon>
-        <div class="text-h5 q-mt-md">{{settings.confirmText || 'Registration confirmed'}}</div>
-        <div v-if="submission && submission.ticketCode" class="q-mt-lg">
-          <div class="text-caption text-grey-7">Your confirmation code</div>
-          <div class="text-h6 ticket-code">{{submission.ticketCode}}</div>
+      <q-card v-else-if="loadError" class="pf-card text-center"><q-icon name="error_outline" color="negative" size="3rem"></q-icon><div class="text-h6 q-mt-md">{{loadError}}</div><q-btn outline color="primary" class="q-mt-md" label="Retry" @click="loadFlow()"></q-btn></q-card>
+      <template v-else-if="flow && confirmed">
+        <div v-if="settings.endImage" class="pf-banner" :style="endBannerStyle"></div>
+        <q-card class="pf-card text-center">
+          <q-icon name="check_circle" color="positive" size="3rem"></q-icon>
+          <div class="text-h5 q-mt-md">{{settings.confirmText || 'Registration confirmed'}}</div>
+          <div v-if="submission && submission.ticketCode" class="q-mt-lg">
+            <div class="text-caption text-grey-7">Your confirmation code</div>
+            <div class="text-h6 ticket-code">{{submission.ticketCode}}</div>
+          </div>
+        </q-card>
+      </template>
+      <template v-else-if="flow">
+        <div class="pf-headerblock">
+          <div v-if="settings.headerImage" class="pf-banner" :style="bannerStyle"></div>
+          <template v-if="!isStepper || step===-1">
+            <h1 class="pf-title">{{flow.title}}</h1>
+            <p v-if="flow.description" class="pf-desc">{{flow.description}}</p>
+            <div v-if="flow.remaining!==null && flow.remaining!==undefined" class="pf-remaining">{{flow.remaining}} spot(s) remaining</div>
+          </template>
         </div>
-      </q-card>
-      <q-card v-else-if="flow && isStepper && step===-1" class="q-pa-xl text-center tf-welcome overflow-hidden">
-        <div v-if="settings.headerImage" class="form-banner" :style="bannerStyle"></div>
-        <h1 class="text-h4 q-mt-none q-mb-sm">{{flow.title}}</h1>
-        <p v-if="flow.description" class="text-grey-8">{{flow.description}}</p>
-        <div v-if="flow.remaining!==null && flow.remaining!==undefined" class="text-caption q-mb-md">{{flow.remaining}} spot(s) remaining</div>
-        <q-btn unelevated no-caps color="primary" size="lg" @click="step=0"><span>Start</span><q-icon name="arrow_forward" class="q-ml-sm"></q-icon></q-btn>
-        <div v-if="pricing.mode==='fixed' && pricing.amountSat>0" class="text-caption q-mt-lg">{{formatSats(pricing.amountSat)}} sats to complete</div>
-      </q-card>
-      <q-card v-else-if="flow" class="q-pa-lg overflow-hidden">
-        <div v-if="settings.headerImage" class="form-banner" :style="bannerStyle"></div>
-        <template v-if="!isStepper">
-          <h1 class="text-h5 q-mt-none q-mb-sm">{{flow.title}}</h1>
-          <p v-if="flow.description" class="text-grey-8">{{flow.description}}</p>
-          <div v-if="flow.remaining!==null && flow.remaining!==undefined" class="text-caption q-mb-md">{{flow.remaining}} spot(s) remaining</div>
-        </template>
-        <q-linear-progress v-if="isStepper" :value="stepProgress" rounded class="q-mb-md" aria-label="Form progress"></q-linear-progress>
-        <div class="q-gutter-md">
-          <template v-for="(field, i) in formFields"><div :key="field.id" v-if="!isStepper || i===step">
+        <div v-if="isStepper && step===-1" class="text-center q-mt-xl">
+          <q-btn unelevated no-caps color="primary" size="lg" @click="step=0"><span>Start</span><q-icon name="arrow_forward" class="q-ml-sm"></q-icon></q-btn>
+          <div v-if="pricing.mode==='fixed' && pricing.amountSat>0" class="pf-hint q-mt-md">{{formatSats(pricing.amountSat)}} sats to complete</div>
+        </div>
+        <template v-else>
+          <q-linear-progress v-if="isStepper" :value="stepProgress" rounded class="q-mb-md" aria-label="Form progress"></q-linear-progress>
+          <template v-for="(field, i) in formFields"><div :key="field.id" v-if="!isStepper || i===step" class="pf-card">
             <template v-if="isStepper">
               <div class="tf-q">
                 <div class="tf-qnum">{{i+1}} <q-icon name="arrow_forward" size="0.9em"></q-icon></div>
@@ -62,27 +62,35 @@
               </div>
             </template>
             <template v-else>
-              <q-input v-if="['text','email','phone','number','date','nostr_pubkey'].includes(field.type)" outlined dense :type="field.type==='number'?'number':(field.type==='date'?'date':'text')" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')" :hint="field.help"></q-input>
-              <q-input v-else-if="field.type==='textarea'" outlined type="textarea" rows="3" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')" :hint="field.help"></q-input>
-              <q-select v-else-if="field.type==='select'" outlined dense :options="field.options||[]" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')"></q-select>
-              <div v-else-if="field.type==='radio'"><div class="text-subtitle2">{{field.label}}<span v-if="field.required"> *</span></div><q-option-group :options="(field.options||[]).map(o=>({label:o,value:o}))" v-model="answers[field.id]" type="radio"></q-option-group></div>
-              <q-checkbox v-else-if="['checkbox','consent'].includes(field.type)" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')"></q-checkbox>
+              <div class="pf-qlabel">{{field.label}}<span v-if="field.required" class="pf-req">*</span><span v-else-if="!isOptionalLabel(field)" class="tf-opt">(optional)</span></div>
+              <div v-if="field.help" class="pf-qhelp">{{field.help}}</div>
+              <q-input v-if="['text','email','phone','number','date','nostr_pubkey'].includes(field.type)" outlined :type="field.type==='number'?'number':(field.type==='date'?'date':'text')" v-model="answers[field.id]" placeholder="Type your answer here…"></q-input>
+              <q-input v-else-if="field.type==='textarea'" outlined type="textarea" rows="3" v-model="answers[field.id]" placeholder="Type your answer here…"></q-input>
+              <q-select v-else-if="field.type==='select'" outlined :options="field.options||[]" v-model="answers[field.id]" placeholder="Choose an option"></q-select>
+              <div v-else-if="field.type==='radio'" class="tf-options">
+                <div v-for="(opt, oi) in field.options||[]" :key="oi" class="tf-option" :class="{'tf-selected': answers[field.id]===opt}" @click="answers[field.id]=opt">
+                  <span class="tf-key">{{optionKey(oi)}}</span>
+                  <span class="tf-optext">{{opt}}</span>
+                  <q-icon v-if="answers[field.id]===opt" name="check" class="tf-check"></q-icon>
+                </div>
+              </div>
+              <q-checkbox v-else-if="['checkbox','consent'].includes(field.type)" v-model="answers[field.id]" :label="field.type==='consent'?'I accept':'Yes'"></q-checkbox>
             </template>
           </div></template>
-        </div>
-        <div v-if="submitError" class="text-negative q-mt-md" role="alert">{{submitError}}</div>
-        <div v-if="isStepper" class="row items-end justify-between q-mt-lg">
-          <q-btn flat no-caps label="Back" :disable="step<=0" @click="prevStep"></q-btn>
-          <div class="text-center">
-            <q-btn unelevated no-caps color="primary" :loading="submitting" @click="onOk">
-              <span>{{isLastStep ? submitLabel : 'OK'}}</span><q-icon v-if="!isLastStep" name="check" class="q-ml-xs"></q-icon>
-            </q-btn>
-            <div class="tf-hint">press <b>Enter ↵</b></div>
+          <div v-if="submitError" class="text-negative q-mt-md" role="alert">{{submitError}}</div>
+          <div v-if="isStepper" class="row items-end justify-between q-mt-sm">
+            <q-btn flat no-caps label="Back" :disable="step<=0" @click="prevStep"></q-btn>
+            <div class="text-center">
+              <q-btn unelevated no-caps color="primary" :loading="submitting" @click="onOk">
+                <span>{{isLastStep ? submitLabel : 'OK'}}</span><q-icon v-if="!isLastStep" name="check" class="q-ml-xs"></q-icon>
+              </q-btn>
+              <div class="tf-hint">press <b>Enter ↵</b></div>
+            </div>
           </div>
-        </div>
-        <q-btn v-else unelevated no-caps color="primary" class="full-width q-mt-lg" :loading="submitting" :label="submitLabel" @click="submit"></q-btn>
-        <div v-if="hasNostrField" class="text-caption text-grey-7 q-mt-sm">Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login.</div>
-      </q-card>
+          <q-btn v-else unelevated no-caps color="primary" size="lg" class="full-width q-mt-sm" :loading="submitting" :label="submitLabel" @click="submit"></q-btn>
+          <div v-if="hasNostrField" class="pf-hint text-center q-mt-md">Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login.</div>
+        </template>
+      </template>
     </div>
     <q-dialog v-model="invoiceDialog" position="top"><q-card class="q-pa-lg" style="min-width:min(92vw,420px)">
       <div v-if="invoice">

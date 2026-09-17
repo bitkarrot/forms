@@ -336,7 +336,7 @@ return function render(_ctx, _cache) {
                                       modelValue: _ctx.flowDialog.data.headerImage,
                                       "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.headerImage) = $event),
                                       label: "Image URL",
-                                      placeholder: "/ext-assets/forms/assets/banner.svg"
+                                      placeholder: "/ext-assets/forms/assets/banner.png"
                                     }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
                                     (_ctx.isExternalHeader)
                                       ? (_openBlock(), _createElementBlock("div", {
@@ -363,7 +363,7 @@ return function render(_ctx, _cache) {
                                         "no-caps": "",
                                         size: "sm",
                                         label: "Use sample",
-                                        onClick: $event => (_ctx.flowDialog.data.headerImage='/ext-assets/forms/assets/banner.svg')
+                                        onClick: $event => (_ctx.flowDialog.data.headerImage='/ext-assets/forms/assets/banner.png')
                                       }, null, 8 /* PROPS */, ["onClick"]),
                                       _createVNode(_component_q_btn, {
                                         flat: "",
@@ -743,7 +743,7 @@ return function render(_ctx, _cache) {
                               class: "col",
                               modelValue: _ctx.flowDialog.data.headerImage,
                               "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.headerImage) = $event),
-                              placeholder: "/ext-assets/forms/assets/banner.svg"
+                              placeholder: "/ext-assets/forms/assets/banner.png"
                             }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
                             _createVNode(_component_q_btn, {
                               flat: "",
@@ -771,7 +771,7 @@ return function render(_ctx, _cache) {
                               class: "col",
                               modelValue: _ctx.flowDialog.data.bgImage,
                               "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.bgImage) = $event),
-                              placeholder: "/ext-assets/forms/assets/banner.svg"
+                              placeholder: "/ext-assets/forms/assets/banner.png"
                             }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
                             _createVNode(_component_q_btn, {
                               flat: "",
@@ -799,7 +799,7 @@ return function render(_ctx, _cache) {
                               class: "col",
                               modelValue: _ctx.flowDialog.data.endImage,
                               "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.endImage) = $event),
-                              placeholder: "/ext-assets/forms/assets/banner.svg"
+                              placeholder: "/ext-assets/forms/assets/banner.png"
                             }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
                             _createVNode(_component_q_btn, {
                               flat: "",

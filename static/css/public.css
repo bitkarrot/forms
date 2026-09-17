@@ -2,7 +2,7 @@
 .public-page { min-height: 100vh; }
 .public-page h1 { color: var(--fc-title, var(--fc-global, inherit)); }
 .public-page p { color: var(--fc-desc, var(--fc-global, inherit)); }
-.public-page .tf-qlabel, .public-page .q-field__label, .public-page .text-subtitle2 { color: var(--fc-question, var(--fc-global, inherit)); }
+.public-page .tf-qlabel, .public-page .pf-qlabel, .public-page .q-field__label { color: var(--fc-question, var(--fc-global, inherit)); }
 .public-page .q-card {
   background-color: color-mix(in srgb, var(--forms-card, #fff) calc(var(--fc-card-op, 1) * 100%), transparent);
 }
@@ -10,12 +10,33 @@
 .pending-row { display: flex; align-items: center; gap: 12px; justify-content: center; }
 .ticket-code { font-family: monospace; letter-spacing: 0.08em; word-break: break-all; }
 
-.form-banner {
-  height: 140px;
-  margin: -2.5rem -2.5rem 1.25rem;
+/* Public form — mirrors the builder canvas layout */
+.pf-form { max-width: 680px; margin: 0 auto; padding: 32px 16px 64px; }
+.pf-headerblock { margin-bottom: 22px; }
+.pf-banner {
+  height: 180px;
+  border-radius: 14px;
   background-size: cover;
   background-position: center;
+  margin-bottom: 18px;
 }
+.pf-title { font-size: 1.7rem; font-weight: 700; line-height: 1.25; margin: 0 0 6px; }
+.pf-desc { font-size: 1rem; opacity: 0.75; margin: 0; white-space: pre-line; }
+.pf-remaining { font-size: 0.85rem; opacity: 0.65; margin-top: 8px; }
+.pf-card {
+  background: color-mix(in srgb, var(--forms-card, #fff) calc(var(--fc-card-op, 1) * 100%), transparent);
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+  padding: 18px 20px 20px;
+  margin-bottom: 16px;
+  color: var(--forms-text);
+}
+.pf-card:has(> .tf-q) { padding: 28px 32px; }
+.pf-qlabel { font-size: 1.15rem; font-weight: 600; line-height: 1.3; margin-bottom: 2px; }
+.pf-req { color: var(--q-primary); margin-left: 4px; }
+.pf-qhelp { font-size: 0.9rem; opacity: 0.65; margin-bottom: 10px; }
+.pf-hint { font-size: 0.8rem; line-height: 1.45; opacity: 0.6; }
+body.body--dark .pf-card { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); }
 
 .tf-q { animation: tf-fadein 0.25s ease; }
 @keyframes tf-fadein { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }

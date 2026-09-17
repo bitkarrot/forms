@@ -10,16 +10,15 @@ return function render(_ctx, _cache) {
   const _component_q_input = _resolveComponent("q-input")
   const _component_q_select = _resolveComponent("q-select")
   const _component_q_checkbox = _resolveComponent("q-checkbox")
-  const _component_q_option_group = _resolveComponent("q-option-group")
   const _component_qrcode_vue = _resolveComponent("qrcode-vue")
   const _component_q_spinner_dots = _resolveComponent("q-spinner-dots")
   const _component_q_dialog = _resolveComponent("q-dialog")
 
   return (_openBlock(), _createElementBlock("div", {
-    class: "public-page row justify-center q-py-md q-py-sm-xl",
+    class: "public-page",
     style: _normalizeStyle(_ctx.pageStyle)
   }, [
-    _createElementVNode("div", { class: "col-12 col-sm-9 col-md-7 col-lg-5" }, [
+    _createElementVNode("div", { class: "pf-form" }, [
       (_ctx.loading)
         ? (_openBlock(), _createElementBlock("div", {
             key: 0,
@@ -34,7 +33,7 @@ return function render(_ctx, _cache) {
         : (_ctx.loadError)
           ? (_openBlock(), _createBlock(_component_q_card, {
               key: 1,
-              class: "q-pa-lg text-center"
+              class: "pf-card text-center"
             }, {
               default: _withCtx(() => [
                 _createVNode(_component_q_icon, {
@@ -54,132 +53,107 @@ return function render(_ctx, _cache) {
               _: 1 /* STABLE */
             }))
           : (_ctx.flow && _ctx.confirmed)
-            ? (_openBlock(), _createBlock(_component_q_card, {
-                key: 2,
-                class: "q-pa-lg text-center overflow-hidden"
-              }, {
-                default: _withCtx(() => [
-                  (_ctx.settings.endImage)
-                    ? (_openBlock(), _createElementBlock("div", {
-                        key: 0,
-                        class: "form-banner",
-                        style: _normalizeStyle(_ctx.endBannerStyle)
-                      }, null, 4 /* STYLE */))
-                    : _createCommentVNode("v-if", true),
-                  _createVNode(_component_q_icon, {
-                    name: "check_circle",
-                    color: "positive",
-                    size: "3rem"
-                  }),
-                  _createElementVNode("div", { class: "text-h5 q-mt-md" }, _toDisplayString(_ctx.settings.confirmText || 'Registration confirmed'), 1 /* TEXT */),
-                  (_ctx.submission && _ctx.submission.ticketCode)
-                    ? (_openBlock(), _createElementBlock("div", {
-                        key: 1,
-                        class: "q-mt-lg"
-                      }, [
-                        _createElementVNode("div", { class: "text-caption text-grey-7" }, "Your confirmation code"),
-                        _createElementVNode("div", { class: "text-h6 ticket-code" }, _toDisplayString(_ctx.submission.ticketCode), 1 /* TEXT */)
-                      ]))
-                    : _createCommentVNode("v-if", true)
-                ]),
-                _: 1 /* STABLE */
-              }))
-            : (_ctx.flow && _ctx.isStepper && _ctx.step===-1)
-              ? (_openBlock(), _createBlock(_component_q_card, {
-                  key: 3,
-                  class: "q-pa-xl text-center tf-welcome overflow-hidden"
-                }, {
+            ? (_openBlock(), _createElementBlock(_Fragment, { key: 2 }, [
+                (_ctx.settings.endImage)
+                  ? (_openBlock(), _createElementBlock("div", {
+                      key: 0,
+                      class: "pf-banner",
+                      style: _normalizeStyle(_ctx.endBannerStyle)
+                    }, null, 4 /* STYLE */))
+                  : _createCommentVNode("v-if", true),
+                _createVNode(_component_q_card, { class: "pf-card text-center" }, {
                   default: _withCtx(() => [
-                    (_ctx.settings.headerImage)
+                    _createVNode(_component_q_icon, {
+                      name: "check_circle",
+                      color: "positive",
+                      size: "3rem"
+                    }),
+                    _createElementVNode("div", { class: "text-h5 q-mt-md" }, _toDisplayString(_ctx.settings.confirmText || 'Registration confirmed'), 1 /* TEXT */),
+                    (_ctx.submission && _ctx.submission.ticketCode)
                       ? (_openBlock(), _createElementBlock("div", {
                           key: 0,
-                          class: "form-banner",
-                          style: _normalizeStyle(_ctx.bannerStyle)
-                        }, null, 4 /* STYLE */))
-                      : _createCommentVNode("v-if", true),
-                    _createElementVNode("h1", { class: "text-h4 q-mt-none q-mb-sm" }, _toDisplayString(_ctx.flow.title), 1 /* TEXT */),
-                    (_ctx.flow.description)
-                      ? (_openBlock(), _createElementBlock("p", {
-                          key: 1,
-                          class: "text-grey-8"
-                        }, _toDisplayString(_ctx.flow.description), 1 /* TEXT */))
-                      : _createCommentVNode("v-if", true),
-                    (_ctx.flow.remaining!==null && _ctx.flow.remaining!==undefined)
-                      ? (_openBlock(), _createElementBlock("div", {
-                          key: 2,
-                          class: "text-caption q-mb-md"
-                        }, _toDisplayString(_ctx.flow.remaining) + " spot(s) remaining", 1 /* TEXT */))
-                      : _createCommentVNode("v-if", true),
-                    _createVNode(_component_q_btn, {
-                      unelevated: "",
-                      "no-caps": "",
-                      color: "primary",
-                      size: "lg",
-                      onClick: $event => (_ctx.step=0)
-                    }, {
-                      default: _withCtx(() => [
-                        _createElementVNode("span", null, "Start"),
-                        _createVNode(_component_q_icon, {
-                          name: "arrow_forward",
-                          class: "q-ml-sm"
-                        })
-                      ]),
-                      _: 1 /* STABLE */
-                    }, 8 /* PROPS */, ["onClick"]),
-                    (_ctx.pricing.mode==='fixed' && _ctx.pricing.amountSat>0)
-                      ? (_openBlock(), _createElementBlock("div", {
-                          key: 3,
-                          class: "text-caption q-mt-lg"
-                        }, _toDisplayString(_ctx.formatSats(_ctx.pricing.amountSat)) + " sats to complete", 1 /* TEXT */))
+                          class: "q-mt-lg"
+                        }, [
+                          _createElementVNode("div", { class: "text-caption text-grey-7" }, "Your confirmation code"),
+                          _createElementVNode("div", { class: "text-h6 ticket-code" }, _toDisplayString(_ctx.submission.ticketCode), 1 /* TEXT */)
+                        ]))
                       : _createCommentVNode("v-if", true)
                   ]),
                   _: 1 /* STABLE */
-                }))
-              : (_ctx.flow)
-                ? (_openBlock(), _createBlock(_component_q_card, {
-                    key: 4,
-                    class: "q-pa-lg overflow-hidden"
-                  }, {
-                    default: _withCtx(() => [
-                      (_ctx.settings.headerImage)
-                        ? (_openBlock(), _createElementBlock("div", {
-                            key: 0,
-                            class: "form-banner",
-                            style: _normalizeStyle(_ctx.bannerStyle)
-                          }, null, 4 /* STYLE */))
-                        : _createCommentVNode("v-if", true),
-                      (!_ctx.isStepper)
-                        ? (_openBlock(), _createElementBlock(_Fragment, { key: 1 }, [
-                            _createElementVNode("h1", { class: "text-h5 q-mt-none q-mb-sm" }, _toDisplayString(_ctx.flow.title), 1 /* TEXT */),
-                            (_ctx.flow.description)
-                              ? (_openBlock(), _createElementBlock("p", {
-                                  key: 0,
-                                  class: "text-grey-8"
-                                }, _toDisplayString(_ctx.flow.description), 1 /* TEXT */))
-                              : _createCommentVNode("v-if", true),
-                            (_ctx.flow.remaining!==null && _ctx.flow.remaining!==undefined)
-                              ? (_openBlock(), _createElementBlock("div", {
-                                  key: 1,
-                                  class: "text-caption q-mb-md"
-                                }, _toDisplayString(_ctx.flow.remaining) + " spot(s) remaining", 1 /* TEXT */))
-                              : _createCommentVNode("v-if", true)
-                          ], 64 /* STABLE_FRAGMENT */))
-                        : _createCommentVNode("v-if", true),
-                      (_ctx.isStepper)
-                        ? (_openBlock(), _createBlock(_component_q_linear_progress, {
-                            key: 2,
-                            value: _ctx.stepProgress,
-                            rounded: "",
-                            class: "q-mb-md",
-                            "aria-label": "Form progress"
-                          }, null, 8 /* PROPS */, ["value"]))
-                        : _createCommentVNode("v-if", true),
-                      _createElementVNode("div", { class: "q-gutter-md" }, [
+                })
+              ], 64 /* STABLE_FRAGMENT */))
+            : (_ctx.flow)
+              ? (_openBlock(), _createElementBlock(_Fragment, { key: 3 }, [
+                  _createElementVNode("div", { class: "pf-headerblock" }, [
+                    (_ctx.settings.headerImage)
+                      ? (_openBlock(), _createElementBlock("div", {
+                          key: 0,
+                          class: "pf-banner",
+                          style: _normalizeStyle(_ctx.bannerStyle)
+                        }, null, 4 /* STYLE */))
+                      : _createCommentVNode("v-if", true),
+                    (!_ctx.isStepper || _ctx.step===-1)
+                      ? (_openBlock(), _createElementBlock(_Fragment, { key: 1 }, [
+                          _createElementVNode("h1", { class: "pf-title" }, _toDisplayString(_ctx.flow.title), 1 /* TEXT */),
+                          (_ctx.flow.description)
+                            ? (_openBlock(), _createElementBlock("p", {
+                                key: 0,
+                                class: "pf-desc"
+                              }, _toDisplayString(_ctx.flow.description), 1 /* TEXT */))
+                            : _createCommentVNode("v-if", true),
+                          (_ctx.flow.remaining!==null && _ctx.flow.remaining!==undefined)
+                            ? (_openBlock(), _createElementBlock("div", {
+                                key: 1,
+                                class: "pf-remaining"
+                              }, _toDisplayString(_ctx.flow.remaining) + " spot(s) remaining", 1 /* TEXT */))
+                            : _createCommentVNode("v-if", true)
+                        ], 64 /* STABLE_FRAGMENT */))
+                      : _createCommentVNode("v-if", true)
+                  ]),
+                  (_ctx.isStepper && _ctx.step===-1)
+                    ? (_openBlock(), _createElementBlock("div", {
+                        key: 0,
+                        class: "text-center q-mt-xl"
+                      }, [
+                        _createVNode(_component_q_btn, {
+                          unelevated: "",
+                          "no-caps": "",
+                          color: "primary",
+                          size: "lg",
+                          onClick: $event => (_ctx.step=0)
+                        }, {
+                          default: _withCtx(() => [
+                            _createElementVNode("span", null, "Start"),
+                            _createVNode(_component_q_icon, {
+                              name: "arrow_forward",
+                              class: "q-ml-sm"
+                            })
+                          ]),
+                          _: 1 /* STABLE */
+                        }, 8 /* PROPS */, ["onClick"]),
+                        (_ctx.pricing.mode==='fixed' && _ctx.pricing.amountSat>0)
+                          ? (_openBlock(), _createElementBlock("div", {
+                              key: 0,
+                              class: "pf-hint q-mt-md"
+                            }, _toDisplayString(_ctx.formatSats(_ctx.pricing.amountSat)) + " sats to complete", 1 /* TEXT */))
+                          : _createCommentVNode("v-if", true)
+                      ]))
+                    : (_openBlock(), _createElementBlock(_Fragment, { key: 1 }, [
+                        (_ctx.isStepper)
+                          ? (_openBlock(), _createBlock(_component_q_linear_progress, {
+                              key: 0,
+                              value: _ctx.stepProgress,
+                              rounded: "",
+                              class: "q-mb-md",
+                              "aria-label": "Form progress"
+                            }, null, 8 /* PROPS */, ["value"]))
+                          : _createCommentVNode("v-if", true),
                         (_openBlock(true), _createElementBlock(_Fragment, null, _renderList(_ctx.formFields, (field, i) => {
                           return (_openBlock(), _createElementBlock(_Fragment, null, [
                             (!_ctx.isStepper || i===_ctx.step)
                               ? (_openBlock(), _createElementBlock("div", {
-                                  key: field.id
+                                  key: field.id,
+                                  class: "pf-card"
                                 }, [
                                   (_ctx.isStepper)
                                     ? (_openBlock(), _createElementBlock("div", {
@@ -269,132 +243,155 @@ return function render(_ctx, _cache) {
                                                   : _createCommentVNode("v-if", true)
                                       ]))
                                     : (_openBlock(), _createElementBlock(_Fragment, { key: 1 }, [
+                                        _createElementVNode("div", { class: "pf-qlabel" }, [
+                                          _createTextVNode(_toDisplayString(field.label), 1 /* TEXT */),
+                                          (field.required)
+                                            ? (_openBlock(), _createElementBlock("span", {
+                                                key: 0,
+                                                class: "pf-req"
+                                              }, "*"))
+                                            : (!_ctx.isOptionalLabel(field))
+                                              ? (_openBlock(), _createElementBlock("span", {
+                                                  key: 1,
+                                                  class: "tf-opt"
+                                                }, "(optional)"))
+                                              : _createCommentVNode("v-if", true)
+                                        ]),
+                                        (field.help)
+                                          ? (_openBlock(), _createElementBlock("div", {
+                                              key: 0,
+                                              class: "pf-qhelp"
+                                            }, _toDisplayString(field.help), 1 /* TEXT */))
+                                          : _createCommentVNode("v-if", true),
                                         (['text','email','phone','number','date','nostr_pubkey'].includes(field.type))
                                           ? (_openBlock(), _createBlock(_component_q_input, {
-                                              key: 0,
+                                              key: 1,
                                               outlined: "",
-                                              dense: "",
                                               type: field.type==='number'?'number':(field.type==='date'?'date':'text'),
                                               modelValue: _ctx.answers[field.id],
                                               "onUpdate:modelValue": $event => ((_ctx.answers[field.id]) = $event),
-                                              label: field.label+(field.required?' *':''),
-                                              hint: field.help
-                                            }, null, 8 /* PROPS */, ["type", "modelValue", "onUpdate:modelValue", "label", "hint"]))
+                                              placeholder: "Type your answer here…"
+                                            }, null, 8 /* PROPS */, ["type", "modelValue", "onUpdate:modelValue"]))
                                           : (field.type==='textarea')
                                             ? (_openBlock(), _createBlock(_component_q_input, {
-                                                key: 1,
+                                                key: 2,
                                                 outlined: "",
                                                 type: "textarea",
                                                 rows: "3",
                                                 modelValue: _ctx.answers[field.id],
                                                 "onUpdate:modelValue": $event => ((_ctx.answers[field.id]) = $event),
-                                                label: field.label+(field.required?' *':''),
-                                                hint: field.help
-                                              }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "label", "hint"]))
+                                                placeholder: "Type your answer here…"
+                                              }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]))
                                             : (field.type==='select')
                                               ? (_openBlock(), _createBlock(_component_q_select, {
-                                                  key: 2,
+                                                  key: 3,
                                                   outlined: "",
-                                                  dense: "",
                                                   options: field.options||[],
                                                   modelValue: _ctx.answers[field.id],
                                                   "onUpdate:modelValue": $event => ((_ctx.answers[field.id]) = $event),
-                                                  label: field.label+(field.required?' *':'')
-                                                }, null, 8 /* PROPS */, ["options", "modelValue", "onUpdate:modelValue", "label"]))
+                                                  placeholder: "Choose an option"
+                                                }, null, 8 /* PROPS */, ["options", "modelValue", "onUpdate:modelValue"]))
                                               : (field.type==='radio')
-                                                ? (_openBlock(), _createElementBlock("div", { key: 3 }, [
-                                                    _createElementVNode("div", { class: "text-subtitle2" }, [
-                                                      _createTextVNode(_toDisplayString(field.label), 1 /* TEXT */),
-                                                      (field.required)
-                                                        ? (_openBlock(), _createElementBlock("span", { key: 0 }, " *"))
-                                                        : _createCommentVNode("v-if", true)
-                                                    ]),
-                                                    _createVNode(_component_q_option_group, {
-                                                      options: (field.options||[]).map(o=>({label:o,value:o})),
-                                                      modelValue: _ctx.answers[field.id],
-                                                      "onUpdate:modelValue": $event => ((_ctx.answers[field.id]) = $event),
-                                                      type: "radio"
-                                                    }, null, 8 /* PROPS */, ["options", "modelValue", "onUpdate:modelValue"])
+                                                ? (_openBlock(), _createElementBlock("div", {
+                                                    key: 4,
+                                                    class: "tf-options"
+                                                  }, [
+                                                    (_openBlock(true), _createElementBlock(_Fragment, null, _renderList(field.options||[], (opt, oi) => {
+                                                      return (_openBlock(), _createElementBlock("div", {
+                                                        key: oi,
+                                                        class: _normalizeClass(["tf-option", {'tf-selected': _ctx.answers[field.id]===opt}]),
+                                                        onClick: $event => (_ctx.answers[field.id]=opt)
+                                                      }, [
+                                                        _createElementVNode("span", { class: "tf-key" }, _toDisplayString(_ctx.optionKey(oi)), 1 /* TEXT */),
+                                                        _createElementVNode("span", { class: "tf-optext" }, _toDisplayString(opt), 1 /* TEXT */),
+                                                        (_ctx.answers[field.id]===opt)
+                                                          ? (_openBlock(), _createBlock(_component_q_icon, {
+                                                              key: 0,
+                                                              name: "check",
+                                                              class: "tf-check"
+                                                            }))
+                                                          : _createCommentVNode("v-if", true)
+                                                      ], 10 /* CLASS, PROPS */, ["onClick"]))
+                                                    }), 128 /* KEYED_FRAGMENT */))
                                                   ]))
                                                 : (['checkbox','consent'].includes(field.type))
                                                   ? (_openBlock(), _createBlock(_component_q_checkbox, {
-                                                      key: 4,
+                                                      key: 5,
                                                       modelValue: _ctx.answers[field.id],
                                                       "onUpdate:modelValue": $event => ((_ctx.answers[field.id]) = $event),
-                                                      label: field.label+(field.required?' *':'')
+                                                      label: field.type==='consent'?'I accept':'Yes'
                                                     }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "label"]))
                                                   : _createCommentVNode("v-if", true)
                                       ], 64 /* STABLE_FRAGMENT */))
                                 ]))
                               : _createCommentVNode("v-if", true)
                           ], 64 /* STABLE_FRAGMENT */))
-                        }), 256 /* UNKEYED_FRAGMENT */))
-                      ]),
-                      (_ctx.submitError)
-                        ? (_openBlock(), _createElementBlock("div", {
-                            key: 3,
-                            class: "text-negative q-mt-md",
-                            role: "alert"
-                          }, _toDisplayString(_ctx.submitError), 1 /* TEXT */))
-                        : _createCommentVNode("v-if", true),
-                      (_ctx.isStepper)
-                        ? (_openBlock(), _createElementBlock("div", {
-                            key: 4,
-                            class: "row items-end justify-between q-mt-lg"
-                          }, [
-                            _createVNode(_component_q_btn, {
-                              flat: "",
-                              "no-caps": "",
-                              label: "Back",
-                              disable: _ctx.step<=0,
-                              onClick: _ctx.prevStep
-                            }, null, 8 /* PROPS */, ["disable", "onClick"]),
-                            _createElementVNode("div", { class: "text-center" }, [
+                        }), 256 /* UNKEYED_FRAGMENT */)),
+                        (_ctx.submitError)
+                          ? (_openBlock(), _createElementBlock("div", {
+                              key: 1,
+                              class: "text-negative q-mt-md",
+                              role: "alert"
+                            }, _toDisplayString(_ctx.submitError), 1 /* TEXT */))
+                          : _createCommentVNode("v-if", true),
+                        (_ctx.isStepper)
+                          ? (_openBlock(), _createElementBlock("div", {
+                              key: 2,
+                              class: "row items-end justify-between q-mt-sm"
+                            }, [
                               _createVNode(_component_q_btn, {
-                                unelevated: "",
+                                flat: "",
                                 "no-caps": "",
-                                color: "primary",
-                                loading: _ctx.submitting,
-                                onClick: _ctx.onOk
-                              }, {
-                                default: _withCtx(() => [
-                                  _createElementVNode("span", null, _toDisplayString(_ctx.isLastStep ? _ctx.submitLabel : 'OK'), 1 /* TEXT */),
-                                  (!_ctx.isLastStep)
-                                    ? (_openBlock(), _createBlock(_component_q_icon, {
-                                        key: 0,
-                                        name: "check",
-                                        class: "q-ml-xs"
-                                      }))
-                                    : _createCommentVNode("v-if", true)
-                                ]),
-                                _: 1 /* STABLE */
-                              }, 8 /* PROPS */, ["loading", "onClick"]),
-                              _createElementVNode("div", { class: "tf-hint" }, [
-                                _createTextVNode("press "),
-                                _createElementVNode("b", null, "Enter ↵")
+                                label: "Back",
+                                disable: _ctx.step<=0,
+                                onClick: _ctx.prevStep
+                              }, null, 8 /* PROPS */, ["disable", "onClick"]),
+                              _createElementVNode("div", { class: "text-center" }, [
+                                _createVNode(_component_q_btn, {
+                                  unelevated: "",
+                                  "no-caps": "",
+                                  color: "primary",
+                                  loading: _ctx.submitting,
+                                  onClick: _ctx.onOk
+                                }, {
+                                  default: _withCtx(() => [
+                                    _createElementVNode("span", null, _toDisplayString(_ctx.isLastStep ? _ctx.submitLabel : 'OK'), 1 /* TEXT */),
+                                    (!_ctx.isLastStep)
+                                      ? (_openBlock(), _createBlock(_component_q_icon, {
+                                          key: 0,
+                                          name: "check",
+                                          class: "q-ml-xs"
+                                        }))
+                                      : _createCommentVNode("v-if", true)
+                                  ]),
+                                  _: 1 /* STABLE */
+                                }, 8 /* PROPS */, ["loading", "onClick"]),
+                                _createElementVNode("div", { class: "tf-hint" }, [
+                                  _createTextVNode("press "),
+                                  _createElementVNode("b", null, "Enter ↵")
+                                ])
                               ])
-                            ])
-                          ]))
-                        : (_openBlock(), _createBlock(_component_q_btn, {
-                            key: 5,
-                            unelevated: "",
-                            "no-caps": "",
-                            color: "primary",
-                            class: "full-width q-mt-lg",
-                            loading: _ctx.submitting,
-                            label: _ctx.submitLabel,
-                            onClick: _ctx.submit
-                          }, null, 8 /* PROPS */, ["loading", "label", "onClick"])),
-                      (_ctx.hasNostrField)
-                        ? (_openBlock(), _createElementBlock("div", {
-                            key: 6,
-                            class: "text-caption text-grey-7 q-mt-sm"
-                          }, "Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login."))
-                        : _createCommentVNode("v-if", true)
-                    ]),
-                    _: 1 /* STABLE */
-                  }))
-                : _createCommentVNode("v-if", true)
+                            ]))
+                          : (_openBlock(), _createBlock(_component_q_btn, {
+                              key: 3,
+                              unelevated: "",
+                              "no-caps": "",
+                              color: "primary",
+                              size: "lg",
+                              class: "full-width q-mt-sm",
+                              loading: _ctx.submitting,
+                              label: _ctx.submitLabel,
+                              onClick: _ctx.submit
+                            }, null, 8 /* PROPS */, ["loading", "label", "onClick"])),
+                        (_ctx.hasNostrField)
+                          ? (_openBlock(), _createElementBlock("div", {
+                              key: 4,
+                              class: "pf-hint text-center q-mt-md"
+                            }, "Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login."))
+                          : _createCommentVNode("v-if", true)
+                      ], 64 /* STABLE_FRAGMENT */))
+                ], 64 /* STABLE_FRAGMENT */))
+              : _createCommentVNode("v-if", true)
     ]),
     _createVNode(_component_q_dialog, {
       modelValue: _ctx.invoiceDialog,
