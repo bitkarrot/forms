@@ -171,6 +171,13 @@ body.body--dark .fb-gear { background: rgba(30, 30, 30, 0.85); color: #eee; }
   opacity: 0.55;
   margin-bottom: 10px;
 }
+.fb-hint {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  opacity: 0.68;
+}
+.fb-hosts > div { padding: 2px 0; }
+.fb-hosts b { font-weight: 600; opacity: 1; }
 
 /* Live preview */
 .form-preview {
