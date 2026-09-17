@@ -1,0 +1,5 @@
+Third-party assets loaded at runtime from the LNbits core vendor bundle
+(/ext-assets/forms/_lnbits/): Vue.js (MIT), Quasar Framework (MIT),
+qrcode.vue (MIT), Material Icons (Apache-2.0).
+
+No third-party code is vendored into this repository at this time.

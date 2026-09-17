@@ -1,0 +1,72 @@
+{
+  "id": "forms",
+  "name": "Forms",
+  "short_description": "Payment-gated forms, registrations and paid workflows",
+  "description": "Build forms and paid registration flows: attendees submit and pay a Lightning invoice that settles directly into the organizer's wallet. Includes a public hosted page, preset light/dark themes with custom CSS, a website embed widget, CSV export, and optional Nostr pubkey prefill in the embed.",
+  "version": "0.1.0",
+  "min_lnbits_version": "1.6.0",
+  "extension_type": "wasm",
+  "license": "MIT",
+  "wasm": {
+    "module": "wasm/module.wasm",
+    "wit": "wasm/wit/world.wit",
+    "world": "forms",
+    "exports": [
+      {"name": "list-flows", "visibility": "authenticated"},
+      {"name": "create-flow", "visibility": "authenticated"},
+      {"name": "get-flow", "visibility": "authenticated"},
+      {"name": "update-flow", "visibility": "authenticated"},
+      {"name": "set-flow-status", "visibility": "authenticated"},
+      {"name": "list-submissions", "visibility": "authenticated"},
+      {"name": "update-submission", "visibility": "authenticated"},
+      {"name": "export-submissions", "visibility": "authenticated"},
+      {"name": "list-wallets", "visibility": "authenticated"},
+      {"name": "public-get-flow", "visibility": "public"},
+      {"name": "public-submit", "visibility": "public"},
+      {"name": "public-get-submission", "visibility": "public"},
+      {"name": "on-invoice-paid", "visibility": "event"}
+    ]
+  },
+  "ui_routes": [
+    {"path": "/forms", "entrypoint": "templates/index.html", "auth": "user"},
+    {"path": "/forms/f/{flowId}", "entrypoint": "templates/public.html", "auth": "public"}
+  ],
+  "api_routes": [
+    {"method": "GET", "path": "/flows", "export": "list-flows", "auth": "user"},
+    {"method": "POST", "path": "/flows", "export": "create-flow", "auth": "user"},
+    {"method": "GET", "path": "/flows/{flowId}", "export": "get-flow", "auth": "user"},
+    {"method": "PUT", "path": "/flows/{flowId}", "export": "update-flow", "auth": "user",
+     "ownerContext": {"table": "flows", "idParam": "flowId"}},
+    {"method": "POST", "path": "/flows/{flowId}/status", "export": "set-flow-status", "auth": "user",
+     "ownerContext": {"table": "flows", "idParam": "flowId"}},
+    {"method": "GET", "path": "/flows/{flowId}/submissions", "export": "list-submissions", "auth": "user",
+     "ownerContext": {"table": "flows", "idParam": "flowId"}},
+    {"method": "GET", "path": "/flows/{flowId}/export", "export": "export-submissions", "auth": "user",
+     "ownerContext": {"table": "flows", "idParam": "flowId"}},
+    {"method": "PATCH", "path": "/submissions/{subId}", "export": "update-submission", "auth": "user",
+     "ownerContext": {"table": "submissions", "idParam": "subId"}},
+    {"method": "GET", "path": "/wallets", "export": "list-wallets", "auth": "user"},
+    {"method": "GET", "path": "/f/{flowId}", "export": "public-get-flow", "auth": "public",
+     "ownerContext": {"table": "flows", "idParam": "flowId"}},
+    {"method": "POST", "path": "/f/{flowId}/submit", "export": "public-submit", "auth": "public",
+     "ownerContext": {"table": "flows", "idParam": "flowId"}},
+    {"method": "GET", "path": "/s/{submissionId}", "export": "public-get-submission", "auth": "public",
+     "ownerContext": {"table": "submissions", "idParam": "submissionId"}}
+  ],
+  "events": {"onInvoicePaid": "on-invoice-paid"},
+  "permissions": [
+    {"id": "ext.storage.read", "description": "Read form and submission data"},
+    {"id": "ext.storage.write", "description": "Create and update forms and submissions"},
+    {"id": "ext.storage.read_public", "description": "Serve public form pages",
+     "policies": [
+       {"table_name": "flows", "public_fields": [
+         "id", "title", "description", "schemaJson", "pricingJson", "currency",
+         "status", "capacity", "settingsJson", "createdAt", "updatedAt"
+       ], "source_id_field": "id"}
+     ]},
+    {"id": "wallet.create_invoice_public", "description": "Create checkout invoices paid to the organizer's wallet",
+     "policies": [{"table": "flows", "wallet_field": "walletId"}]},
+    {"id": "wallet.list", "description": "List your wallets for the payout picker"},
+    {"id": "utils.basic", "description": "Currency conversion and invoice utilities"}
+  ]
+}

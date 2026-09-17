@@ -1,0 +1,5 @@
+.vue-pending { visibility: hidden; }
+.public-page { min-height: 100vh; }
+.qr-box { display: flex; justify-content: center; padding: 12px; background: #fff; border-radius: 8px; }
+.pending-row { display: flex; align-items: center; gap: 12px; justify-content: center; }
+.ticket-code { font-family: monospace; letter-spacing: 0.08em; word-break: break-all; }
