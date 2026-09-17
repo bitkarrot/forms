@@ -11,13 +11,20 @@ See `PLAN.md` for the full design and phase plan.
 
 ## Status
 
-P0 scaffold complete: component-model WASM component (Rust + cargo-component,
-`wasm32-wasip1`), schema'd storage, public payment loop, admin + public UIs.
-Not yet verified end-to-end against a live LNbits instance.
+Feature-complete MVP (P0–P4): component-model WASM component (Rust +
+cargo-component, `wasm32-wasip1`), schema'd storage, verified public payment
+loop, admin builder UI, hosted public pages with themes/stepper/custom CSS,
+cross-origin JavaScript embed widget, deterministic packaging, and store
+metadata.
 
-Layout and conventions follow `../zapgoalswasm/` (a registry-included WASM
-extension). `../paidtasks/` uses the legacy WASM ABI and does not run on the
-current runtime.
+Verified against LNbits 1.6.2rc1: `tests/e2e_local.py` drives the full
+install → create → publish → submit → invoice → pay → ticket loop, and
+`tests/backend` runs 18 native mock-host tests covering capacity, expiry,
+quarantine, idempotency, and approval flows.
+
+Layout and conventions follow
+[zapgoalswasm](https://github.com/bitkarrot/zapgoalswasm), a registry-included
+WASM extension.
 
 ## Build & test
 
