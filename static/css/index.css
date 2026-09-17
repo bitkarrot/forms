@@ -1,3 +1,25 @@
 .vue-pending { visibility: hidden; }
 .ticket-code { font-family: monospace; letter-spacing: 0.08em; }
 .field-row { border: 1px solid rgba(128, 128, 128, 0.3); }
+
+.tf-qlist { max-height: 420px; overflow-y: auto; }
+.tf-qcard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 6px 10px 12px;
+  margin-bottom: 6px;
+  border: 1px solid rgba(128, 128, 128, 0.3);
+  border-left: 3px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tf-qcard:hover { background: rgba(128, 128, 128, 0.08); }
+.tf-qcard.tf-active {
+  border-left-color: var(--q-primary);
+  background: rgba(128, 128, 128, 0.08);
+}
+.tf-qnum { font-size: 0.8rem; font-weight: 600; opacity: 0.6; min-width: 1.2em; }
+.tf-qicon { opacity: 0.6; }
+.tf-qcard-label { flex: 1; font-size: 0.95rem; }

@@ -36,7 +36,7 @@
       </q-td></template>
     </q-table>
 
-    <q-dialog v-model="flowDialog.show"><q-card class="q-pa-lg" style="min-width:min(92vw,560px)">
+    <q-dialog v-model="flowDialog.show"><q-card class="q-pa-lg" style="min-width:min(94vw,880px)">
       <div class="text-h6 q-mb-md">{{flowDialog.editing?'Edit flow':'New flow'}}</div>
       <div class="q-gutter-md">
         <q-select v-if="!flowDialog.editing" outlined dense emit-value map-options v-model="flowDialog.template" :options="flowTemplates.map(t=>({value:t.value,label:t.label}))" label="Start from template" @update:model-value="applyTemplate"></q-select>
@@ -53,25 +53,46 @@
         </div>
         <div>
           <div class="row items-center q-mb-xs">
-            <div class="text-subtitle2">Fields</div>
+            <div class="text-subtitle2">Questions</div>
             <q-space></q-space>
-            <q-btn flat dense no-caps size="sm" icon="add" label="Add field" @click="addField"></q-btn>
+            <q-btn unelevated dense no-caps size="sm" color="primary" icon="add" label="Add question">
+              <q-menu anchor="bottom right" self="top right"><q-list dense style="min-width:190px">
+                <q-item v-for="t in fieldTypeOptions" :key="t.value" clickable v-close-popup @click="addField(t.value)">
+                  <q-item-section avatar><q-icon :name="t.icon" size="sm"></q-icon></q-item-section>
+                  <q-item-section>{{t.label}}</q-item-section>
+                </q-item>
+              </q-list></q-menu>
+            </q-btn>
           </div>
-          <div v-if="!flowDialog.data.fields.length" class="text-grey-7 q-mb-sm">No fields — the form will only collect a payment.</div>
-          <div v-for="(field, i) in flowDialog.data.fields" :key="i" class="field-row q-mb-sm q-pa-sm rounded-borders">
-            <div class="row q-col-gutter-sm items-center">
-              <q-select class="col-12 col-sm-4" outlined dense emit-value map-options v-model="field.type" :options="fieldTypeOptions" label="Type" @update:model-value="field.type==='consent'&&(field.required=true)"></q-select>
-              <q-input class="col-12 col-sm-5" outlined dense v-model="field.label" label="Label"></q-input>
-              <div class="col-12 col-sm-3 row items-center justify-end">
-                <q-checkbox dense v-model="field.required" label="Required" :disable="field.type==='consent'"></q-checkbox>
-                <q-btn flat round dense size="sm" icon="arrow_upward" aria-label="Move up" :disable="i===0" @click="moveField(i,-1)"></q-btn>
-                <q-btn flat round dense size="sm" icon="arrow_downward" aria-label="Move down" :disable="i===flowDialog.data.fields.length-1" @click="moveField(i,1)"></q-btn>
-                <q-btn flat round dense size="sm" icon="delete" color="negative" aria-label="Delete field" @click="removeField(i)"></q-btn>
+          <div v-if="!flowDialog.data.fields.length" class="text-grey-7 q-mb-sm">No questions — the form will only collect a payment.</div>
+          <div v-else class="row q-col-gutter-md">
+            <div class="col-12 col-sm-5 tf-qlist">
+              <div v-for="(field, i) in flowDialog.data.fields" :key="i" class="tf-qcard" :class="{'tf-active': i===flowDialog.sel}" @click="selectField(i)">
+                <span class="tf-qnum">{{i+1}}</span>
+                <q-icon :name="fieldIcon(field.type)" size="xs" class="tf-qicon"></q-icon>
+                <span class="tf-qcard-label ellipsis">{{field.label||'Untitled question'}}</span>
+                <q-btn flat round dense size="sm" icon="more_vert" aria-label="Question actions" @click.stop>
+                  <q-menu><q-list dense>
+                    <q-item clickable v-close-popup :disable="i===0" @click="moveField(i,-1)"><q-item-section>Move up</q-item-section></q-item>
+                    <q-item clickable v-close-popup :disable="i===flowDialog.data.fields.length-1" @click="moveField(i,1)"><q-item-section>Move down</q-item-section></q-item>
+                    <q-item clickable v-close-popup @click="duplicateField(i)"><q-item-section>Duplicate</q-item-section></q-item>
+                    <q-item clickable v-close-popup @click="removeField(i)"><q-item-section class="text-negative">Delete</q-item-section></q-item>
+                  </q-list></q-menu>
+                </q-btn>
               </div>
-              <q-input class="col-12 col-sm-6" outlined dense v-model="field.id" label="Field ID" hint="Auto from label if empty"></q-input>
-              <q-input class="col-12 col-sm-6" outlined dense v-model="field.help" label="Help text (optional)"></q-input>
-              <q-input v-if="['select','radio'].includes(field.type)" class="col-12" outlined dense v-model="field.optionsText" label="Options (comma-separated)"></q-input>
-              <div v-if="field.type==='nostr_pubkey'" class="col-12 text-caption text-grey-7">One-click Nostr sign-in only works in the embed widget — on the hosted page attendees paste their npub manually.</div>
+            </div>
+            <div class="col-12 col-sm-7" v-if="flowDialog.data.fields[flowDialog.sel]">
+              <div class="q-gutter-sm">
+                <q-select outlined dense emit-value map-options v-model="flowDialog.data.fields[flowDialog.sel].type" :options="fieldTypeOptions" label="Question type" @update:model-value="flowDialog.data.fields[flowDialog.sel].type==='consent'&&(flowDialog.data.fields[flowDialog.sel].required=true)">
+                  <template #option="scope"><q-item v-bind="scope.itemProps"><q-item-section avatar><q-icon :name="scope.opt.icon"></q-icon></q-item-section><q-item-section>{{scope.opt.label}}</q-item-section></q-item></template>
+                </q-select>
+                <q-input outlined dense v-model="flowDialog.data.fields[flowDialog.sel].label" label="Question" placeholder="Your question here"></q-input>
+                <q-input outlined dense v-model="flowDialog.data.fields[flowDialog.sel].help" label="Description (optional)"></q-input>
+                <q-input outlined dense v-model="flowDialog.data.fields[flowDialog.sel].id" label="Field ID" hint="Auto from question if empty"></q-input>
+                <q-input v-if="['select','radio'].includes(flowDialog.data.fields[flowDialog.sel].type)" outlined dense type="textarea" autogrow v-model="flowDialog.data.fields[flowDialog.sel].optionsText" label="Choices (comma-separated)"></q-input>
+                <q-toggle v-model="flowDialog.data.fields[flowDialog.sel].required" label="Required" :disable="flowDialog.data.fields[flowDialog.sel].type==='consent'"></q-toggle>
+                <div v-if="flowDialog.data.fields[flowDialog.sel].type==='nostr_pubkey'" class="text-caption text-grey-7">One-click Nostr sign-in only works in the embed widget — on the hosted page attendees paste their npub manually.</div>
+              </div>
             </div>
           </div>
         </div>

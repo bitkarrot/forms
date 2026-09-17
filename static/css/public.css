@@ -3,3 +3,40 @@
 .qr-box { display: flex; justify-content: center; padding: 12px; background: #fff; border-radius: 8px; }
 .pending-row { display: flex; align-items: center; gap: 12px; justify-content: center; }
 .ticket-code { font-family: monospace; letter-spacing: 0.08em; word-break: break-all; }
+
+.tf-q { animation: tf-fadein 0.25s ease; }
+@keyframes tf-fadein { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.tf-qnum { font-size: 0.95rem; font-weight: 600; opacity: 0.75; margin-bottom: 6px; }
+.tf-qlabel { font-size: 1.6rem; font-weight: 700; line-height: 1.25; margin-bottom: 4px; }
+.tf-opt { font-size: 0.85rem; font-weight: 400; opacity: 0.55; margin-left: 8px; }
+.tf-qhelp { font-size: 1rem; opacity: 0.65; margin-bottom: 14px; }
+.tf-q .q-field, .tf-q .tf-options, .tf-q .q-checkbox { margin-top: 10px; }
+.tf-options { display: flex; flex-direction: column; gap: 8px; }
+.tf-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tf-option:hover { background: rgba(128, 128, 128, 0.08); }
+.tf-option.tf-selected { border-color: var(--q-primary); border-width: 2px; }
+.tf-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 4px;
+  border: 1px solid rgba(128, 128, 128, 0.45);
+  border-radius: 5px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.tf-optext { flex: 1; }
+.tf-check { color: var(--q-primary); }
+.tf-hint { font-size: 0.75rem; opacity: 0.55; margin-top: 6px; }
+.tf-hint b { font-weight: 600; }

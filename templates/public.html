@@ -24,25 +24,58 @@
           <div class="text-h6 ticket-code">{{submission.ticketCode}}</div>
         </div>
       </q-card>
-      <q-card v-else-if="flow" class="q-pa-lg">
-        <h1 class="text-h5 q-mt-none q-mb-sm">{{flow.title}}</h1>
+      <q-card v-else-if="flow && isStepper && step===-1" class="q-pa-xl text-center tf-welcome">
+        <h1 class="text-h4 q-mt-none q-mb-sm">{{flow.title}}</h1>
         <p v-if="flow.description" class="text-grey-8">{{flow.description}}</p>
         <div v-if="flow.remaining!==null && flow.remaining!==undefined" class="text-caption q-mb-md">{{flow.remaining}} spot(s) remaining</div>
+        <q-btn unelevated no-caps color="primary" size="lg" @click="step=0"><span>Start</span><q-icon name="arrow_forward" class="q-ml-sm"></q-icon></q-btn>
+        <div v-if="pricing.mode==='fixed' && pricing.amountSat>0" class="text-caption q-mt-lg">{{formatSats(pricing.amountSat)}} sats to complete</div>
+      </q-card>
+      <q-card v-else-if="flow" class="q-pa-lg">
+        <template v-if="!isStepper">
+          <h1 class="text-h5 q-mt-none q-mb-sm">{{flow.title}}</h1>
+          <p v-if="flow.description" class="text-grey-8">{{flow.description}}</p>
+          <div v-if="flow.remaining!==null && flow.remaining!==undefined" class="text-caption q-mb-md">{{flow.remaining}} spot(s) remaining</div>
+        </template>
         <q-linear-progress v-if="isStepper" :value="stepProgress" rounded class="q-mb-md" aria-label="Form progress"></q-linear-progress>
         <div class="q-gutter-md">
-          <div v-for="(field, i) in formFields" :key="field.id" v-show="!isStepper || i===step">
-            <q-input v-if="['text','email','phone','number','date','nostr_pubkey'].includes(field.type)" outlined dense :type="field.type==='number'?'number':(field.type==='date'?'date':'text')" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')" :hint="field.help"></q-input>
-            <q-input v-else-if="field.type==='textarea'" outlined type="textarea" rows="3" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')" :hint="field.help"></q-input>
-            <q-select v-else-if="field.type==='select'" outlined dense :options="field.options||[]" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')"></q-select>
-            <div v-else-if="field.type==='radio'"><div class="text-subtitle2">{{field.label}}<span v-if="field.required"> *</span></div><q-option-group :options="(field.options||[]).map(o=>({label:o,value:o}))" v-model="answers[field.id]" type="radio"></q-option-group></div>
-            <q-checkbox v-else-if="['checkbox','consent'].includes(field.type)" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')"></q-checkbox>
-          </div>
+          <template v-for="(field, i) in formFields"><div :key="field.id" v-if="!isStepper || i===step">
+            <template v-if="isStepper">
+              <div class="tf-q">
+                <div class="tf-qnum">{{i+1}} <q-icon name="arrow_forward" size="0.9em"></q-icon></div>
+                <div class="tf-qlabel">{{field.label}}<span v-if="!field.required" class="tf-opt">(optional)</span></div>
+                <div v-if="field.help" class="tf-qhelp">{{field.help}}</div>
+                <q-input v-if="['text','email','phone','number','date','nostr_pubkey'].includes(field.type)" outlined :type="field.type==='number'?'number':(field.type==='date'?'date':'text')" v-model="answers[field.id]" placeholder="Type your answer here…"></q-input>
+                <q-input v-else-if="field.type==='textarea'" outlined type="textarea" rows="4" v-model="answers[field.id]" placeholder="Type your answer here…"></q-input>
+                <q-select v-else-if="field.type==='select'" outlined :options="field.options||[]" v-model="answers[field.id]" placeholder="Choose an option"></q-select>
+                <div v-else-if="field.type==='radio'" class="tf-options">
+                  <div v-for="(opt, oi) in field.options||[]" :key="oi" class="tf-option" :class="{'tf-selected': answers[field.id]===opt}" @click="chooseOption(field, opt)">
+                    <span class="tf-key">{{optionKey(oi)}}</span>
+                    <span class="tf-optext">{{opt}}</span>
+                    <q-icon v-if="answers[field.id]===opt" name="check" class="tf-check"></q-icon>
+                  </div>
+                </div>
+                <q-checkbox v-else-if="['checkbox','consent'].includes(field.type)" v-model="answers[field.id]" :label="field.type==='consent'?'I accept':'Yes'"></q-checkbox>
+              </div>
+            </template>
+            <template v-else>
+              <q-input v-if="['text','email','phone','number','date','nostr_pubkey'].includes(field.type)" outlined dense :type="field.type==='number'?'number':(field.type==='date'?'date':'text')" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')" :hint="field.help"></q-input>
+              <q-input v-else-if="field.type==='textarea'" outlined type="textarea" rows="3" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')" :hint="field.help"></q-input>
+              <q-select v-else-if="field.type==='select'" outlined dense :options="field.options||[]" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')"></q-select>
+              <div v-else-if="field.type==='radio'"><div class="text-subtitle2">{{field.label}}<span v-if="field.required"> *</span></div><q-option-group :options="(field.options||[]).map(o=>({label:o,value:o}))" v-model="answers[field.id]" type="radio"></q-option-group></div>
+              <q-checkbox v-else-if="['checkbox','consent'].includes(field.type)" v-model="answers[field.id]" :label="field.label+(field.required?' *':'')"></q-checkbox>
+            </template>
+          </div></template>
         </div>
         <div v-if="submitError" class="text-negative q-mt-md" role="alert">{{submitError}}</div>
-        <div v-if="isStepper" class="row justify-between q-mt-lg">
-          <q-btn flat no-caps label="Back" :disable="step===0" @click="step=Math.max(0,step-1);submitError=''"></q-btn>
-          <q-btn v-if="step<formFields.length-1" unelevated no-caps color="primary" label="Next" @click="nextStep"></q-btn>
-          <q-btn v-else unelevated no-caps color="primary" :loading="submitting" :label="submitLabel" @click="submit"></q-btn>
+        <div v-if="isStepper" class="row items-end justify-between q-mt-lg">
+          <q-btn flat no-caps label="Back" :disable="step<=0" @click="prevStep"></q-btn>
+          <div class="text-center">
+            <q-btn unelevated no-caps color="primary" :loading="submitting" @click="onOk">
+              <span>{{isLastStep ? submitLabel : 'OK'}}</span><q-icon v-if="!isLastStep" name="check" class="q-ml-xs"></q-icon>
+            </q-btn>
+            <div class="tf-hint">press <b>Enter ↵</b></div>
+          </div>
         </div>
         <q-btn v-else unelevated no-caps color="primary" class="full-width q-mt-lg" :loading="submitting" :label="submitLabel" @click="submit"></q-btn>
         <div v-if="hasNostrField" class="text-caption text-grey-7 q-mt-sm">Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login.</div>

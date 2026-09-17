@@ -7,7 +7,7 @@
     data: () => ({
       flow: null, settings: {}, loading: true, loadError: '', answers: {}, submitting: false,
       submitError: '', invoice: null, invoiceDialog: false, confirmed: false, submission: null,
-      pollTimer: null, tickTimer: null, nowTs: Math.floor(Date.now() / 1000), step: 0, expired: false,
+      pollTimer: null, tickTimer: null, nowTs: Math.floor(Date.now() / 1000), step: -1, expired: false,
     }),
     computed: {
       formFields() {
@@ -17,6 +17,7 @@
       pricing() { try { return JSON.parse(this.flow?.pricingJson || '{}') } catch (_) { return {} } },
       isStepper() { return this.settings.renderer === 'stepper' && this.formFields.length > 0 },
       stepProgress() { return this.formFields.length ? (this.step + 1) / this.formFields.length : 0 },
+      isLastStep() { return this.step === this.formFields.length - 1 },
       expiresIn() {
         if (!this.invoice?.expiresAt) return null
         return Math.max(0, Number(this.invoice.expiresAt) - this.nowTs)
@@ -80,6 +81,25 @@
         this.submitError = ''
         if (this.step < this.formFields.length - 1) this.step += 1
       },
+      prevStep() { this.step = Math.max(-1, this.step - 1); this.submitError = '' },
+      onOk() {
+        if (this.step === -1) { this.step = 0; return }
+        if (this.isLastStep) { this.submit(); return }
+        this.nextStep()
+      },
+      optionKey(i) { return String.fromCharCode(65 + i) },
+      chooseOption(field, opt) {
+        this.answers[field.id] = opt
+        if (!this.isLastStep) setTimeout(() => this.nextStep(), 280)
+      },
+      onKey(e) {
+        if (e.key !== 'Enter' || !this.flow || this.loading || this.invoiceDialog || this.confirmed) return
+        if (e.target && e.target.tagName === 'TEXTAREA') return
+        if (document.querySelector('.q-menu, .q-dialog')) return
+        e.preventDefault()
+        if (this.isStepper) this.onOk()
+        else this.submit()
+      },
       async submit() {
         if (this.submitting) return
         this.submitting = true; this.submitError = ''
@@ -138,7 +158,8 @@
         }
       },
     },
-    beforeUnmount() { this.stopPolling(); this.stopTicking() },
+    mounted() { window.addEventListener('keydown', this.onKey) },
+    beforeUnmount() { this.stopPolling(); this.stopTicking(); window.removeEventListener('keydown', this.onKey) },
   })
   app.use(Quasar)
   if (window.QrcodeVue?.default) app.component('qrcode-vue', window.QrcodeVue.default)

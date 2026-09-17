@@ -1,5 +1,5 @@
 window.FORMS_INDEX_RENDER=function(){
-const { createElementVNode: _createElementVNode, resolveComponent: _resolveComponent, createVNode: _createVNode, openBlock: _openBlock, createElementBlock: _createElementBlock, createCommentVNode: _createCommentVNode, toDisplayString: _toDisplayString, withCtx: _withCtx, createBlock: _createBlock, createTextVNode: _createTextVNode, renderList: _renderList, Fragment: _Fragment } = Vue
+const { createElementVNode: _createElementVNode, resolveComponent: _resolveComponent, createVNode: _createVNode, openBlock: _openBlock, createElementBlock: _createElementBlock, createCommentVNode: _createCommentVNode, toDisplayString: _toDisplayString, withCtx: _withCtx, createBlock: _createBlock, createTextVNode: _createTextVNode, renderList: _renderList, Fragment: _Fragment, resolveDirective: _resolveDirective, withDirectives: _withDirectives, withModifiers: _withModifiers, normalizeClass: _normalizeClass, normalizeProps: _normalizeProps, guardReactiveProps: _guardReactiveProps } = Vue
 
 return function render(_ctx, _cache) {
   const _component_q_space = _resolveComponent("q-space")
@@ -13,7 +13,13 @@ return function render(_ctx, _cache) {
   const _component_q_select = _resolveComponent("q-select")
   const _component_q_input = _resolveComponent("q-input")
   const _component_q_checkbox = _resolveComponent("q-checkbox")
+  const _component_q_item_section = _resolveComponent("q-item-section")
+  const _component_q_item = _resolveComponent("q-item")
+  const _component_q_list = _resolveComponent("q-list")
+  const _component_q_menu = _resolveComponent("q-menu")
+  const _component_q_toggle = _resolveComponent("q-toggle")
   const _component_q_dialog = _resolveComponent("q-dialog")
+  const _directive_close_popup = _resolveDirective("close-popup")
 
   return (_openBlock(), _createElementBlock("div", {
     class: "q-pa-md",
@@ -198,7 +204,7 @@ return function render(_ctx, _cache) {
       default: _withCtx(() => [
         _createVNode(_component_q_card, {
           class: "q-pa-lg",
-          style: {"min-width":"min(92vw,560px)"}
+          style: {"min-width":"min(94vw,880px)"}
         }, {
           default: _withCtx(() => [
             _createElementVNode("div", { class: "text-h6 q-mb-md" }, _toDisplayString(_ctx.flowDialog.editing?'Edit flow':'New flow'), 1 /* TEXT */),
@@ -307,125 +313,271 @@ return function render(_ctx, _cache) {
               ]),
               _createElementVNode("div", null, [
                 _createElementVNode("div", { class: "row items-center q-mb-xs" }, [
-                  _createElementVNode("div", { class: "text-subtitle2" }, "Fields"),
+                  _createElementVNode("div", { class: "text-subtitle2" }, "Questions"),
                   _createVNode(_component_q_space),
                   _createVNode(_component_q_btn, {
-                    flat: "",
+                    unelevated: "",
                     dense: "",
                     "no-caps": "",
                     size: "sm",
+                    color: "primary",
                     icon: "add",
-                    label: "Add field",
-                    onClick: _ctx.addField
-                  }, null, 8 /* PROPS */, ["onClick"])
+                    label: "Add question"
+                  }, {
+                    default: _withCtx(() => [
+                      _createVNode(_component_q_menu, {
+                        anchor: "bottom right",
+                        self: "top right"
+                      }, {
+                        default: _withCtx(() => [
+                          _createVNode(_component_q_list, {
+                            dense: "",
+                            style: {"min-width":"190px"}
+                          }, {
+                            default: _withCtx(() => [
+                              (_openBlock(true), _createElementBlock(_Fragment, null, _renderList(_ctx.fieldTypeOptions, (t) => {
+                                return _withDirectives((_openBlock(), _createBlock(_component_q_item, {
+                                  key: t.value,
+                                  clickable: "",
+                                  onClick: $event => (_ctx.addField(t.value))
+                                }, {
+                                  default: _withCtx(() => [
+                                    _createVNode(_component_q_item_section, { avatar: "" }, {
+                                      default: _withCtx(() => [
+                                        _createVNode(_component_q_icon, {
+                                          name: t.icon,
+                                          size: "sm"
+                                        }, null, 8 /* PROPS */, ["name"])
+                                      ]),
+                                      _: 2 /* DYNAMIC */
+                                    }, 1024 /* DYNAMIC_SLOTS */),
+                                    _createVNode(_component_q_item_section, null, {
+                                      default: _withCtx(() => [
+                                        _createTextVNode(_toDisplayString(t.label), 1 /* TEXT */)
+                                      ]),
+                                      _: 2 /* DYNAMIC */
+                                    }, 1024 /* DYNAMIC_SLOTS */)
+                                  ]),
+                                  _: 2 /* DYNAMIC */
+                                }, 1032 /* PROPS, DYNAMIC_SLOTS */, ["onClick"])), [
+                                  [_directive_close_popup]
+                                ])
+                              }), 128 /* KEYED_FRAGMENT */))
+                            ]),
+                            _: 1 /* STABLE */
+                          })
+                        ]),
+                        _: 1 /* STABLE */
+                      })
+                    ]),
+                    _: 1 /* STABLE */
+                  })
                 ]),
                 (!_ctx.flowDialog.data.fields.length)
                   ? (_openBlock(), _createElementBlock("div", {
                       key: 0,
                       class: "text-grey-7 q-mb-sm"
-                    }, "No fields — the form will only collect a payment."))
-                  : _createCommentVNode("v-if", true),
-                (_openBlock(true), _createElementBlock(_Fragment, null, _renderList(_ctx.flowDialog.data.fields, (field, i) => {
-                  return (_openBlock(), _createElementBlock("div", {
-                    key: i,
-                    class: "field-row q-mb-sm q-pa-sm rounded-borders"
-                  }, [
-                    _createElementVNode("div", { class: "row q-col-gutter-sm items-center" }, [
-                      _createVNode(_component_q_select, {
-                        class: "col-12 col-sm-4",
-                        outlined: "",
-                        dense: "",
-                        "emit-value": "",
-                        "map-options": "",
-                        modelValue: field.type,
-                        "onUpdate:modelValue": [$event => ((field.type) = $event), $event => (field.type==='consent'&&(field.required=true))],
-                        options: _ctx.fieldTypeOptions,
-                        label: "Type"
-                      }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "options"]),
-                      _createVNode(_component_q_input, {
-                        class: "col-12 col-sm-5",
-                        outlined: "",
-                        dense: "",
-                        modelValue: field.label,
-                        "onUpdate:modelValue": $event => ((field.label) = $event),
-                        label: "Label"
-                      }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
-                      _createElementVNode("div", { class: "col-12 col-sm-3 row items-center justify-end" }, [
-                        _createVNode(_component_q_checkbox, {
-                          dense: "",
-                          modelValue: field.required,
-                          "onUpdate:modelValue": $event => ((field.required) = $event),
-                          label: "Required",
-                          disable: field.type==='consent'
-                        }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "disable"]),
-                        _createVNode(_component_q_btn, {
-                          flat: "",
-                          round: "",
-                          dense: "",
-                          size: "sm",
-                          icon: "arrow_upward",
-                          "aria-label": "Move up",
-                          disable: i===0,
-                          onClick: $event => (_ctx.moveField(i,-1))
-                        }, null, 8 /* PROPS */, ["disable", "onClick"]),
-                        _createVNode(_component_q_btn, {
-                          flat: "",
-                          round: "",
-                          dense: "",
-                          size: "sm",
-                          icon: "arrow_downward",
-                          "aria-label": "Move down",
-                          disable: i===_ctx.flowDialog.data.fields.length-1,
-                          onClick: $event => (_ctx.moveField(i,1))
-                        }, null, 8 /* PROPS */, ["disable", "onClick"]),
-                        _createVNode(_component_q_btn, {
-                          flat: "",
-                          round: "",
-                          dense: "",
-                          size: "sm",
-                          icon: "delete",
-                          color: "negative",
-                          "aria-label": "Delete field",
-                          onClick: $event => (_ctx.removeField(i))
-                        }, null, 8 /* PROPS */, ["onClick"])
+                    }, "No questions — the form will only collect a payment."))
+                  : (_openBlock(), _createElementBlock("div", {
+                      key: 1,
+                      class: "row q-col-gutter-md"
+                    }, [
+                      _createElementVNode("div", { class: "col-12 col-sm-5 tf-qlist" }, [
+                        (_openBlock(true), _createElementBlock(_Fragment, null, _renderList(_ctx.flowDialog.data.fields, (field, i) => {
+                          return (_openBlock(), _createElementBlock("div", {
+                            key: i,
+                            class: _normalizeClass(["tf-qcard", {'tf-active': i===_ctx.flowDialog.sel}]),
+                            onClick: $event => (_ctx.selectField(i))
+                          }, [
+                            _createElementVNode("span", { class: "tf-qnum" }, _toDisplayString(i+1), 1 /* TEXT */),
+                            _createVNode(_component_q_icon, {
+                              name: _ctx.fieldIcon(field.type),
+                              size: "xs",
+                              class: "tf-qicon"
+                            }, null, 8 /* PROPS */, ["name"]),
+                            _createElementVNode("span", { class: "tf-qcard-label ellipsis" }, _toDisplayString(field.label||'Untitled question'), 1 /* TEXT */),
+                            _createVNode(_component_q_btn, {
+                              flat: "",
+                              round: "",
+                              dense: "",
+                              size: "sm",
+                              icon: "more_vert",
+                              "aria-label": "Question actions",
+                              onClick: _withModifiers(() => {}, ["stop"])
+                            }, {
+                              default: _withCtx(() => [
+                                _createVNode(_component_q_menu, null, {
+                                  default: _withCtx(() => [
+                                    _createVNode(_component_q_list, { dense: "" }, {
+                                      default: _withCtx(() => [
+                                        _withDirectives((_openBlock(), _createBlock(_component_q_item, {
+                                          clickable: "",
+                                          disable: i===0,
+                                          onClick: $event => (_ctx.moveField(i,-1))
+                                        }, {
+                                          default: _withCtx(() => [
+                                            _createVNode(_component_q_item_section, null, {
+                                              default: _withCtx(() => [
+                                                _createTextVNode("Move up")
+                                              ]),
+                                              _: 1 /* STABLE */
+                                            })
+                                          ]),
+                                          _: 1 /* STABLE */
+                                        }, 8 /* PROPS */, ["disable", "onClick"])), [
+                                          [_directive_close_popup]
+                                        ]),
+                                        _withDirectives((_openBlock(), _createBlock(_component_q_item, {
+                                          clickable: "",
+                                          disable: i===_ctx.flowDialog.data.fields.length-1,
+                                          onClick: $event => (_ctx.moveField(i,1))
+                                        }, {
+                                          default: _withCtx(() => [
+                                            _createVNode(_component_q_item_section, null, {
+                                              default: _withCtx(() => [
+                                                _createTextVNode("Move down")
+                                              ]),
+                                              _: 1 /* STABLE */
+                                            })
+                                          ]),
+                                          _: 1 /* STABLE */
+                                        }, 8 /* PROPS */, ["disable", "onClick"])), [
+                                          [_directive_close_popup]
+                                        ]),
+                                        _withDirectives((_openBlock(), _createBlock(_component_q_item, {
+                                          clickable: "",
+                                          onClick: $event => (_ctx.duplicateField(i))
+                                        }, {
+                                          default: _withCtx(() => [
+                                            _createVNode(_component_q_item_section, null, {
+                                              default: _withCtx(() => [
+                                                _createTextVNode("Duplicate")
+                                              ]),
+                                              _: 1 /* STABLE */
+                                            })
+                                          ]),
+                                          _: 1 /* STABLE */
+                                        }, 8 /* PROPS */, ["onClick"])), [
+                                          [_directive_close_popup]
+                                        ]),
+                                        _withDirectives((_openBlock(), _createBlock(_component_q_item, {
+                                          clickable: "",
+                                          onClick: $event => (_ctx.removeField(i))
+                                        }, {
+                                          default: _withCtx(() => [
+                                            _createVNode(_component_q_item_section, { class: "text-negative" }, {
+                                              default: _withCtx(() => [
+                                                _createTextVNode("Delete")
+                                              ]),
+                                              _: 1 /* STABLE */
+                                            })
+                                          ]),
+                                          _: 1 /* STABLE */
+                                        }, 8 /* PROPS */, ["onClick"])), [
+                                          [_directive_close_popup]
+                                        ])
+                                      ]),
+                                      _: 2 /* DYNAMIC */
+                                    }, 1024 /* DYNAMIC_SLOTS */)
+                                  ]),
+                                  _: 2 /* DYNAMIC */
+                                }, 1024 /* DYNAMIC_SLOTS */)
+                              ]),
+                              _: 2 /* DYNAMIC */
+                            }, 1032 /* PROPS, DYNAMIC_SLOTS */, ["onClick"])
+                          ], 10 /* CLASS, PROPS */, ["onClick"]))
+                        }), 128 /* KEYED_FRAGMENT */))
                       ]),
-                      _createVNode(_component_q_input, {
-                        class: "col-12 col-sm-6",
-                        outlined: "",
-                        dense: "",
-                        modelValue: field.id,
-                        "onUpdate:modelValue": $event => ((field.id) = $event),
-                        label: "Field ID",
-                        hint: "Auto from label if empty"
-                      }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
-                      _createVNode(_component_q_input, {
-                        class: "col-12 col-sm-6",
-                        outlined: "",
-                        dense: "",
-                        modelValue: field.help,
-                        "onUpdate:modelValue": $event => ((field.help) = $event),
-                        label: "Help text (optional)"
-                      }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
-                      (['select','radio'].includes(field.type))
-                        ? (_openBlock(), _createBlock(_component_q_input, {
-                            key: 0,
-                            class: "col-12",
-                            outlined: "",
-                            dense: "",
-                            modelValue: field.optionsText,
-                            "onUpdate:modelValue": $event => ((field.optionsText) = $event),
-                            label: "Options (comma-separated)"
-                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]))
-                        : _createCommentVNode("v-if", true),
-                      (field.type==='nostr_pubkey')
+                      (_ctx.flowDialog.data.fields[_ctx.flowDialog.sel])
                         ? (_openBlock(), _createElementBlock("div", {
-                            key: 1,
-                            class: "col-12 text-caption text-grey-7"
-                          }, "One-click Nostr sign-in only works in the embed widget — on the hosted page attendees paste their npub manually."))
+                            key: 0,
+                            class: "col-12 col-sm-7"
+                          }, [
+                            _createElementVNode("div", { class: "q-gutter-sm" }, [
+                              _createVNode(_component_q_select, {
+                                outlined: "",
+                                dense: "",
+                                "emit-value": "",
+                                "map-options": "",
+                                modelValue: _ctx.flowDialog.data.fields[_ctx.flowDialog.sel].type,
+                                "onUpdate:modelValue": [$event => ((_ctx.flowDialog.data.fields[_ctx.flowDialog.sel].type) = $event), $event => (_ctx.flowDialog.data.fields[_ctx.flowDialog.sel].type==='consent'&&(_ctx.flowDialog.data.fields[_ctx.flowDialog.sel].required=true))],
+                                options: _ctx.fieldTypeOptions,
+                                label: "Question type"
+                              }, {
+                                option: _withCtx((scope) => [
+                                  _createVNode(_component_q_item, _normalizeProps(_guardReactiveProps(scope.itemProps)), {
+                                    default: _withCtx(() => [
+                                      _createVNode(_component_q_item_section, { avatar: "" }, {
+                                        default: _withCtx(() => [
+                                          _createVNode(_component_q_icon, {
+                                            name: scope.opt.icon
+                                          }, null, 8 /* PROPS */, ["name"])
+                                        ]),
+                                        _: 2 /* DYNAMIC */
+                                      }, 1024 /* DYNAMIC_SLOTS */),
+                                      _createVNode(_component_q_item_section, null, {
+                                        default: _withCtx(() => [
+                                          _createTextVNode(_toDisplayString(scope.opt.label), 1 /* TEXT */)
+                                        ]),
+                                        _: 2 /* DYNAMIC */
+                                      }, 1024 /* DYNAMIC_SLOTS */)
+                                    ]),
+                                    _: 2 /* DYNAMIC */
+                                  }, 1040 /* FULL_PROPS, DYNAMIC_SLOTS */)
+                                ]),
+                                _: 1 /* STABLE */
+                              }, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "options"]),
+                              _createVNode(_component_q_input, {
+                                outlined: "",
+                                dense: "",
+                                modelValue: _ctx.flowDialog.data.fields[_ctx.flowDialog.sel].label,
+                                "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.fields[_ctx.flowDialog.sel].label) = $event),
+                                label: "Question",
+                                placeholder: "Your question here"
+                              }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                              _createVNode(_component_q_input, {
+                                outlined: "",
+                                dense: "",
+                                modelValue: _ctx.flowDialog.data.fields[_ctx.flowDialog.sel].help,
+                                "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.fields[_ctx.flowDialog.sel].help) = $event),
+                                label: "Description (optional)"
+                              }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                              _createVNode(_component_q_input, {
+                                outlined: "",
+                                dense: "",
+                                modelValue: _ctx.flowDialog.data.fields[_ctx.flowDialog.sel].id,
+                                "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.fields[_ctx.flowDialog.sel].id) = $event),
+                                label: "Field ID",
+                                hint: "Auto from question if empty"
+                              }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                              (['select','radio'].includes(_ctx.flowDialog.data.fields[_ctx.flowDialog.sel].type))
+                                ? (_openBlock(), _createBlock(_component_q_input, {
+                                    key: 0,
+                                    outlined: "",
+                                    dense: "",
+                                    type: "textarea",
+                                    autogrow: "",
+                                    modelValue: _ctx.flowDialog.data.fields[_ctx.flowDialog.sel].optionsText,
+                                    "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.fields[_ctx.flowDialog.sel].optionsText) = $event),
+                                    label: "Choices (comma-separated)"
+                                  }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]))
+                                : _createCommentVNode("v-if", true),
+                              _createVNode(_component_q_toggle, {
+                                modelValue: _ctx.flowDialog.data.fields[_ctx.flowDialog.sel].required,
+                                "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.fields[_ctx.flowDialog.sel].required) = $event),
+                                label: "Required",
+                                disable: _ctx.flowDialog.data.fields[_ctx.flowDialog.sel].type==='consent'
+                              }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "disable"]),
+                              (_ctx.flowDialog.data.fields[_ctx.flowDialog.sel].type==='nostr_pubkey')
+                                ? (_openBlock(), _createElementBlock("div", {
+                                    key: 1,
+                                    class: "text-caption text-grey-7"
+                                  }, "One-click Nostr sign-in only works in the embed widget — on the hosted page attendees paste their npub manually."))
+                                : _createCommentVNode("v-if", true)
+                            ])
+                          ]))
                         : _createCommentVNode("v-if", true)
-                    ])
-                  ]))
-                }), 128 /* KEYED_FRAGMENT */))
+                    ]))
               ]),
               _createVNode(_component_q_input, {
                 outlined: "",

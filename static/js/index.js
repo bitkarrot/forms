@@ -24,18 +24,22 @@
     return {preset: themePresetOptions.some(o => o.value === theme) ? theme : 'standard', mode: settings.themeMode === 'dark' ? 'dark' : 'light'}
   }
   const fieldTypeOptions = [
-    {value: 'text', label: 'Short text'},
-    {value: 'textarea', label: 'Long text'},
-    {value: 'email', label: 'Email'},
-    {value: 'phone', label: 'Phone'},
-    {value: 'number', label: 'Number'},
-    {value: 'date', label: 'Date'},
-    {value: 'select', label: 'Dropdown'},
-    {value: 'radio', label: 'Multiple choice'},
-    {value: 'checkbox', label: 'Checkbox'},
-    {value: 'consent', label: 'Consent'},
-    {value: 'nostr_pubkey', label: 'Nostr pubkey'},
+    {value: 'text', label: 'Short text', icon: 'text_fields'},
+    {value: 'textarea', label: 'Long text', icon: 'subject'},
+    {value: 'email', label: 'Email', icon: 'mail_outline'},
+    {value: 'phone', label: 'Phone', icon: 'phone'},
+    {value: 'number', label: 'Number', icon: 'tag'},
+    {value: 'date', label: 'Date', icon: 'event'},
+    {value: 'select', label: 'Dropdown', icon: 'arrow_drop_down_circle'},
+    {value: 'radio', label: 'Multiple choice', icon: 'radio_button_checked'},
+    {value: 'checkbox', label: 'Checkbox', icon: 'check_box'},
+    {value: 'consent', label: 'Consent', icon: 'gavel'},
+    {value: 'nostr_pubkey', label: 'Nostr pubkey', icon: 'key'},
   ]
+
+  function fieldIcon(type) {
+    return (fieldTypeOptions.find(t => t.value === type) || {}).icon || 'help_outline'
+  }
 
   function slugify(s) {
     return (s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40)
@@ -126,7 +130,7 @@
     data: () => ({
       flows: [], wallets: [], loading: false, loadError: '', saving: false, formError: '', isDark: false,
       themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions, flowTemplates,
-      flowDialog: {show: false, editing: false, template: 'blank', data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: ''}},
+      flowDialog: {show: false, editing: false, template: 'blank', sel: 0, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: ''}},
       subsDialog: {show: false, flow: null, rows: []},
       subsFilter: '', subsStatusFilter: null,
       shareDialog: {show: false, flow: null},
@@ -172,10 +176,10 @@
         if (flow) {
           const settings = JSON.parse(flow.settingsJson || '{}')
           const {preset, mode} = themeSettings(settings)
-          this.flowDialog = {show: true, editing: true, template: 'blank', data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || ''}}
+          this.flowDialog = {show: true, editing: true, template: 'blank', sel: 0, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || ''}}
         } else {
           const blank = flowTemplates[0].data
-          this.flowDialog = {show: true, editing: false, template: 'blank', data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: ''}}
+          this.flowDialog = {show: true, editing: false, template: 'blank', sel: 0, data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: ''}}
         }
       },
       applyTemplate(value) {
@@ -188,13 +192,29 @@
         d.requireApproval = tpl.data.requireApproval
         d.fields = tpl.data.fields.map(f => ({...f}))
       },
-      addField() { this.flowDialog.data.fields.push(newField()) },
-      removeField(i) { this.flowDialog.data.fields.splice(i, 1) },
+      fieldIcon,
+      selectField(i) { this.flowDialog.sel = i },
+      addField(type = 'text') {
+        const fields = this.flowDialog.data.fields
+        fields.push(newField(type))
+        this.flowDialog.sel = fields.length - 1
+      },
+      duplicateField(i) {
+        const fields = this.flowDialog.data.fields
+        fields.splice(i + 1, 0, {...fields[i], id: ''})
+        this.flowDialog.sel = i + 1
+      },
+      removeField(i) {
+        const fields = this.flowDialog.data.fields
+        fields.splice(i, 1)
+        this.flowDialog.sel = Math.min(this.flowDialog.sel, fields.length - 1)
+      },
       moveField(i, dir) {
         const fields = this.flowDialog.data.fields
         const j = i + dir
         if (j < 0 || j >= fields.length) return
         fields.splice(j, 0, fields.splice(i, 1)[0])
+        this.flowDialog.sel = j
       },
       async saveFlow() {
         if (this.saving) return
