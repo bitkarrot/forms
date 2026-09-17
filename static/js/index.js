@@ -191,6 +191,7 @@
         d.amountSat = tpl.data.amountSat
         d.requireApproval = tpl.data.requireApproval
         d.fields = tpl.data.fields.map(f => ({...f}))
+        this.flowDialog.sel = 0
       },
       fieldIcon,
       selectField(i) { this.flowDialog.sel = i },
