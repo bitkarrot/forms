@@ -15,6 +15,12 @@
     color-mix(in srgb, var(--q-secondary, var(--q-primary)) 5%, transparent)
   );
 }
+.fp-view-toggle {
+  background: rgba(128, 128, 128, 0.16);
+  border-radius: 999px;
+  padding: 3px;
+}
+.fp-view-toggle .q-btn { border-radius: 999px; padding: 0 14px; }
 .tf-qlist { max-height: 420px; overflow-y: auto; }
 .tf-qcard {
   display: flex;

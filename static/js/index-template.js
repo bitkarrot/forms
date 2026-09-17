@@ -220,11 +220,12 @@ return function render(_ctx, _cache) {
               _createVNode(_component_q_btn_toggle, {
                 modelValue: _ctx.flowDialog.view,
                 "onUpdate:modelValue": [$event => ((_ctx.flowDialog.view) = $event), _ctx.setView],
-                dense: "",
-                flat: "",
                 "no-caps": "",
+                unelevated: "",
+                rounded: "",
+                class: "fp-view-toggle",
                 "toggle-color": "primary",
-                options: [{value:'edit',label:'Edit'},{value:'preview',label:'Preview'}]
+                options: [{value:'edit',label:'Edit',icon:'edit'},{value:'preview',label:'Preview',icon:'visibility'}]
               }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"])
             ]),
             _createVNode(_component_q_separator),
@@ -1085,8 +1086,10 @@ return function render(_ctx, _cache) {
             }, 8 /* PROPS */, ["rows", "columns"]),
             _createElementVNode("div", { class: "row justify-end q-mt-md" }, [
               _createVNode(_component_q_btn, {
-                flat: "",
+                unelevated: "",
                 "no-caps": "",
+                color: "primary",
+                icon: "download",
                 label: "Export CSV",
                 onClick: _ctx.exportCsv
               }, null, 8 /* PROPS */, ["onClick"]),
@@ -1095,6 +1098,51 @@ return function render(_ctx, _cache) {
                 "no-caps": "",
                 label: "Close",
                 onClick: $event => (_ctx.subsDialog.show=false)
+              }, null, 8 /* PROPS */, ["onClick"])
+            ])
+          ]),
+          _: 1 /* STABLE */
+        })
+      ]),
+      _: 1 /* STABLE */
+    }, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+    _createVNode(_component_q_dialog, {
+      modelValue: _ctx.csvDialog.show,
+      "onUpdate:modelValue": $event => ((_ctx.csvDialog.show) = $event)
+    }, {
+      default: _withCtx(() => [
+        _createVNode(_component_q_card, {
+          class: "q-pa-lg",
+          style: {"min-width":"min(92vw,640px)"}
+        }, {
+          default: _withCtx(() => [
+            _createElementVNode("div", { class: "text-h6 q-mb-xs" }, "Export CSV"),
+            _createElementVNode("div", { class: "text-caption text-grey-7 q-mb-sm" }, [
+              _createTextVNode("Downloads are blocked inside the LNbits frame — copy the CSV below and save it as "),
+              _createElementVNode("b", null, _toDisplayString(_ctx.csvDialog.filename), 1 /* TEXT */)
+            ]),
+            _createVNode(_component_q_input, {
+              outlined: "",
+              readonly: "",
+              type: "textarea",
+              rows: "12",
+              "model-value": _ctx.csvDialog.content,
+              "input-style": "font-family:monospace;font-size:0.8rem"
+            }, null, 8 /* PROPS */, ["model-value"]),
+            _createElementVNode("div", { class: "row justify-end q-gutter-sm q-mt-md" }, [
+              _createVNode(_component_q_btn, {
+                flat: "",
+                "no-caps": "",
+                label: "Close",
+                onClick: $event => (_ctx.csvDialog.show=false)
+              }, null, 8 /* PROPS */, ["onClick"]),
+              _createVNode(_component_q_btn, {
+                unelevated: "",
+                "no-caps": "",
+                color: "primary",
+                icon: "content_copy",
+                label: "Copy CSV",
+                onClick: _ctx.copyCsv
               }, null, 8 /* PROPS */, ["onClick"])
             ])
           ]),

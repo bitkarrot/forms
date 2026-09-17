@@ -41,7 +41,7 @@
         <q-icon name="dynamic_form" size="sm" color="primary" class="q-mr-sm"></q-icon>
         <div class="text-h6">{{flowDialog.editing?'Edit flow':'New flow'}}</div>
         <q-space></q-space>
-        <q-btn-toggle v-model="flowDialog.view" dense flat no-caps toggle-color="primary" :options="[{value:'edit',label:'Edit'},{value:'preview',label:'Preview'}]" @update:model-value="setView"></q-btn-toggle>
+        <q-btn-toggle v-model="flowDialog.view" no-caps unelevated rounded class="fp-view-toggle" toggle-color="primary" :options="[{value:'edit',label:'Edit',icon:'edit'},{value:'preview',label:'Preview',icon:'visibility'}]" @update:model-value="setView"></q-btn-toggle>
       </div>
       <q-separator></q-separator>
       <div class="q-pa-lg">
@@ -193,7 +193,17 @@
           <q-btn v-if="['paid','confirmed'].includes(props.row.status)" flat dense no-caps size="sm" color="negative" label="Reject" @click="moderate(props.row,'rejected')"></q-btn>
         </q-td></template>
       </q-table>
-      <div class="row justify-end q-mt-md"><q-btn flat no-caps label="Export CSV" @click="exportCsv"></q-btn><q-btn flat no-caps label="Close" @click="subsDialog.show=false"></q-btn></div>
+      <div class="row justify-end q-mt-md"><q-btn unelevated no-caps color="primary" icon="download" label="Export CSV" @click="exportCsv"></q-btn><q-btn flat no-caps label="Close" @click="subsDialog.show=false"></q-btn></div>
+    </q-card></q-dialog>
+
+    <q-dialog v-model="csvDialog.show"><q-card class="q-pa-lg" style="min-width:min(92vw,640px)">
+      <div class="text-h6 q-mb-xs">Export CSV</div>
+      <div class="text-caption text-grey-7 q-mb-sm">Downloads are blocked inside the LNbits frame — copy the CSV below and save it as <b>{{csvDialog.filename}}</b></div>
+      <q-input outlined readonly type="textarea" rows="12" :model-value="csvDialog.content" input-style="font-family:monospace;font-size:0.8rem"></q-input>
+      <div class="row justify-end q-gutter-sm q-mt-md">
+        <q-btn flat no-caps label="Close" @click="csvDialog.show=false"></q-btn>
+        <q-btn unelevated no-caps color="primary" icon="content_copy" label="Copy CSV" @click="copyCsv"></q-btn>
+      </div>
     </q-card></q-dialog>
   </div>
 </div>

@@ -132,6 +132,7 @@
       themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions, flowTemplates,
       flowDialog: {show: false, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: ''}},
       subsDialog: {show: false, flow: null, rows: []},
+      csvDialog: {show: false, filename: '', content: ''},
       subsFilter: '', subsStatusFilter: null,
       shareDialog: {show: false, flow: null},
     }),
@@ -312,9 +313,16 @@
           const rows = (await this.api('GET', `/flows/${flow.id}/export`)).data || []
           const cols = ['id', 'status', 'amountSat', 'ticketCode', 'paymentHash', 'createdAt', 'paidAt', 'answersJson']
           const csv = [cols.join(',')].concat(rows.map(r => cols.map(c => JSON.stringify(r[c] ?? '')).join(','))).join('\n')
-          const blob = new Blob([csv], {type: 'text/csv'})
-          const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${flow.title || 'submissions'}.csv`; a.click()
+          this.csvDialog = {show: true, filename: `${(flow.title || 'submissions').replace(/[^\w-]+/g, '_')}.csv`, content: csv}
         } catch (e) { LNbitsBridge.notify(e.message, 'negative').catch(() => {}) }
+      },
+      async copyCsv() {
+        try {
+          await navigator.clipboard.writeText(this.csvDialog.content)
+          LNbitsBridge.notify('CSV copied to clipboard.', 'positive').catch(() => {})
+        } catch (_) {
+          LNbitsBridge.notify('Clipboard access is unavailable — select the text and copy manually.', 'warning').catch(() => {})
+        }
       },
       statusColor(s) { return {draft: 'grey', published: 'positive', closed: 'warning', archived: 'grey-6', pending_payment: 'orange', paid: 'positive', confirmed: 'positive', approved: 'teal', rejected: 'negative', cancelled: 'grey', expired: 'grey-6'}[s] || 'grey' },
       answersPreview(row) {
