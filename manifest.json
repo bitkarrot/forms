@@ -5,7 +5,7 @@
       "repo": "https://github.com/bitkarrot/forms",
       "version": "0.1.0",
       "archive": "https://github.com/bitkarrot/forms/releases/download/v0.1.0/forms-0.1.0.zip",
-      "hash": "680cb38e7ffe3b76a46564e6eb7d1ec512184b12b54a44dc02dcee807741133d",
+      "hash": "e6925174f336fc72e117e2a0dbd692684809470f6ea0dadca39f53e4c577be24",
       "min_lnbits_version": "1.6.0",
       "name": "Forms — Paid Workflows",
       "short_description": "Payment-gated forms, registrations and paid workflows",
