@@ -20,9 +20,9 @@ return function render(_ctx, _cache) {
   const _component_q_item_section = _resolveComponent("q-item-section")
   const _component_q_item = _resolveComponent("q-item")
   const _component_q_toggle = _resolveComponent("q-toggle")
+  const _component_q_tooltip = _resolveComponent("q-tooltip")
   const _component_q_expansion_item = _resolveComponent("q-expansion-item")
   const _component_q_color = _resolveComponent("q-color")
-  const _component_q_tooltip = _resolveComponent("q-tooltip")
   const _component_q_slider = _resolveComponent("q-slider")
   const _component_q_linear_progress = _resolveComponent("q-linear-progress")
   const _component_q_dialog = _resolveComponent("q-dialog")
@@ -275,11 +275,19 @@ return function render(_ctx, _cache) {
                         class: "fb-pal-item",
                         onClick: $event => (_ctx.addField(t.value))
                       }, [
-                        _createVNode(_component_q_icon, {
-                          name: t.icon,
-                          size: "sm",
-                          style: _normalizeStyle({color:t.color})
-                        }, null, 8 /* PROPS */, ["name", "style"]),
+                        (t.svg)
+                          ? (_openBlock(), _createElementBlock("span", {
+                              key: 0,
+                              class: "fb-pal-ico",
+                              style: _normalizeStyle({color:t.color}),
+                              innerHTML: t.svg
+                            }, null, 12 /* STYLE, PROPS */, ["innerHTML"]))
+                          : (_openBlock(), _createBlock(_component_q_icon, {
+                              key: 1,
+                              name: t.icon,
+                              size: "sm",
+                              style: _normalizeStyle({color:t.color})
+                            }, null, 8 /* PROPS */, ["name", "style"])),
                         _createElementVNode("span", null, _toDisplayString(t.label), 1 /* TEXT */)
                       ], 8 /* PROPS */, ["onClick"]))
                     }), 128 /* KEYED_FRAGMENT */)),
@@ -447,10 +455,17 @@ return function render(_ctx, _cache) {
                             }, null, 8 /* PROPS */, ["onClick"]),
                             _createVNode(_component_q_space),
                             _createElementVNode("span", { class: "fb-type" }, [
-                              _createVNode(_component_q_icon, {
-                                name: _ctx.fieldIcon(field.type),
-                                size: "xs"
-                              }, null, 8 /* PROPS */, ["name"]),
+                              (_ctx.fieldSvg(field.type))
+                                ? (_openBlock(), _createElementBlock("span", {
+                                    key: 0,
+                                    class: "fb-pal-ico xs",
+                                    innerHTML: _ctx.fieldSvg(field.type)
+                                  }, null, 8 /* PROPS */, ["innerHTML"]))
+                                : (_openBlock(), _createBlock(_component_q_icon, {
+                                    key: 1,
+                                    name: _ctx.fieldIcon(field.type),
+                                    size: "xs"
+                                  }, null, 8 /* PROPS */, ["name"])),
                               _createTextVNode(" " + _toDisplayString(_ctx.typeLabel(field.type)), 1 /* TEXT */)
                             ])
                           ]),
@@ -552,10 +567,18 @@ return function render(_ctx, _cache) {
                                 default: _withCtx(() => [
                                   _createVNode(_component_q_item_section, { avatar: "" }, {
                                     default: _withCtx(() => [
-                                      _createVNode(_component_q_icon, {
-                                        name: scope.opt.icon,
-                                        style: _normalizeStyle({color:scope.opt.color})
-                                      }, null, 8 /* PROPS */, ["name", "style"])
+                                      (scope.opt.svg)
+                                        ? (_openBlock(), _createElementBlock("span", {
+                                            key: 0,
+                                            class: "fb-pal-ico",
+                                            style: _normalizeStyle({color:scope.opt.color}),
+                                            innerHTML: scope.opt.svg
+                                          }, null, 12 /* STYLE, PROPS */, ["innerHTML"]))
+                                        : (_openBlock(), _createBlock(_component_q_icon, {
+                                            key: 1,
+                                            name: scope.opt.icon,
+                                            style: _normalizeStyle({color:scope.opt.color})
+                                          }, null, 8 /* PROPS */, ["name", "style"]))
                                     ]),
                                     _: 2 /* DYNAMIC */
                                   }, 1024 /* DYNAMIC_SLOTS */),
@@ -655,12 +678,32 @@ return function render(_ctx, _cache) {
                             modelModifiers: { number: true },
                             label: "Capacity (0 = unlimited)"
                           }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
-                          _createVNode(_component_q_checkbox, {
-                            dense: "",
-                            modelValue: _ctx.flowDialog.data.requireApproval,
-                            "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.requireApproval) = $event),
-                            label: "Require manual approval after payment"
-                          }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"])
+                          _createElementVNode("div", { class: "row items-center no-wrap" }, [
+                            _createVNode(_component_q_checkbox, {
+                              dense: "",
+                              class: "col",
+                              modelValue: _ctx.flowDialog.data.requireApproval,
+                              "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.requireApproval) = $event),
+                              label: "Require manual approval after payment"
+                            }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+                            _createVNode(_component_q_icon, {
+                              name: "help_outline",
+                              size: "xs",
+                              color: "grey",
+                              class: "cursor-help"
+                            }, {
+                              default: _withCtx(() => [
+                                _createVNode(_component_q_tooltip, { "max-width": "280px" }, {
+                                  default: _withCtx(() => [
+                                    _createTextVNode("Payment is collected as usual, but no ticket is issued until you approve the entry in the Submissions list. Use it to vet applicants — rejecting does not refund the payment.")
+                                  ]),
+                                  _: 1 /* STABLE */
+                                })
+                              ]),
+                              _: 1 /* STABLE */
+                            })
+                          ]),
+                          _createElementVNode("div", { class: "fb-hint" }, "Paid entries wait for your review — approve to issue the ticket.")
                         ])
                       ]),
                       _: 1 /* STABLE */

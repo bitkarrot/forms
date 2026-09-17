@@ -54,6 +54,9 @@
 }
 .fb-pal-item:hover { background: rgba(128, 128, 128, 0.12); }
 .fb-pal-tpl { color: var(--q-primary); }
+.fb-pal-ico { display: inline-flex; width: 18px; height: 18px; flex-shrink: 0; }
+.fb-pal-ico svg { width: 100%; height: 100%; }
+.fb-pal-ico.xs { width: 14px; height: 14px; }
 
 .fb-canvas { background: var(--forms-page, rgba(128, 128, 128, 0.09)); color: var(--forms-text, inherit); overflow-y: auto; }
 .fb-form { max-width: 680px; margin: 0 auto; padding: 28px 20px 60px; }

@@ -52,7 +52,7 @@
         <div class="fb-palette scroll">
           <div class="fb-pal-group">Inputs</div>
           <div v-for="t in fieldTypeOptions" :key="t.value" class="fb-pal-item" @click="addField(t.value)">
-            <q-icon :name="t.icon" size="sm" :style="{color:t.color}"></q-icon><span>{{t.label}}</span>
+            <span v-if="t.svg" class="fb-pal-ico" :style="{color:t.color}" v-html="t.svg"></span><q-icon v-else :name="t.icon" size="sm" :style="{color:t.color}"></q-icon><span>{{t.label}}</span>
           </div>
           <template v-if="!flowDialog.editing">
             <div class="fb-pal-group q-mt-md">Pre-built</div>
@@ -85,7 +85,7 @@
                 <q-btn flat round dense size="sm" :icon="field.required?'star':'star_border'" aria-label="Toggle required" :class="{'fb-star-on':field.required}" @click.stop="toggleRequired(i)"></q-btn>
                 <q-btn flat round dense size="sm" icon="delete" color="negative" aria-label="Delete question" @click.stop="removeField(i)"></q-btn>
                 <q-space></q-space>
-                <span class="fb-type"><q-icon :name="fieldIcon(field.type)" size="xs"></q-icon> {{typeLabel(field.type)}}</span>
+                <span class="fb-type"><span v-if="fieldSvg(field.type)" class="fb-pal-ico xs" v-html="fieldSvg(field.type)"></span><q-icon v-else :name="fieldIcon(field.type)" size="xs"></q-icon> {{typeLabel(field.type)}}</span>
               </div>
               <input class="fb-qlabel" v-model="field.label" placeholder="Click here to edit" @click.stop>
               <div v-if="field.help" class="fb-qhelp">{{field.help}}</div>
@@ -106,7 +106,7 @@
             <div class="fb-side-sec">
               <div class="fb-side-title">Question</div>
               <q-select outlined dense emit-value map-options v-model="flowDialog.data.fields[flowDialog.sel].type" :options="fieldTypeOptions" label="Type" @update:model-value="flowDialog.data.fields[flowDialog.sel].type==='consent'&&(flowDialog.data.fields[flowDialog.sel].required=true)">
-                <template #option="scope"><q-item v-bind="scope.itemProps"><q-item-section avatar><q-icon :name="scope.opt.icon" :style="{color:scope.opt.color}"></q-icon></q-item-section><q-item-section>{{scope.opt.label}}</q-item-section></q-item></template>
+                <template #option="scope"><q-item v-bind="scope.itemProps"><q-item-section avatar><span v-if="scope.opt.svg" class="fb-pal-ico" :style="{color:scope.opt.color}" v-html="scope.opt.svg"></span><q-icon v-else :name="scope.opt.icon" :style="{color:scope.opt.color}"></q-icon></q-item-section><q-item-section>{{scope.opt.label}}</q-item-section></q-item></template>
               </q-select>
               <q-input class="q-mt-sm" outlined dense v-model="flowDialog.data.fields[flowDialog.sel].help" label="Description (optional)"></q-input>
               <q-input class="q-mt-sm" outlined dense v-model="flowDialog.data.fields[flowDialog.sel].id" label="Field ID" hint="Auto from question if empty"></q-input>
@@ -120,7 +120,13 @@
               <q-select outlined dense v-model="flowDialog.data.walletId" :options="walletOptions" emit-value map-options label="Payout wallet" :disable="flowDialog.editing"></q-select>
               <q-input outlined dense type="number" min="0" v-model.number="flowDialog.data.amountSat" label="Price (sats, 0 = free)"></q-input>
               <q-input outlined dense type="number" min="0" v-model.number="flowDialog.data.capacity" label="Capacity (0 = unlimited)"></q-input>
-              <q-checkbox dense v-model="flowDialog.data.requireApproval" label="Require manual approval after payment"></q-checkbox>
+              <div class="row items-center no-wrap">
+                <q-checkbox dense class="col" v-model="flowDialog.data.requireApproval" label="Require manual approval after payment"></q-checkbox>
+                <q-icon name="help_outline" size="xs" color="grey" class="cursor-help">
+                  <q-tooltip max-width="280px">Payment is collected as usual, but no ticket is issued until you approve the entry in the Submissions list. Use it to vet applicants — rejecting does not refund the payment.</q-tooltip>
+                </q-icon>
+              </div>
+              <div class="fb-hint">Paid entries wait for your review — approve to issue the ticket.</div>
             </div>
           </q-expansion-item>
           <q-expansion-item icon="palette" label="Appearance" group="fb-side" class="fb-acc">

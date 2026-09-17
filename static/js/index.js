@@ -23,6 +23,10 @@
     if (theme === 'light') return {preset: 'standard', mode: 'light'}
     return {preset: themePresetOptions.some(o => o.value === theme) ? theme : 'standard', mode: settings.themeMode === 'dark' ? 'dark' : 'light'}
   }
+  // Bundled material-icons font lacks an ostrich — hand-drawn nostrich silhouette.
+  // The eye is an evenodd cutout so it stays transparent on any background.
+  const NOSTRICH = '<svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd"><path d="M15.5 3.4C17.3 3.4 18.8 4.6 19.1 6L22.8 6.7 18.7 7.5C18.4 8.7 17.4 9.6 16.1 9.9 14 10.4 12.8 12.2 12.6 14.5L12.6 22.5 8.4 22.5C8.4 16 9.4 11 12.6 7.4 12.8 5 13.9 3.4 15.5 3.4ZM15 6a.9.9 0 1 0 1.8 0 .9.9 0 1 0-1.8 0"/></svg>'
+
   const fieldTypeOptions = [
     {value: 'text', label: 'Short answer', icon: 'text_fields', color: '#8b5cf6'},
     {value: 'textarea', label: 'Paragraph', icon: 'subject', color: '#65a30d'},
@@ -34,11 +38,14 @@
     {value: 'radio', label: 'Multiple choice', icon: 'radio_button_checked', color: '#14b8a6'},
     {value: 'checkbox', label: 'Checkbox', icon: 'check_box', color: '#3b82f6'},
     {value: 'consent', label: 'Consent', icon: 'gavel', color: '#a855f7'},
-    {value: 'nostr_pubkey', label: 'Nostr pubkey', icon: 'key', color: '#8e30eb'},
+    {value: 'nostr_pubkey', label: 'Nostr pubkey', svg: NOSTRICH, color: '#c045f0'},
   ]
 
   function fieldIcon(type) {
     return (fieldTypeOptions.find(t => t.value === type) || {}).icon || 'help_outline'
+  }
+  function fieldSvg(type) {
+    return (fieldTypeOptions.find(t => t.value === type) || {}).svg || ''
   }
 
   function slugify(s) {
@@ -323,7 +330,7 @@
         d.fields = tpl.data.fields.map(f => ({...f}))
         this.flowDialog.sel = 0
       },
-      fieldIcon,
+      fieldIcon, fieldSvg,
       typeLabel(type) { return (fieldTypeOptions.find(t => t.value === type) || {}).label || type },
       selectField(i) { this.flowDialog.sel = i },
       toggleRequired(i) {
