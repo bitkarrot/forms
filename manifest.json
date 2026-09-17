@@ -1,0 +1,18 @@
+{
+  "extensions": [
+    {
+      "id": "forms",
+      "repo": "https://github.com/OWNER/forms",
+      "version": "0.1.0",
+      "archive": "https://github.com/OWNER/forms/releases/download/v0.1.0/forms-0.1.0.zip",
+      "hash": "REPLACE_WITH_SHA256_OF_RELEASE_ZIP",
+      "min_lnbits_version": "1.6.0",
+      "name": "Forms — Paid Workflows",
+      "short_description": "Payment-gated forms, registrations and paid workflows",
+      "icon": "https://raw.githubusercontent.com/OWNER/forms/v0.1.0/static/assets/icon.png",
+      "details_link": "https://raw.githubusercontent.com/OWNER/forms/v0.1.0/config.json",
+      "html_url": "https://github.com/OWNER/forms/releases/tag/v0.1.0",
+      "extension_type": "wasm"
+    }
+  ]
+}

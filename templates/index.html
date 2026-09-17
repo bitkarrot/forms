@@ -39,11 +39,13 @@
     <q-dialog v-model="flowDialog.show"><q-card class="q-pa-lg" style="min-width:min(92vw,560px)">
       <div class="text-h6 q-mb-md">{{flowDialog.editing?'Edit flow':'New flow'}}</div>
       <div class="q-gutter-md">
+        <q-select v-if="!flowDialog.editing" outlined dense emit-value map-options v-model="flowDialog.template" :options="flowTemplates.map(t=>({value:t.value,label:t.label}))" label="Start from template" @update:model-value="applyTemplate"></q-select>
         <q-input outlined dense v-model="flowDialog.data.title" label="Title" :rules="[v=>Boolean(v&&v.trim())||'Required']"></q-input>
         <q-input outlined dense type="textarea" autogrow v-model="flowDialog.data.description" label="Description"></q-input>
         <q-select outlined dense v-model="flowDialog.data.walletId" :options="walletOptions" emit-value map-options label="Payout wallet" :disable="flowDialog.editing"></q-select>
         <q-input outlined dense type="number" min="0" v-model.number="flowDialog.data.amountSat" label="Price (sats, 0 = free)"></q-input>
         <q-input outlined dense type="number" min="0" v-model.number="flowDialog.data.capacity" label="Capacity (0 = unlimited)"></q-input>
+        <q-checkbox dense v-model="flowDialog.data.requireApproval" label="Require manual approval after payment"></q-checkbox>
         <div class="row q-col-gutter-sm">
           <q-select class="col-12 col-sm-4" outlined dense emit-value map-options v-model="flowDialog.data.themePreset" :options="themePresetOptions" label="Theme preset"></q-select>
           <q-select class="col-6 col-sm-4" outlined dense emit-value map-options v-model="flowDialog.data.themeMode" :options="themeModeOptions" label="Mode"></q-select>

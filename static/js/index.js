@@ -44,6 +44,56 @@
     return {id: '', type, label: '', required: false, help: '', optionsText: ''}
   }
 
+  const flowTemplates = [
+    {
+      value: 'blank', label: 'Blank form',
+      data: {title: '', description: '', amountSat: 0, requireApproval: false,
+        fields: [{id: 'name', type: 'text', label: 'Name', required: true, help: '', optionsText: ''}, {id: 'email', type: 'email', label: 'Email', required: true, help: '', optionsText: ''}]},
+    },
+    {
+      value: 'event', label: 'Event ticket',
+      data: {title: 'Event registration', description: 'Reserve your spot.', amountSat: 1000, requireApproval: false,
+        fields: [
+          {id: 'name', type: 'text', label: 'Full name', required: true, help: '', optionsText: ''},
+          {id: 'email', type: 'email', label: 'Email', required: true, help: '', optionsText: ''},
+          {id: 'ticket_type', type: 'radio', label: 'Ticket type', required: true, help: '', optionsText: 'General, Supporter'},
+          {id: 'dietary', type: 'text', label: 'Dietary requirements', required: false, help: '', optionsText: ''},
+          {id: 'nostr', type: 'nostr_pubkey', label: 'Nostr pubkey (optional)', required: false, help: 'Your npub for attendee networking.', optionsText: ''},
+          {id: 'terms', type: 'consent', label: 'I accept the event terms', required: true, help: '', optionsText: ''},
+        ]},
+    },
+    {
+      value: 'membership', label: 'Paid membership',
+      data: {title: 'Membership signup', description: 'Join our community.', amountSat: 2100, requireApproval: false,
+        fields: [
+          {id: 'name', type: 'text', label: 'Name', required: true, help: '', optionsText: ''},
+          {id: 'email', type: 'email', label: 'Email', required: true, help: '', optionsText: ''},
+          {id: 'nostr', type: 'nostr_pubkey', label: 'Nostr pubkey', required: false, help: '', optionsText: ''},
+          {id: 'tier', type: 'select', label: 'Membership tier', required: true, help: '', optionsText: 'Standard, Patron'},
+          {id: 'terms', type: 'consent', label: 'I agree to the membership terms', required: true, help: '', optionsText: ''},
+        ]},
+    },
+    {
+      value: 'donation', label: 'Donation + signup',
+      data: {title: 'Support us', description: 'Donate and stay in the loop.', amountSat: 500, requireApproval: false,
+        fields: [
+          {id: 'name', type: 'text', label: 'Name (optional)', required: false, help: '', optionsText: ''},
+          {id: 'email', type: 'email', label: 'Email for updates', required: true, help: '', optionsText: ''},
+          {id: 'message', type: 'textarea', label: 'Message (optional)', required: false, help: '', optionsText: ''},
+        ]},
+    },
+    {
+      value: 'application', label: 'Application (approval)',
+      data: {title: 'Application', description: 'Apply — approved applicants receive a payment link.', amountSat: 0, requireApproval: true,
+        fields: [
+          {id: 'name', type: 'text', label: 'Name', required: true, help: '', optionsText: ''},
+          {id: 'email', type: 'email', label: 'Email', required: true, help: '', optionsText: ''},
+          {id: 'motivation', type: 'textarea', label: 'Why do you want to join?', required: true, help: '', optionsText: ''},
+          {id: 'nostr', type: 'nostr_pubkey', label: 'Nostr pubkey (optional)', required: false, help: '', optionsText: ''},
+        ]},
+    },
+  ]
+
   function schemaToFields(schemaJson) {
     try {
       const fields = JSON.parse(schemaJson || '{"fields":[]}').fields || []
@@ -74,8 +124,8 @@
     render: window.FORMS_INDEX_RENDER(),
     data: () => ({
       flows: [], wallets: [], loading: false, loadError: '', saving: false, formError: '', isDark: false,
-      themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions,
-      flowDialog: {show: false, editing: false, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', fields: [], customCss: ''}},
+      themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions, flowTemplates,
+      flowDialog: {show: false, editing: false, template: 'blank', data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: ''}},
       subsDialog: {show: false, flow: null, rows: []},
       subsFilter: '', subsStatusFilter: null,
       shareDialog: {show: false, flow: null},
@@ -121,10 +171,21 @@
         if (flow) {
           const settings = JSON.parse(flow.settingsJson || '{}')
           const {preset, mode} = themeSettings(settings)
-          this.flowDialog = {show: true, editing: true, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || ''}}
+          this.flowDialog = {show: true, editing: true, template: 'blank', data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || ''}}
         } else {
-          this.flowDialog = {show: true, editing: false, data: {title: '', description: '', walletId: this.wallets[0]?.id || null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', fields: [newField('text'), newField('email')], customCss: ''}}
+          const blank = flowTemplates[0].data
+          this.flowDialog = {show: true, editing: false, template: 'blank', data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: ''}}
         }
+      },
+      applyTemplate(value) {
+        const tpl = flowTemplates.find(t => t.value === value)
+        if (!tpl || this.flowDialog.editing) return
+        const d = this.flowDialog.data
+        d.title = tpl.data.title
+        d.description = tpl.data.description
+        d.amountSat = tpl.data.amountSat
+        d.requireApproval = tpl.data.requireApproval
+        d.fields = tpl.data.fields.map(f => ({...f}))
       },
       addField() { this.flowDialog.data.fields.push(newField()) },
       removeField(i) { this.flowDialog.data.fields.splice(i, 1) },
@@ -145,7 +206,7 @@
           title: d.title.trim(), description: d.description || '', capacity: Number(d.capacity) || 0,
           pricingJson: {mode: Number(d.amountSat) > 0 ? 'fixed' : 'free', amountSat: Number(d.amountSat) || 0},
           schemaJson,
-          settingsJson: {theme: d.themePreset, themeMode: d.themeMode, renderer: d.renderer, customCss: d.customCss || ''},
+          settingsJson: {theme: d.themePreset, themeMode: d.themeMode, renderer: d.renderer, requireApproval: Boolean(d.requireApproval), customCss: d.customCss || ''},
         }
         this.saving = true; this.formError = ''
         try {
@@ -207,8 +268,7 @@
     },
   })
   app.use(Quasar)
-  app.mount('#q-app')
+  const vm = app.mount('#q-app')
   document.getElementById('q-app').classList.remove('vue-pending')
-  const vm = app._instance.proxy
   LNbitsBridge.connect().then(() => { vm.initTheme(); vm.load() }).catch(e => { vm.loadError = e.message })
 })()

@@ -639,6 +639,11 @@ impl Guest for Component {
             None => return err("Submission not found"),
         };
         sub["status"] = json!(target);
+        if target == "approved"
+            && sub.get("ticketCode").and_then(Value::as_str).unwrap_or("").is_empty()
+        {
+            sub["ticketCode"] = json!(id("tkt"));
+        }
         if !set("submissions", &sub) {
             return err("Could not update submission");
         }
@@ -896,14 +901,22 @@ impl Guest for Component {
             }
             return quarantine("Submission already settled with another payment");
         }
-        sub["status"] = json!("paid");
+        let requires_approval = flow
+            .get("settingsJson")
+            .and_then(Value::as_str)
+            .and_then(|s| serde_json::from_str::<Value>(s).ok())
+            .and_then(|s| s.get("requireApproval").and_then(Value::as_bool))
+            .unwrap_or(false);
+        sub["status"] = json!(if requires_approval { "confirmed" } else { "paid" });
         sub["paidAt"] = json!(stamp());
         sub["paymentHash"] = json!(hash);
         sub["checkingId"] = json!(event
             .get("checkingId")
             .and_then(Value::as_str)
             .unwrap_or(""));
-        if sub.get("ticketCode").and_then(Value::as_str).unwrap_or("").is_empty() {
+        if !requires_approval
+            && sub.get("ticketCode").and_then(Value::as_str).unwrap_or("").is_empty()
+        {
             sub["ticketCode"] = json!(id("tkt"));
         }
         if !set("submissions", &sub) {

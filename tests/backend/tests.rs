@@ -309,6 +309,33 @@ fn submissions_admin_list_export_and_moderate() {
 }
 
 #[test]
+fn approval_flow_confirms_then_issues_ticket_on_approval() {
+    let mut req = create_request();
+    req["settingsJson"] = json!({"requireApproval": true});
+    host::reset();
+    let flow = decode(Component::create_flow(req.to_string()));
+    let flow_id = flow["id"].as_str().unwrap();
+    publish(flow_id);
+    let result = submit(flow_id);
+    let sub_id = result["submissionId"].as_str().unwrap();
+    let delivered = decode(Component::on_invoice_paid(host::last_event().to_string()));
+    assert_eq!(delivered["updated"], true, "{delivered}");
+    let sub = host::row("submissions", sub_id).unwrap();
+    assert_eq!(sub["status"], "confirmed");
+    assert_eq!(sub["ticketCode"], "");
+    let view = sub_status(sub_id);
+    assert_eq!(view["paid"], true);
+    assert!(view["ticketCode"].as_str().unwrap_or("x").is_empty());
+    let approved = decode(Component::update_submission(
+        json!({"subId": sub_id, "status": "approved"}).to_string(),
+    ));
+    assert_eq!(approved["status"], "approved");
+    let ticket = host::row("submissions", sub_id).unwrap()["ticketCode"].clone();
+    assert!(ticket.as_str().unwrap().starts_with("tkt"));
+    assert!(sub_status(sub_id)["ticketCode"].as_str().unwrap().starts_with("tkt"));
+}
+
+#[test]
 fn css_sanitization_strips_dangerous_constructs() {
     host::reset();
     let mut req = create_request();

@@ -136,9 +136,8 @@
     beforeUnmount() { this.stopPolling(); this.stopTicking() },
   })
   app.use(Quasar)
-  app.component('qrcode-vue', QrcodeVue)
-  app.mount('#q-app')
+  if (window.QrcodeVue?.default) app.component('qrcode-vue', window.QrcodeVue.default)
+  const vm = app.mount('#q-app')
   document.getElementById('q-app').classList.remove('vue-pending')
-  const vm = app._instance.proxy
   LNbitsBridge.connect().then(() => vm.loadFlow()).catch(e => { vm.loading = false; vm.loadError = e.message })
 })()

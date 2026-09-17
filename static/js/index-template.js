@@ -10,8 +10,8 @@ return function render(_ctx, _cache) {
   const _component_q_badge = _resolveComponent("q-badge")
   const _component_q_td = _resolveComponent("q-td")
   const _component_q_table = _resolveComponent("q-table")
-  const _component_q_input = _resolveComponent("q-input")
   const _component_q_select = _resolveComponent("q-select")
+  const _component_q_input = _resolveComponent("q-input")
   const _component_q_checkbox = _resolveComponent("q-checkbox")
   const _component_q_dialog = _resolveComponent("q-dialog")
 
@@ -203,6 +203,19 @@ return function render(_ctx, _cache) {
           default: _withCtx(() => [
             _createElementVNode("div", { class: "text-h6 q-mb-md" }, _toDisplayString(_ctx.flowDialog.editing?'Edit flow':'New flow'), 1 /* TEXT */),
             _createElementVNode("div", { class: "q-gutter-md" }, [
+              (!_ctx.flowDialog.editing)
+                ? (_openBlock(), _createBlock(_component_q_select, {
+                    key: 0,
+                    outlined: "",
+                    dense: "",
+                    "emit-value": "",
+                    "map-options": "",
+                    modelValue: _ctx.flowDialog.template,
+                    "onUpdate:modelValue": [$event => ((_ctx.flowDialog.template) = $event), _ctx.applyTemplate],
+                    options: _ctx.flowTemplates.map(t=>({value:t.value,label:t.label})),
+                    label: "Start from template"
+                  }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "options"]))
+                : _createCommentVNode("v-if", true),
               _createVNode(_component_q_input, {
                 outlined: "",
                 dense: "",
@@ -250,6 +263,12 @@ return function render(_ctx, _cache) {
                 "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.capacity) = $event),
                 modelModifiers: { number: true },
                 label: "Capacity (0 = unlimited)"
+              }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
+              _createVNode(_component_q_checkbox, {
+                dense: "",
+                modelValue: _ctx.flowDialog.data.requireApproval,
+                "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.requireApproval) = $event),
+                label: "Require manual approval after payment"
               }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
               _createElementVNode("div", { class: "row q-col-gutter-sm" }, [
                 _createVNode(_component_q_select, {
@@ -419,7 +438,7 @@ return function render(_ctx, _cache) {
               }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
               (_ctx.formError)
                 ? (_openBlock(), _createElementBlock("div", {
-                    key: 0,
+                    key: 1,
                     class: "text-negative",
                     role: "alert"
                   }, _toDisplayString(_ctx.formError), 1 /* TEXT */))
