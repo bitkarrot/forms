@@ -19,7 +19,9 @@
     {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/public-filled.png"},
     {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/payment.png"},
     {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/confirmation.png"},
-    {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/embed-widget.png"}
+    {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/embed-widget.png"},
+    {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/stepper-dark-start.png"},
+    {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/screenshots/stepper-dark-question.png"}
   ],
   "wasm": {
     "module": "wasm/module.wasm",

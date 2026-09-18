@@ -39,6 +39,10 @@ self-hosted Lightning payments.
     <td><img src="screenshots/payment.png" alt="Lightning invoice checkout"></td>
     <td><img src="screenshots/confirmation.png" alt="Confirmation with ticket code"></td>
   </tr>
+  <tr>
+    <td><img src="screenshots/stepper-dark-start.png" alt="Typeform-style stepper in dark mode — start screen"></td>
+    <td><img src="screenshots/stepper-dark-question.png" alt="Typeform-style stepper in dark mode — one question at a time"></td>
+  </tr>
 </table>
 
 The same form embedded on any website:
