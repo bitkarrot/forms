@@ -17,6 +17,7 @@
   var POLL_MS = 2000;
   var disposed = false, flow = null, fields = [], settings = {}, pricing = {};
   var submission = null, pollTimer = null, tickTimer = null, errorBox = null, qrCancel = null;
+  var answers = {}, stepIndex = -1, stepperKeys = false, widgetActive = false, cardFlat = false;
 
   var PRESETS = {
     standard: {card: '#ffffff', text: '#1f2937', muted: '#6b7280', primary: '#1976d2', border: 'rgba(0,0,0,0.15)'},
@@ -148,24 +149,53 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
 .fm-spin{width:1.1rem;height:1.1rem;border:2px solid;border-top-color:transparent;border-radius:50%;animation:fm-rot .8s linear infinite;display:inline-block}
 @keyframes fm-rot{to{transform:rotate(360deg)}}
 .fm-ticket{font:1.3rem monospace;letter-spacing:.08em;overflow-wrap:anywhere;margin-top:.5rem}
+.fm-card{position:relative;overflow:hidden}
+.fm-stage{padding:4px 0}
+.tf-q{animation:fm-fade .25s ease}
+@keyframes fm-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.tf-qnum{font-size:.95rem;font-weight:600;opacity:.75;margin-bottom:6px}
+.tf-qlabel{font-size:1.45rem;font-weight:700;line-height:1.25;margin-bottom:4px;overflow-wrap:anywhere}
+.tf-opt{font-size:.85rem;font-weight:400;opacity:.55;margin-left:8px}
+.tf-qhelp{font-size:1rem;opacity:.65;margin-bottom:14px}
+.tf-options{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.tf-option{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid rgba(128,128,128,.35);border-radius:8px;cursor:pointer;transition:border-color .15s,background .15s}
+.tf-option:hover{background:rgba(128,128,128,.08)}
+.tf-option.tf-selected{border-color:var(--fm-primary);border-width:2px}
+.tf-key{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 4px;border:1px solid rgba(128,128,128,.45);border-radius:5px;font-size:.78rem;font-weight:700}
+.tf-optext{flex:1}
+.tf-check{color:var(--fm-primary);font-weight:700}
+.tf-hint{font-size:.75rem;opacity:.55;margin-top:6px;text-align:center}
+.tf-hint b{font-weight:600}
+.fm-ok,.fm-start{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.7rem;border:none;border-radius:.6rem;font-weight:700;cursor:pointer;font-size:1rem}
+.tf-nav{position:absolute;right:12px;bottom:16px;display:flex;flex-direction:column;z-index:5}
+.tf-nav button{width:40px;height:34px;border:none;cursor:pointer;font-size:.95rem;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
+.tf-nav button:first-child{border-radius:8px 8px 0 0}
+.tf-nav button:last-child{border-radius:0 0 8px 8px;margin-top:1px}
+.tf-progress{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(128,128,128,.2)}
+.tf-progress-fill{height:100%;background:var(--fm-primary);transition:width .25s}
 `, shadow);
   var card = element('div', 'fm-card', null, shadow);
   element('div', 'fm-center fm-muted', 'Loading form…', card);
 
   function applyPalette() {
     var p = palette();
-    card.style.background = p.card;
+    card.style.background = cardFlat ? 'transparent' : p.card;
+    card.style.boxShadow = cardFlat ? 'none' : '';
     card.style.color = p.text;
     card.style.setProperty('--fm-primary', p.primary);
     card.querySelectorAll('.fm-input,.fm-textarea,.fm-select,.fm-bolt,.fm-nostr,.fm-btn').forEach(function (n) {
       n.style.borderColor = p.border;
     });
-    card.querySelectorAll('.fm-submit,.fm-btn.fm-primary').forEach(function (n) {
+    card.querySelectorAll('.fm-submit,.fm-btn.fm-primary,.fm-ok,.fm-start').forEach(function (n) {
       n.style.background = p.primary;
       n.style.color = contrastColor(p.primary);
     });
+    card.querySelectorAll('.tf-nav button').forEach(function (n) {
+      n.style.background = p.text;
+      n.style.color = p.card;
+    });
     if (p.pill) {
-      card.querySelectorAll('.fm-submit,.fm-btn').forEach(function (n) { n.style.borderRadius = '999px'; });
+      card.querySelectorAll('.fm-submit,.fm-btn,.fm-ok,.fm-start').forEach(function (n) { n.style.borderRadius = '999px'; });
       card.querySelectorAll('.fm-input,.fm-textarea,.fm-select').forEach(function (n) { n.style.borderRadius = '12px'; });
     }
     card.querySelectorAll('.fm-muted,.fm-help,.fm-note').forEach(function (n) { n.style.color = p.muted; });
@@ -182,7 +212,7 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     var q = c.question || global;
     if (q) card.querySelectorAll('.fm-label').forEach(function (n) { n.style.color = q; });
     var op = Number(settings.cardOpacity);
-    if (!isNaN(op) && op < 1) {
+    if (!cardFlat && !isNaN(op) && op < 1) {
       card.style.background = 'color-mix(in srgb, ' + p.card + ' ' + (op * 100) + '%, transparent)';
     }
     var bg = (settings.bgImage || '').trim();
@@ -272,11 +302,44 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     return input;
   }
 
+  function submitLabel() {
+    return pricing.mode === 'fixed' && Number(pricing.amountSat) > 0 ? 'Pay ' + formatSats(pricing.amountSat) : 'Submit';
+  }
+
+  function submitAnswers(btn, label) {
+    for (var i = 0; i < fields.length; i++) {
+      var f = fields[i];
+      if (f.required && fieldEmpty(f, answers)) {
+        errorBox.textContent = '"' + f.label + '" is required.';
+        return;
+      }
+    }
+    errorBox.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    api('POST', '/f/' + encodeURIComponent(flowId) + '/submit', {answers: answers}).then(function (result) {
+      if (disposed) return;
+      if (!result || !result.submissionId) throw new Error('Invalid response');
+      submission = result;
+      stepperKeys = false;
+      if (result.status === 'confirmed') { renderConfirmed(result); return; }
+      renderInvoice(result);
+    }).catch(function (e) {
+      errorBox.textContent = e.message || 'Submission failed.';
+      btn.disabled = false;
+      btn.textContent = label;
+    });
+  }
+
   function renderForm(message) {
     stopTimers();
     submission = null;
+    answers = {};
+    stepIndex = -1;
+    if (isStepperMode()) { renderStepper(message); return; }
+    stepperKeys = false;
+    cardFlat = false;
     replaceContents(card);
-    var p = palette();
     if (settings.headerImage) {
       var banner = element('div', 'fm-banner', null, card);
       banner.style.backgroundImage = 'url("' + assetUrl(settings.headerImage).replace(/"/g, '%22') + '")';
@@ -286,36 +349,159 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     if (flow.remaining !== null && flow.remaining !== undefined) {
       element('div', 'fm-muted', flow.remaining + ' spot(s) remaining', card);
     }
-    var answers = {};
     fields.forEach(function (f) { renderField(f, answers, card); });
     errorBox = element('div', 'fm-error', message || '', card);
     errorBox.setAttribute('role', 'alert');
-    var isPaid = pricing.mode === 'fixed' && Number(pricing.amountSat) > 0;
-    var submit = button('fm-submit', isPaid ? 'Pay ' + formatSats(pricing.amountSat) : 'Submit', card, function () {
-      for (var i = 0; i < fields.length; i++) {
-        var f = fields[i];
-        if (f.required && fieldEmpty(f, answers)) {
-          errorBox.textContent = '"' + f.label + '" is required.';
-          return;
-        }
-      }
-      errorBox.textContent = '';
-      submit.disabled = true;
-      submit.textContent = 'Submitting…';
-      api('POST', '/f/' + encodeURIComponent(flowId) + '/submit', {answers: answers}).then(function (result) {
-        if (disposed) return;
-        if (!result || !result.submissionId) throw new Error('Invalid response');
-        submission = result;
-        if (result.status === 'confirmed') { renderConfirmed(result); return; }
-        renderInvoice(result);
-      }).catch(function (e) {
-        errorBox.textContent = e.message || 'Submission failed.';
-        submit.disabled = false;
-        submit.textContent = isPaid ? 'Pay ' + formatSats(pricing.amountSat) : 'Submit';
-      });
-    });
+    var label = submitLabel();
+    var submit = button('fm-submit', label, card, function () { submitAnswers(submit, label); });
     applyPalette();
   }
+
+  // --- Typeform-style stepper (mirrors the hosted public page) ---
+  function isStepperMode() { return settings.renderer === 'stepper' && fields.length > 0; }
+  function isOptionalLabel(field) { return /optional/i.test((field && field.label) || ''); }
+
+  function renderStepper(message) {
+    replaceContents(card);
+    stepperKeys = true;
+    cardFlat = stepIndex === -1;
+    if (stepIndex === -1) {
+      if (settings.headerImage) {
+        var banner = element('div', 'fm-banner', null, card);
+        banner.style.backgroundImage = 'url("' + assetUrl(settings.headerImage).replace(/"/g, '%22') + '")';
+      }
+      element('h1', 'fm-title', flow.title, card);
+      if (flow.description) element('p', 'fm-desc', flow.description, card);
+      if (flow.remaining !== null && flow.remaining !== undefined) {
+        element('div', 'fm-muted', flow.remaining + ' spot(s) remaining', card);
+      }
+      var stage = element('div', 'fm-stage fm-center', null, card);
+      button('fm-start', 'Start →', stage, function () { stepOk(); });
+      if (pricing.mode === 'fixed' && Number(pricing.amountSat) > 0) {
+        element('div', 'fm-muted', formatSats(pricing.amountSat) + ' to complete', stage).style.marginTop = '.75rem';
+      }
+      applyPalette();
+      return;
+    }
+    var field = fields[stepIndex];
+    var stage = element('div', 'fm-stage', null, card);
+    var q = element('div', 'tf-q', null, stage);
+    element('div', 'tf-qnum', (stepIndex + 1) + ' →', q);
+    var lab = element('div', 'tf-qlabel', field.label, q);
+    if (!field.required && !isOptionalLabel(field)) element('span', 'tf-opt', '(optional)', lab);
+    if (field.help) element('div', 'tf-qhelp', field.help, q);
+    var input = null;
+    if (field.type === 'radio') {
+      var box = element('div', 'tf-options', null, q);
+      (field.options || []).forEach(function (o, oi) {
+        var opt = element('div', 'tf-option' + (answers[field.id] === o ? ' tf-selected' : ''), null, box);
+        element('span', 'tf-key', String.fromCharCode(65 + oi), opt);
+        element('span', 'tf-optext', o, opt);
+        element('span', 'tf-check', answers[field.id] === o ? '✓' : '', opt);
+        opt.addEventListener('click', function () { chooseOption(field, o); });
+      });
+    } else if (field.type === 'select') {
+      input = element('select', 'fm-select', null, q);
+      element('option', '', '', input).value = '';
+      (field.options || []).forEach(function (o) {
+        var opt = element('option', '', o, input);
+        opt.value = o;
+      });
+      input.value = answers[field.id] || '';
+      input.addEventListener('input', function () { answers[field.id] = input.value; });
+    } else if (field.type === 'checkbox' || field.type === 'consent') {
+      var check = element('label', 'fm-check', null, q);
+      input = element('input', '', null, check);
+      input.type = 'checkbox';
+      input.checked = !!answers[field.id];
+      check.appendChild(document.createTextNode(' ' + (field.type === 'consent' ? 'I accept' : 'Yes')));
+      input.addEventListener('input', function () { answers[field.id] = input.checked; });
+      if (answers[field.id] === undefined) answers[field.id] = false;
+    } else {
+      input = element(field.type === 'textarea' ? 'textarea' : 'input', field.type === 'textarea' ? 'fm-textarea' : 'fm-input', null, q);
+      if (field.type !== 'textarea') {
+        input.type = {email: 'email', number: 'number', date: 'date', phone: 'tel'}[field.type] || 'text';
+      }
+      input.placeholder = 'Type your answer here…';
+      input.value = answers[field.id] || '';
+      input.addEventListener('input', function () { answers[field.id] = input.value; });
+    }
+    if (field.type === 'nostr_pubkey') {
+      var nb = nostrButton(input);
+      if (nb) q.appendChild(nb);
+      else element('div', 'fm-help', 'No Nostr signer found — paste your npub.', q);
+    }
+    errorBox = element('div', 'fm-error', message || '', stage);
+    errorBox.setAttribute('role', 'alert');
+    var last = stepIndex === fields.length - 1;
+    var okRow = element('div', 'fm-center', null, stage);
+    button('fm-ok', last ? submitLabel() : 'OK ✓', okRow, function () { stepOk(); });
+    element('div', 'tf-hint', null, stage).innerHTML = 'press <b>Enter ↵</b> or use the <b>↓ ↑</b> arrows';
+    var nav = element('div', 'tf-nav', null, card);
+    nav.setAttribute('role', 'group');
+    nav.setAttribute('aria-label', 'Question navigation');
+    var up = button('', '▲', nav, function () { stepPrev(); });
+    up.disabled = stepIndex <= 0;
+    up.setAttribute('aria-label', 'Previous question');
+    var down = button('', '▼', nav, function () { stepOk(); });
+    down.setAttribute('aria-label', 'Next question');
+    var prog = element('div', 'tf-progress', null, card);
+    var fill = element('div', 'tf-progress-fill', null, prog);
+    fill.style.width = Math.round(((stepIndex + 1) / fields.length) * 100) + '%';
+    applyPalette();
+  }
+
+  function stepOk() {
+    if (stepIndex === -1) { stepIndex = 0; renderStepper(); return; }
+    var field = fields[stepIndex];
+    if (field && field.required && fieldEmpty(field, answers)) {
+      errorBox.textContent = '"' + field.label + '" is required.';
+      return;
+    }
+    if (stepIndex < fields.length - 1) { stepIndex += 1; renderStepper(); return; }
+    submitAnswers(card.querySelector('.fm-ok'), submitLabel());
+  }
+
+  function stepPrev() {
+    if (stepIndex > -1) { stepIndex -= 1; renderStepper(); }
+  }
+
+  function chooseOption(field, opt) {
+    answers[field.id] = opt;
+    renderStepper();
+    if (stepIndex < fields.length - 1) {
+      setTimeout(function () { if (!disposed) stepOk(); }, 280);
+    }
+  }
+
+  function onKey(e) {
+    if (disposed || !stepperKeys || !widgetActive) return;
+    var path = e.composedPath ? e.composedPath() : [];
+    var tag = path.length && path[0].tagName;
+    if (tag === 'TEXTAREA') return;
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      if (tag === 'SELECT') return;
+      e.preventDefault();
+      if (e.key === 'ArrowUp') stepPrev(); else stepOk();
+      return;
+    }
+    if (e.key === 'Enter') { e.preventDefault(); stepOk(); return; }
+    var field = fields[stepIndex];
+    if (field && field.type === 'radio' && tag !== 'INPUT' && /^[a-zA-Z]$/.test(e.key)) {
+      var opt = (field.options || [])[e.key.toLowerCase().charCodeAt(0) - 97];
+      if (opt) { e.preventDefault(); chooseOption(field, opt); }
+    }
+  }
+  document.addEventListener('keydown', onKey);
+  function markActive(e) {
+    var path = e.composedPath ? e.composedPath() : [];
+    // focus resets to <body> when a clicked element is re-rendered — keep the
+    // last real interaction's state instead of clearing it
+    if (e.type === 'focusin' && (!path.length || path[0] === document.body || path[0] === document.documentElement)) return;
+    widgetActive = path.indexOf(container) !== -1;
+  }
+  document.addEventListener('mousedown', markActive);
+  document.addEventListener('focusin', markActive);
 
   function loadQR(cb) {
     if (window.FormsQR && typeof window.FormsQR.create === 'function') { cb(window.FormsQR); return; }
@@ -370,6 +556,7 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
   }
 
   function renderInvoice(result) {
+    cardFlat = false;
     replaceContents(card);
     var amount = result.amountSat || (pricing.amountSat || 0);
     element('div', 'fm-title fm-center', 'Pay ' + formatSats(amount), card);
@@ -419,6 +606,7 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
 
   function renderConfirmed(view) {
     stopTimers();
+    cardFlat = false;
     replaceContents(card);
     if (settings.endImage) {
       var endBanner = element('div', 'fm-banner', null, card);
@@ -457,7 +645,14 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
 
   // Cleanup hooks if the host page removes the widget.
   var observer = new MutationObserver(function () {
-    if (!document.contains(container)) { disposed = true; stopTimers(); observer.disconnect(); }
+    if (!document.contains(container)) {
+      disposed = true;
+      stopTimers();
+      observer.disconnect();
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('mousedown', markActive);
+      document.removeEventListener('focusin', markActive);
+    }
   });
   observer.observe(document.documentElement, {childList: true, subtree: true});
 })();

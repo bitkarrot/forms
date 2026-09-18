@@ -89,14 +89,16 @@ The Share dialog generates a snippet like:
 <div id="forms-embed"></div>
 ```
 
-The widget renders the same themed form on any external page, including the
+The widget renders the same themed form on any external page — including the
+stepper layout, so a form set to one-question-at-a-time steps through
+questions on your site exactly like the hosted page. It also provides the
 NIP-07 "Login with Nostr" prefill that isn't possible inside the LNbits frame.
 
 ## Install
 
 Requires **LNbits 1.6.0 or newer** with WASM extension support.
 
-1. Download `forms-0.2.0.zip` from the
+1. Download `forms-0.2.1.zip` from the
    [latest release](https://github.com/bitkarrot/forms/releases/latest), or
    add this repo's `manifest.json` as an extension source in LNbits.
 2. Install and review the requested permissions: extension storage, wallet
