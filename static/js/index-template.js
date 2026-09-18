@@ -28,7 +28,7 @@ return function render(_ctx, _cache) {
   const _component_q_dialog = _resolveComponent("q-dialog")
 
   return (_openBlock(), _createElementBlock("div", {
-    class: "q-pa-md",
+    class: "q-pa-md fa-page",
     style: {"max-width":"960px","margin":"0 auto"}
   }, [
     _createElementVNode("div", { class: "row items-center q-mb-md" }, [

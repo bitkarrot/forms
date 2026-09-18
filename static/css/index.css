@@ -5,6 +5,20 @@
 .q-card, .q-menu { border-radius: 14px; }
 .q-dialog__inner:not(.q-dialog__inner--maximized) > div { border-radius: 14px; }
 .q-table__container { border-radius: 14px; overflow: hidden; }
+
+/* Admin list — same type scale as the builder canvas */
+.fa-page .text-h5 { font-size: 1.7rem; font-weight: 700; }
+.fa-page .q-table thead th {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+}
+.fa-page .q-table tbody td { font-size: 1.05rem; padding: 14px 16px; }
+.fa-page .q-table tbody td:first-child { font-weight: 600; }
+.fa-page .q-table .q-badge { font-size: 0.8rem; }
+.fa-page .q-table__bottom { font-size: 0.9rem; }
 .q-btn--rectangle { border-radius: 10px; }
 .q-field--outlined .q-field__control { border-radius: 10px; }
 
