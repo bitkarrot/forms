@@ -332,6 +332,7 @@ return function render(_ctx, _cache) {
                 flat: "",
                 "no-caps": "",
                 label: "Cancel",
+                class: "q-mr-sm",
                 onClick: $event => (_ctx.flowDialog.show=false)
               }, null, 8 /* PROPS */, ["onClick"]),
               (_ctx.flowDialog.data.status!=='published')
@@ -341,6 +342,7 @@ return function render(_ctx, _cache) {
                     "no-caps": "",
                     color: "positive",
                     label: "Publish",
+                    class: "q-mr-sm",
                     loading: _ctx.saving,
                     onClick: $event => (_ctx.saveFlow(true))
                   }, null, 8 /* PROPS */, ["loading", "onClick"]))
@@ -1123,14 +1125,7 @@ return function render(_ctx, _cache) {
                         ])
                       ]),
                       _: 1 /* STABLE */
-                    }),
-                    (_ctx.formError)
-                      ? (_openBlock(), _createElementBlock("div", {
-                          key: 1,
-                          class: "text-negative q-pa-sm",
-                          role: "alert"
-                        }, _toDisplayString(_ctx.formError), 1 /* TEXT */))
-                      : _createCommentVNode("v-if", true)
+                    })
                   ])
                 ]))
               : (_openBlock(), _createElementBlock("div", {
@@ -1359,16 +1354,9 @@ return function render(_ctx, _cache) {
                                   ], 64 /* STABLE_FRAGMENT */))
                                 }), 256 /* UNKEYED_FRAGMENT */))
                               ]),
-                              (_ctx.formError)
-                                ? (_openBlock(), _createElementBlock("div", {
-                                    key: 2,
-                                    class: "text-negative q-mt-md",
-                                    role: "alert"
-                                  }, _toDisplayString(_ctx.formError), 1 /* TEXT */))
-                                : _createCommentVNode("v-if", true),
                               (_ctx.previewStepper)
                                 ? (_openBlock(), _createElementBlock("div", {
-                                    key: 3,
+                                    key: 2,
                                     class: "row items-end justify-between q-mt-lg"
                                   }, [
                                     _createVNode(_component_q_btn, {
@@ -1404,7 +1392,7 @@ return function render(_ctx, _cache) {
                                     ])
                                   ]))
                                 : (_openBlock(), _createBlock(_component_q_btn, {
-                                    key: 4,
+                                    key: 3,
                                     unelevated: "",
                                     "no-caps": "",
                                     color: "primary",

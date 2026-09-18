@@ -168,7 +168,7 @@
   const app = Vue.createApp({
     render: window.FORMS_INDEX_RENDER(),
     data: () => ({
-      flows: [], wallets: [], loading: false, loadError: '', saving: false, formError: '', isDark: false,
+      flows: [], wallets: [], loading: false, loadError: '', saving: false, isDark: false,
       themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions, flowTemplates, customCssSample, colorKeys,
       flowDialog: {show: false, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: '', headerImage: '', confirmText: '', bgImage: '', endImage: '', cardOpacity: 1, colors: {global: '', title: '', description: '', question: ''}, notifyUrl: '', notifyKey: '', notifyOnSubmit: true, notifyOnPaid: true}},
       notifyTesting: false, notifyResult: '', notifyOk: false,
@@ -255,8 +255,8 @@
       },
       setView(v) {
         if (v === 'preview') { this.flowDialog.previewStep = -1; this.flowDialog.previewAnswers = {} }
-        this.formError = ''
       },
+      showError(msg) { LNbitsBridge.notify(msg || 'Something went wrong.', 'negative').catch(() => {}) },
       isExtImg(v) { return /^https?:\/\//.test(v || '') },
       pickHeaderImage() { this.pickImage('headerImage') },
       pickImage(field) {
@@ -265,10 +265,10 @@
         inp.onchange = () => {
           const f = inp.files && inp.files[0]
           if (!f) return
-          if (f.size > 145000) { this.formError = 'Image too large — pick one under ~140 KB (data URIs are ~33% bigger than the file).'; return }
+          if (f.size > 145000) { this.showError('Image too large — pick one under ~140 KB (data URIs are ~33% bigger than the file).'); return }
           const r = new FileReader()
-          r.onload = () => { this.flowDialog.data[field] = String(r.result || ''); this.formError = '' }
-          r.onerror = () => { this.formError = 'Could not read that image file.' }
+          r.onload = () => { this.flowDialog.data[field] = String(r.result || '') }
+          r.onerror = () => { this.showError('Could not read that image file.') }
           r.readAsDataURL(f)
         }
         inp.click()
@@ -297,18 +297,16 @@
       },
       previewNext() {
         const field = this.flowDialog.data.fields[this.flowDialog.previewStep]
-        if (field && field.required && this.previewFieldEmpty(field)) { this.formError = `"${field.label || 'Untitled question'}" is required.`; return }
-        this.formError = ''
+        if (field && field.required && this.previewFieldEmpty(field)) { this.showError(`"${field.label || 'Untitled question'}" is required.`); return }
         if (this.flowDialog.previewStep < this.flowDialog.data.fields.length - 1) this.flowDialog.previewStep += 1
       },
-      previewPrev() { this.flowDialog.previewStep = Math.max(-1, this.flowDialog.previewStep - 1); this.formError = '' },
+      previewPrev() { this.flowDialog.previewStep = Math.max(-1, this.flowDialog.previewStep - 1) },
       previewOk() {
         if (this.flowDialog.previewStep === -1) { this.flowDialog.previewStep = 0; return }
         if (this.previewLastStep) return
         this.previewNext()
       },
       openFlowDialog(flow = null) {
-        this.formError = ''
         if (flow) {
           const settings = JSON.parse(flow.settingsJson || '{}')
           const {preset, mode} = themeSettings(settings)
@@ -363,17 +361,17 @@
       async saveFlow(publish = false) {
         if (this.saving) return
         const d = this.flowDialog.data
-        if (!d.title?.trim() || (!this.flowDialog.editing && !d.walletId)) { this.formError = 'Title and payout wallet are required.'; return }
+        if (!d.title?.trim() || (!this.flowDialog.editing && !d.walletId)) { this.showError('Title and payout wallet are required.'); return }
         let schemaJson
         try { schemaJson = fieldsToSchema(d.fields) }
-        catch (e) { this.formError = e.message; return }
+        catch (e) { this.showError(e.message); return }
         const payload = {
           title: d.title.trim(), description: d.description || '', capacity: Number(d.capacity) || 0,
           pricingJson: {mode: Number(d.amountSat) > 0 ? 'fixed' : 'free', amountSat: Number(d.amountSat) || 0},
           schemaJson,
           settingsJson: {theme: d.themePreset, themeMode: d.themeMode, renderer: d.renderer, requireApproval: Boolean(d.requireApproval), customCss: d.customCss || '', headerImage: d.headerImage || '', confirmText: d.confirmText || '', bgImage: d.bgImage || '', endImage: d.endImage || '', cardOpacity: Number(d.cardOpacity ?? 1), colors: d.colors || {}, notifyUrl: d.notifyUrl || '', notifyKey: d.notifyKey || '', notifyOnSubmit: Boolean(d.notifyOnSubmit), notifyOnPaid: Boolean(d.notifyOnPaid)},
         }
-        this.saving = true; this.formError = ''
+        this.saving = true
         try {
           const saved = this.flowDialog.editing
             ? await this.api('PUT', `/flows/${d.id}`, payload)
@@ -386,7 +384,7 @@
           if (i < 0) this.flows.unshift(saved); else this.flows.splice(i, 1, saved)
           this.flowDialog.show = false
           LNbitsBridge.notify(publish ? 'Flow published.' : 'Flow saved.', 'positive').catch(() => {})
-        } catch (e) { this.formError = e.message }
+        } catch (e) { this.showError(e.message) }
         finally { this.saving = false }
       },
       async setStatus(flow, status) {
