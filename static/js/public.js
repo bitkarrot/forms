@@ -114,12 +114,26 @@
         if (!this.isLastStep) setTimeout(() => this.nextStep(), 280)
       },
       onKey(e) {
-        if (e.key !== 'Enter' || !this.flow || this.loading || this.invoiceDialog || this.confirmed) return
-        if (e.target && e.target.tagName === 'TEXTAREA') return
+        if (!this.flow || this.loading || this.invoiceDialog || this.confirmed) return
         if (document.querySelector('.q-menu, .q-dialog')) return
-        e.preventDefault()
-        if (this.isStepper) this.onOk()
-        else this.submit()
+        const tag = e.target ? e.target.tagName : ''
+        if (tag === 'TEXTAREA') return
+        if (!this.isStepper) {
+          if (e.key === 'Enter') { e.preventDefault(); this.submit() }
+          return
+        }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          if (e.target && e.target.closest && e.target.closest('.q-select')) return
+          e.preventDefault()
+          if (e.key === 'ArrowUp') this.prevStep(); else this.onOk()
+          return
+        }
+        if (e.key === 'Enter') { e.preventDefault(); this.onOk(); return }
+        const field = this.formFields[this.step]
+        if (field && field.type === 'radio' && tag !== 'INPUT' && /^[a-zA-Z]$/.test(e.key)) {
+          const opt = (field.options || [])[e.key.toLowerCase().charCodeAt(0) - 97]
+          if (opt) { e.preventDefault(); this.chooseOption(field, opt) }
+        }
       },
       async submit() {
         if (this.submitting) return

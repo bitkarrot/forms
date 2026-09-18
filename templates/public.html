@@ -36,17 +36,17 @@
             <div v-if="flow.remaining!==null && flow.remaining!==undefined" class="pf-remaining">{{flow.remaining}} spot(s) remaining</div>
           </template>
         </div>
-        <div v-if="isStepper && step===-1" class="text-center q-mt-xl">
+        <div v-if="isStepper && step===-1" class="tf-stage text-center">
           <q-btn unelevated no-caps color="primary" size="lg" @click="step=0"><span>Start</span><q-icon name="arrow_forward" class="q-ml-sm"></q-icon></q-btn>
           <div v-if="pricing.mode==='fixed' && pricing.amountSat>0" class="pf-hint q-mt-md">{{formatSats(pricing.amountSat)}} sats to complete</div>
         </div>
         <template v-else>
-          <q-linear-progress v-if="isStepper" :value="stepProgress" rounded class="q-mb-md" aria-label="Form progress"></q-linear-progress>
-          <template v-for="(field, i) in formFields"><div :key="field.id" v-if="!isStepper || i===step" class="pf-card">
+          <div :class="{'tf-stage': isStepper}">
+          <template v-for="(field, i) in formFields"><div :key="field.id" v-if="!isStepper || i===step" class="pf-card" :class="{'tf-flat': isStepper}">
             <template v-if="isStepper">
               <div class="tf-q">
                 <div class="tf-qnum">{{i+1}} <q-icon name="arrow_forward" size="0.9em"></q-icon></div>
-                <div class="tf-qlabel">{{field.label}}<span v-if="!field.required" class="tf-opt">(optional)</span></div>
+                <div class="tf-qlabel">{{field.label}}<span v-if="!field.required && !isOptionalLabel(field)" class="tf-opt">(optional)</span></div>
                 <div v-if="field.help" class="tf-qhelp">{{field.help}}</div>
                 <q-input v-if="['text','email','phone','number','date','nostr_pubkey'].includes(field.type)" outlined :type="field.type==='number'?'number':(field.type==='date'?'date':'text')" v-model="answers[field.id]" placeholder="Type your answer here…"></q-input>
                 <q-input v-else-if="field.type==='textarea'" outlined type="textarea" rows="4" v-model="answers[field.id]" placeholder="Type your answer here…"></q-input>
@@ -78,17 +78,20 @@
             </template>
           </div></template>
           <div v-if="submitError" class="text-negative q-mt-md" role="alert">{{submitError}}</div>
-          <div v-if="isStepper" class="row items-end justify-between q-mt-sm">
-            <q-btn flat no-caps label="Back" :disable="step<=0" @click="prevStep"></q-btn>
-            <div class="text-center">
-              <q-btn unelevated no-caps color="primary" :loading="submitting" @click="onOk">
-                <span>{{isLastStep ? submitLabel : 'OK'}}</span><q-icon v-if="!isLastStep" name="check" class="q-ml-xs"></q-icon>
-              </q-btn>
-              <div class="tf-hint">press <b>Enter ↵</b></div>
-            </div>
+          <div v-if="isStepper" class="text-center">
+            <q-btn unelevated no-caps color="primary" :loading="submitting" @click="onOk">
+              <span>{{isLastStep ? submitLabel : 'OK'}}</span><q-icon v-if="!isLastStep" name="check" class="q-ml-xs"></q-icon>
+            </q-btn>
+            <div class="tf-hint">press <b>Enter ↵</b> or use the <b>↓ ↑</b> arrows</div>
           </div>
+          <div v-if="isStepper" class="tf-nav" role="group" aria-label="Question navigation">
+            <q-btn unelevated dense square icon="keyboard_arrow_up" :disable="step<=0" aria-label="Previous question" @click="prevStep"></q-btn>
+            <q-btn unelevated dense square icon="keyboard_arrow_down" aria-label="Next question" @click="onOk"></q-btn>
+          </div>
+          <q-linear-progress v-if="isStepper" :value="stepProgress" class="tf-progress" aria-label="Form progress"></q-linear-progress>
           <q-btn v-else unelevated no-caps color="primary" size="lg" class="full-width q-mt-sm" :loading="submitting" :label="submitLabel" @click="submit"></q-btn>
-          <div v-if="hasNostrField" class="pf-hint text-center q-mt-md">Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login.</div>
+          <div v-if="hasNostrField && (!isStepper || formFields[step]?.type==='nostr_pubkey')" class="pf-hint text-center q-mt-md">Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login.</div>
+          </div>
         </template>
       </template>
     </div>

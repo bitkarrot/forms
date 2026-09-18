@@ -1219,7 +1219,7 @@ return function render(_ctx, _cache) {
                                                 ]),
                                                 _createElementVNode("div", { class: "tf-qlabel" }, [
                                                   _createTextVNode(_toDisplayString(field.label || 'Untitled question'), 1 /* TEXT */),
-                                                  (!field.required)
+                                                  (!field.required && !_ctx.isOptionalLabel(field))
                                                     ? (_openBlock(), _createElementBlock("span", {
                                                         key: 0,
                                                         class: "tf-opt"
@@ -1357,42 +1357,60 @@ return function render(_ctx, _cache) {
                               (_ctx.previewStepper)
                                 ? (_openBlock(), _createElementBlock("div", {
                                     key: 2,
-                                    class: "row items-end justify-between q-mt-lg"
+                                    class: "text-center q-mt-lg"
                                   }, [
                                     _createVNode(_component_q_btn, {
-                                      flat: "",
+                                      unelevated: "",
                                       "no-caps": "",
-                                      label: "Back",
-                                      disable: _ctx.flowDialog.previewStep<=0,
-                                      onClick: _ctx.previewPrev
-                                    }, null, 8 /* PROPS */, ["disable", "onClick"]),
-                                    _createElementVNode("div", { class: "text-center" }, [
-                                      _createVNode(_component_q_btn, {
-                                        unelevated: "",
-                                        "no-caps": "",
-                                        color: "primary",
-                                        onClick: _ctx.previewOk
-                                      }, {
-                                        default: _withCtx(() => [
-                                          _createElementVNode("span", null, _toDisplayString(_ctx.previewLastStep ? _ctx.previewSubmitLabel : 'OK'), 1 /* TEXT */),
-                                          (!_ctx.previewLastStep)
-                                            ? (_openBlock(), _createBlock(_component_q_icon, {
-                                                key: 0,
-                                                name: "check",
-                                                class: "q-ml-xs"
-                                              }))
-                                            : _createCommentVNode("v-if", true)
-                                        ]),
-                                        _: 1 /* STABLE */
-                                      }, 8 /* PROPS */, ["onClick"]),
-                                      _createElementVNode("div", { class: "tf-hint" }, [
-                                        _createTextVNode("press "),
-                                        _createElementVNode("b", null, "Enter ↵")
-                                      ])
+                                      color: "primary",
+                                      onClick: _ctx.previewOk
+                                    }, {
+                                      default: _withCtx(() => [
+                                        _createElementVNode("span", null, _toDisplayString(_ctx.previewLastStep ? _ctx.previewSubmitLabel : 'OK'), 1 /* TEXT */),
+                                        (!_ctx.previewLastStep)
+                                          ? (_openBlock(), _createBlock(_component_q_icon, {
+                                              key: 0,
+                                              name: "check",
+                                              class: "q-ml-xs"
+                                            }))
+                                          : _createCommentVNode("v-if", true)
+                                      ]),
+                                      _: 1 /* STABLE */
+                                    }, 8 /* PROPS */, ["onClick"]),
+                                    _createElementVNode("div", { class: "tf-hint" }, [
+                                      _createTextVNode("press "),
+                                      _createElementVNode("b", null, "Enter ↵"),
+                                      _createTextVNode(" or use the "),
+                                      _createElementVNode("b", null, "↓ ↑"),
+                                      _createTextVNode(" arrows")
                                     ])
                                   ]))
-                                : (_openBlock(), _createBlock(_component_q_btn, {
+                                : _createCommentVNode("v-if", true),
+                              (_ctx.previewStepper)
+                                ? (_openBlock(), _createElementBlock("div", {
                                     key: 3,
+                                    class: "tf-nav-preview"
+                                  }, [
+                                    _createVNode(_component_q_btn, {
+                                      unelevated: "",
+                                      dense: "",
+                                      square: "",
+                                      icon: "keyboard_arrow_up",
+                                      disable: _ctx.flowDialog.previewStep<=0,
+                                      "aria-label": "Previous question",
+                                      onClick: _ctx.previewPrev
+                                    }, null, 8 /* PROPS */, ["disable", "onClick"]),
+                                    _createVNode(_component_q_btn, {
+                                      unelevated: "",
+                                      dense: "",
+                                      square: "",
+                                      icon: "keyboard_arrow_down",
+                                      "aria-label": "Next question",
+                                      onClick: _ctx.previewOk
+                                    }, null, 8 /* PROPS */, ["onClick"])
+                                  ]))
+                                : (_openBlock(), _createBlock(_component_q_btn, {
+                                    key: 4,
                                     unelevated: "",
                                     "no-caps": "",
                                     color: "primary",

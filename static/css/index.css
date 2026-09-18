@@ -237,7 +237,11 @@ body.body--dark .fb-gear { background: rgba(30, 30, 30, 0.85); color: #eee; }
   padding: 24px 16px;
   min-height: 320px;
 }
-.fp-preview-card { max-width: 560px; margin: 0 auto; }
+.fp-preview-card { max-width: 560px; margin: 0 auto; position: relative; }
+.tf-nav-preview { position: absolute; right: 12px; bottom: 12px; display: flex; flex-direction: column; z-index: 5; }
+.tf-nav-preview .q-btn { width: 36px; height: 30px; background: var(--forms-text, #262627); color: var(--forms-page, #fff); }
+.tf-nav-preview .q-btn:first-child { border-radius: 8px 8px 0 0; }
+.tf-nav-preview .q-btn:last-child { border-radius: 0 0 8px 8px; margin-top: 1px; }
 .form-preview .q-card {
   background-color: color-mix(in srgb, var(--forms-card, #fff) calc(var(--fc-card-op, 1) * 100%), transparent);
 }

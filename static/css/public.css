@@ -78,3 +78,35 @@ body.body--dark .pf-card { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); }
 .tf-check { color: var(--q-primary); }
 .tf-hint { font-size: 0.75rem; opacity: 0.55; margin-top: 6px; }
 .tf-hint b { font-weight: 600; }
+
+/* Typeform-style stepper — flat question centered in the viewport */
+.tf-stage { display: flex; flex-direction: column; justify-content: center; min-height: 60vh; }
+.pf-card.tf-flat {
+  background: transparent;
+  box-shadow: none;
+  padding: 8px 0;
+}
+.tf-nav {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+}
+.tf-nav .q-btn {
+  width: 40px;
+  height: 34px;
+  background: var(--forms-text, #262627);
+  color: var(--forms-page, #fff);
+}
+.tf-nav .q-btn:first-child { border-radius: 8px 8px 0 0; }
+.tf-nav .q-btn:last-child { border-radius: 0 0 8px 8px; margin-top: 1px; }
+body.body--dark .pf-card.tf-flat { box-shadow: none; }
+.tf-progress {
+  position: fixed !important;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+}

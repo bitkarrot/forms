@@ -8,13 +8,18 @@ Bitcoin Lightning — a self-hostable WASM extension for
 own site, and attendees pay a Lightning invoice to register. No Stripe account,
 no third-party form service — your LNbits instance is the whole stack.
 
+Forms is inspired by the familiar simplicity of **Google Forms** and the
+focused, one-question-at-a-time experience of **Typeform** — reimagined for
+self-hosted Lightning payments.
+
 ## What you can build
 
 - **Event tickets & RSVPs** — capacity limits, automatic ticket codes per
   registrant
 - **Paid memberships** — collect dues in sats, confirmed the moment the
   invoice settles
-- **Applications** — optional manual-approval mode before payment is accepted
+- **Form-based applications** — collect structured applications and review them
+  first: optional manual approval before payment is accepted
 - **Donations with signup** — supporter forms with custom amounts
 - **Anything with fields** — text, email, phone, number, date, dropdowns,
   multiple choice, checkboxes, consent, Nostr pubkey

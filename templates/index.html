@@ -222,7 +222,7 @@
                 <template v-if="previewStepper">
                   <div class="tf-q">
                     <div class="tf-qnum">{{i+1}} <q-icon name="arrow_forward" size="0.9em"></q-icon></div>
-                    <div class="tf-qlabel">{{field.label || 'Untitled question'}}<span v-if="!field.required" class="tf-opt">(optional)</span></div>
+                    <div class="tf-qlabel">{{field.label || 'Untitled question'}}<span v-if="!field.required && !isOptionalLabel(field)" class="tf-opt">(optional)</span></div>
                     <div v-if="field.help" class="tf-qhelp">{{field.help}}</div>
                     <q-input v-if="['text','email','phone','number','date','nostr_pubkey'].includes(field.type)" outlined :type="field.type==='number'?'number':(field.type==='date'?'date':'text')" v-model="flowDialog.previewAnswers[field.id]" placeholder="Type your answer here…"></q-input>
                     <q-input v-else-if="field.type==='textarea'" outlined type="textarea" rows="4" v-model="flowDialog.previewAnswers[field.id]" placeholder="Type your answer here…"></q-input>
@@ -246,12 +246,13 @@
                 </template>
               </div></template>
             </div>
-            <div v-if="previewStepper" class="row items-end justify-between q-mt-lg">
-              <q-btn flat no-caps label="Back" :disable="flowDialog.previewStep<=0" @click="previewPrev"></q-btn>
-              <div class="text-center">
-                <q-btn unelevated no-caps color="primary" @click="previewOk"><span>{{previewLastStep ? previewSubmitLabel : 'OK'}}</span><q-icon v-if="!previewLastStep" name="check" class="q-ml-xs"></q-icon></q-btn>
-                <div class="tf-hint">press <b>Enter ↵</b></div>
-              </div>
+            <div v-if="previewStepper" class="text-center q-mt-lg">
+              <q-btn unelevated no-caps color="primary" @click="previewOk"><span>{{previewLastStep ? previewSubmitLabel : 'OK'}}</span><q-icon v-if="!previewLastStep" name="check" class="q-ml-xs"></q-icon></q-btn>
+              <div class="tf-hint">press <b>Enter ↵</b> or use the <b>↓ ↑</b> arrows</div>
+            </div>
+            <div v-if="previewStepper" class="tf-nav-preview">
+              <q-btn unelevated dense square icon="keyboard_arrow_up" :disable="flowDialog.previewStep<=0" aria-label="Previous question" @click="previewPrev"></q-btn>
+              <q-btn unelevated dense square icon="keyboard_arrow_down" aria-label="Next question" @click="previewOk"></q-btn>
             </div>
             <q-btn v-else unelevated no-caps color="primary" class="full-width q-mt-lg" :label="previewSubmitLabel"></q-btn>
           </template>

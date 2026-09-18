@@ -291,6 +291,7 @@
       fieldOptions(field) { return (field.optionsText || '').split(',').map(s => s.trim()).filter(Boolean) },
       previewFieldEmpty(field) { const v = this.flowDialog.previewAnswers[field.id]; return v === undefined || v === null || v === '' },
       previewOptionKey(i) { return String.fromCharCode(65 + i) },
+      isOptionalLabel(field) { return /optional/i.test(field?.label || '') },
       previewChoose(field, opt) {
         this.flowDialog.previewAnswers[field.id] = opt
         if (!this.previewLastStep) setTimeout(() => this.previewNext(), 280)
