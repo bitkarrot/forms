@@ -186,6 +186,32 @@ body.body--dark .fb-gear { background: rgba(30, 30, 30, 0.85); color: #eee; }
   padding: 14px;
   overflow-y: auto;
 }
+/* Narrow windows — stack the three columns instead of crushing the canvas */
+@media (max-width: 900px) {
+  .fb-layout { flex-direction: column; }
+  .fb-palette {
+    width: 100%;
+    min-width: 0;
+    max-height: 160px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 2px;
+    padding: 8px;
+  }
+  .fb-pal-group { width: 100%; margin: 2px 8px 4px; }
+  .fb-pal-item { padding: 6px 8px; font-size: 0.85rem; gap: 6px; }
+  .fb-side {
+    width: 100%;
+    min-width: 0;
+    max-height: 45%;
+    border-left: 0;
+    border-top: 1px solid rgba(128, 128, 128, 0.25);
+  }
+  .fp-header { flex-wrap: wrap; row-gap: 6px; }
+}
 .fb-side-sec { padding-bottom: 14px; border-bottom: 1px solid rgba(128, 128, 128, 0.25); margin-bottom: 10px; }
 .fb-side-title {
   font-size: 0.72rem;

@@ -329,7 +329,7 @@ return function render(_ctx, _cache) {
               }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"]),
               _createVNode(_component_q_space),
               _createVNode(_component_q_btn, {
-                flat: "",
+                outline: "",
                 "no-caps": "",
                 label: "Cancel",
                 class: "q-mr-sm",

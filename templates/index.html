@@ -44,7 +44,7 @@
         <q-space></q-space>
         <q-btn-toggle v-model="flowDialog.view" no-caps unelevated rounded class="fp-view-toggle" toggle-color="primary" :options="[{value:'edit',label:'Builder',icon:'edit'},{value:'preview',label:'Preview',icon:'visibility'}]" @update:model-value="setView"></q-btn-toggle>
         <q-space></q-space>
-        <q-btn flat no-caps label="Cancel" class="q-mr-sm" @click="flowDialog.show=false"></q-btn>
+        <q-btn outline no-caps label="Cancel" class="q-mr-sm" @click="flowDialog.show=false"></q-btn>
         <q-btn v-if="flowDialog.data.status!=='published'" unelevated no-caps color="positive" label="Publish" class="q-mr-sm" :loading="saving" @click="saveFlow(true)"></q-btn>
         <q-btn unelevated no-caps color="primary" label="Save" :loading="saving" @click="saveFlow()"></q-btn>
       </div>
