@@ -40,14 +40,14 @@ self-hosted Lightning payments.
     <td><img src="screenshots/confirmation.png" alt="Confirmation with ticket code"></td>
   </tr>
   <tr>
-    <td><img src="screenshots/stepper-dark-start.png" alt="Typeform-style stepper in dark mode — start screen"></td>
+    <td><img src="screenshots/stepper-themed.png" alt="Typeform-style stepper with custom background — pick an answer, press Enter"></td>
     <td><img src="screenshots/stepper-dark-question.png" alt="Typeform-style stepper in dark mode — one question at a time"></td>
   </tr>
+  <tr>
+    <td><img src="screenshots/stepper-dark-start.png" alt="Typeform-style stepper in dark mode — start screen"></td>
+    <td><img src="screenshots/embed-widget.png" alt="The same form embedded on any website with the JavaScript widget"></td>
+  </tr>
 </table>
-
-The same form embedded on any website:
-
-<p align="center"><img src="screenshots/embed-widget.png" alt="Embeddable JavaScript widget" width="640"></p>
 
 ## Make it yours
 
