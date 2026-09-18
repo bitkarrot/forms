@@ -186,13 +186,29 @@ body.body--dark .fb-gear { background: rgba(30, 30, 30, 0.85); color: #eee; }
   padding: 14px;
   overflow-y: auto;
 }
-/* Narrow windows — stack the three columns instead of crushing the canvas */
+.fb-pal-toggle { display: none; }
+/* Narrow windows — stack the columns and collapse the input palette behind a
+   toggle so the canvas keeps most of the screen */
 @media (max-width: 900px) {
   .fb-layout { flex-direction: column; }
-  .fb-palette {
+  .fb-pal-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--q-primary);
+    cursor: pointer;
+    user-select: none;
+  }
+  .fb-pal-toggle:hover { background: rgba(128, 128, 128, 0.08); }
+  .fb-palette { display: none; }
+  .fb-layout.fb-pal-open .fb-palette {
     width: 100%;
     min-width: 0;
-    max-height: 160px;
+    max-height: 220px;
     border-right: 0;
     border-bottom: 1px solid rgba(128, 128, 128, 0.25);
     display: flex;
@@ -200,6 +216,7 @@ body.body--dark .fb-gear { background: rgba(30, 30, 30, 0.85); color: #eee; }
     align-content: flex-start;
     gap: 2px;
     padding: 8px;
+    overflow-y: auto;
   }
   .fb-pal-group { width: 100%; margin: 2px 8px 4px; }
   .fb-pal-item { padding: 6px 8px; font-size: 0.85rem; gap: 6px; }

@@ -49,7 +49,11 @@
         <q-btn unelevated no-caps color="primary" label="Save" :loading="saving" @click="saveFlow()"></q-btn>
       </div>
       <q-separator></q-separator>
-      <div v-if="flowDialog.view==='edit'" class="fb-layout row no-wrap col">
+      <div v-if="flowDialog.view==='edit'" class="fb-layout row no-wrap col" :class="{'fb-pal-open': flowDialog.palOpen}">
+        <div class="fb-pal-toggle" @click="flowDialog.palOpen = !flowDialog.palOpen">
+          <q-icon :name="flowDialog.palOpen ? 'expand_less' : 'add'" size="sm"></q-icon>
+          <span>{{ flowDialog.palOpen ? 'Hide inputs' : 'Add question / template' }}</span>
+        </div>
         <div class="fb-palette scroll">
           <div class="fb-pal-group">Inputs</div>
           <div v-for="t in fieldTypeOptions" :key="t.value" class="fb-pal-item" @click="addField(t.value)">
@@ -98,8 +102,8 @@
                 <q-checkbox v-else-if="['checkbox','consent'].includes(field.type)" v-model="flowDialog.previewAnswers['f'+i]" :label="field.type==='consent'?'I accept':'Yes'"></q-checkbox>
               </div>
             </div>
-            <div v-if="!flowDialog.data.fields.length" class="fb-empty">Pick a field type on the left to add your first question — the form can also collect a payment with no questions.</div>
-            <div v-else class="fb-addhint">Click an input type on the left to add another question</div>
+            <div v-if="!flowDialog.data.fields.length" class="fb-empty">Pick a field type to add your first question — the form can also collect a payment with no questions.</div>
+            <div v-else class="fb-addhint">Pick an input type to add another question</div>
           </div>
         </div>
         <div class="fb-side scroll">

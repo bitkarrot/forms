@@ -360,8 +360,18 @@ return function render(_ctx, _cache) {
             (_ctx.flowDialog.view==='edit')
               ? (_openBlock(), _createElementBlock("div", {
                   key: 0,
-                  class: "fb-layout row no-wrap col"
+                  class: _normalizeClass(["fb-layout row no-wrap col", {'fb-pal-open': _ctx.flowDialog.palOpen}])
                 }, [
+                  _createElementVNode("div", {
+                    class: "fb-pal-toggle",
+                    onClick: $event => (_ctx.flowDialog.palOpen = !_ctx.flowDialog.palOpen)
+                  }, [
+                    _createVNode(_component_q_icon, {
+                      name: _ctx.flowDialog.palOpen ? 'expand_less' : 'add',
+                      size: "sm"
+                    }, null, 8 /* PROPS */, ["name"]),
+                    _createElementVNode("span", null, _toDisplayString(_ctx.flowDialog.palOpen ? 'Hide inputs' : 'Add question / template'), 1 /* TEXT */)
+                  ], 8 /* PROPS */, ["onClick"]),
                   _createElementVNode("div", { class: "fb-palette scroll" }, [
                     _createElementVNode("div", { class: "fb-pal-group" }, "Inputs"),
                     (_openBlock(true), _createElementBlock(_Fragment, null, _renderList(_ctx.fieldTypeOptions, (t) => {
@@ -633,11 +643,11 @@ return function render(_ctx, _cache) {
                         ? (_openBlock(), _createElementBlock("div", {
                             key: 0,
                             class: "fb-empty"
-                          }, "Pick a field type on the left to add your first question — the form can also collect a payment with no questions."))
+                          }, "Pick a field type to add your first question — the form can also collect a payment with no questions."))
                         : (_openBlock(), _createElementBlock("div", {
                             key: 1,
                             class: "fb-addhint"
-                          }, "Click an input type on the left to add another question"))
+                          }, "Pick an input type to add another question"))
                     ])
                   ], 6 /* CLASS, STYLE */),
                   _createElementVNode("div", { class: "fb-side scroll" }, [
@@ -1116,7 +1126,7 @@ return function render(_ctx, _cache) {
                       _: 1 /* STABLE */
                     })
                   ])
-                ]))
+                ], 2 /* CLASS */))
               : (_openBlock(), _createElementBlock("div", {
                   key: 1,
                   class: "col scroll q-pa-lg"
