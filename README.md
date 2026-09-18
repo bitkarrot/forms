@@ -59,7 +59,10 @@ The same form embedded on any website:
 - **Nostr-friendly** — npub fields, plus one-click NIP-07 sign-in to prefill
   the form inside the embed widget
 - **Notifications** — webhook on submit and on payment (Web3Forms for email,
-  ntfy, Slack, Discord, Telegram, IFTTT)
+  ntfy, Slack, Discord, Telegram, IFTTT). The WASM sandbox only allows
+  outbound HTTPS to hosts declared in the extension's `http.request` policy —
+  to use your own endpoint, add its host to `config.json` **and** to
+  `NOTIFY_HOSTS` in `wasm/src/lib.rs`, then rebuild (see Developers below).
 
 ## Getting started
 

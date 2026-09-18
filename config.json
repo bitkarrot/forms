@@ -90,7 +90,7 @@
      "policies": [{"table": "flows", "wallet_field": "walletId"}]},
     {"id": "wallet.list", "description": "List your wallets for the payout picker"},
     {"id": "utils.basic", "description": "Currency conversion and invoice utilities"},
-    {"id": "http.request", "description": "Send submission notifications to your webhook endpoint (email via Web3Forms, or ntfy, Slack, Discord, Telegram, IFTTT)",
+    {"id": "http.request", "description": "Send submission notifications to your webhook endpoint (email via Web3Forms, or ntfy, Slack, Discord, Telegram, IFTTT; instance admins can allow additional hosts in the policies below)",
      "policies": [
        {"host": "https://api.web3forms.com"},
        {"host": "https://ntfy.sh"},

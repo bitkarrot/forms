@@ -395,10 +395,26 @@ fn notifications_fire_on_submit_and_payment() {
 }
 
 #[test]
-fn notify_url_rejects_unlisted_hosts() {
+fn notify_url_rejects_non_https() {
     host::reset();
     let mut req = create_request();
-    req["settingsJson"] = json!({"notifyUrl": "https://evil.example.com/hook"});
+    req["settingsJson"] = json!({"notifyUrl": "http://evil.example.com/hook"});
     let result = decode(Component::create_flow(req.to_string()));
     assert!(result["error"].as_str().unwrap_or("").contains("notifyUrl"));
+}
+
+#[test]
+fn notify_url_accepts_custom_hosts_but_skips_sending() {
+    host::reset();
+    let mut req = create_request();
+    req["settingsJson"] = json!({"notifyUrl": "https://custom.example.com/hook"});
+    let flow = decode(Component::create_flow(req.to_string()));
+    let flow_id = flow["id"].as_str().unwrap();
+    // Any https URL may be saved — the http.request policy decides what is
+    // reachable, and notify() skips unlisted hosts rather than trapping the
+    // submission.
+    publish(flow_id);
+    let result = submit(flow_id);
+    assert_eq!(result["status"], "pending_payment", "{result}");
+    assert_eq!(host::state(|s| s.http_calls.len()), 0);
 }

@@ -25,6 +25,11 @@ const MAX_IMG_DATA_URI: usize = 200_000;
 const INVOICE_EXPIRY_SECS: u64 = 900;
 const PAGE: u32 = 1000;
 
+// Mirrors the http.request permission policy in config.json: http_request traps
+// the whole invocation for hosts outside the policy, and the guest cannot catch
+// traps — so notify() must never call it for a host not listed here. Instance
+// admins enabling a custom endpoint add it to BOTH this list and the
+// config.json policies, then rebuild the module.
 const NOTIFY_HOSTS: [&str; 7] = [
     "api.web3forms.com",
     "ntfy.sh",
@@ -168,6 +173,13 @@ fn flow_settings(flow: &Value) -> Value {
 // callers always persist state BEFORE notifying — a failed webhook can never
 // corrupt a submission, it can only lose a response. Returns the HTTP status
 // code, or None when notifications are not configured for this event.
+fn notify_url_host(url: &str) -> &str {
+    url.strip_prefix("https://")
+        .and_then(|rest| rest.split('/').next())
+        .and_then(|authority| authority.split(':').next())
+        .unwrap_or("")
+}
+
 fn notify(flow: &Value, sub: &Value, event: &str) -> Option<i32> {
     let settings = flow_settings(flow);
     let url = settings
@@ -176,6 +188,18 @@ fn notify(flow: &Value, sub: &Value, event: &str) -> Option<i32> {
         .unwrap_or("")
         .trim();
     if url.is_empty() {
+        return None;
+    }
+    // http_request traps the invocation for hosts outside the http.request
+    // policy and traps cannot be caught — skip unlisted hosts instead.
+    if !NOTIFY_HOSTS.contains(&notify_url_host(url)) {
+        host::log(&host::LogRequest {
+            level: "warning".into(),
+            message: format!(
+                "Notification skipped: host '{}' is not in the extension's allowlist",
+                notify_url_host(url)
+            ),
+        });
         return None;
     }
     let flag = if event == "paid" { "notifyOnPaid" } else { "notifyOnSubmit" };
@@ -486,22 +510,20 @@ fn validate_settings(value: &Value) -> Result<String, String> {
     }
     // Webhook notifications go through the host http.request function, which is
     // HTTPS-only and limited to origins granted in the http.request permission
-    // policy. The URL and key are stripped from the public flow view.
+    // policy (config.json). Any https URL may be saved — hosts outside the
+    // policy are rejected by the host at send time, so instance admins can
+    // allow custom endpoints by adding them to the policies. The URL and key
+    // are stripped from the public flow view.
     let notify_url = value
         .get("notifyUrl")
         .and_then(Value::as_str)
         .unwrap_or("")
         .trim()
         .to_string();
-    if !notify_url.is_empty() {
-        let host_part = notify_url
-            .strip_prefix("https://")
-            .and_then(|rest| rest.split('/').next())
-            .and_then(|authority| authority.split(':').next())
-            .unwrap_or("");
-        if notify_url.len() > 2048 || !NOTIFY_HOSTS.contains(&host_part) {
-            return Err("notifyUrl must be an https URL on an allowed notification host".into());
-        }
+    if !notify_url.is_empty()
+        && (notify_url.len() > 2048 || !notify_url.starts_with("https://"))
+    {
+        return Err("notifyUrl must be an https URL".into());
     }
     let notify_key = value
         .get("notifyKey")
@@ -1258,6 +1280,18 @@ impl Guest for Component {
             .is_empty()
         {
             return err("Set a notification webhook URL first");
+        }
+        let notify_host = notify_url_host(
+            flow_settings(&flow)
+                .get("notifyUrl")
+                .and_then(Value::as_str)
+                .unwrap_or(""),
+        )
+        .to_string();
+        if !NOTIFY_HOSTS.contains(&notify_host.as_str()) {
+            return err(&format!(
+                "'{notify_host}' is not in the built-in notification endpoints — the instance admin must add it to the extension's http.request policy and endpoint list, then rebuild"
+            ));
         }
         // Test sends regardless of the on-submit/on-paid toggles.
         let mut forced = flow_settings(&flow);

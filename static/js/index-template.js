@@ -1001,7 +1001,23 @@ return function render(_ctx, _cache) {
                           _createElementVNode("div", { class: "fb-hint" }, [
                             _createTextVNode("POST submission data to a webhook when someone submits or pays. For "),
                             _createElementVNode("b", null, "email"),
-                            _createTextVNode(" use Web3Forms — free, no signup: get an access key at web3forms.com, use the URL below and paste your key.")
+                            _createTextVNode(" use Web3Forms — free, no signup: get an access key at web3forms.com, use the URL below and paste your key. "),
+                            _createVNode(_component_q_icon, {
+                              name: "help_outline",
+                              size: "xs",
+                              color: "grey",
+                              class: "cursor-help"
+                            }, {
+                              default: _withCtx(() => [
+                                _createVNode(_component_q_tooltip, { "max-width": "300px" }, {
+                                  default: _withCtx(() => [
+                                    _createTextVNode("Built-in endpoints: api.web3forms.com (email), ntfy.sh (push), hooks.slack.com (Slack), discord.com (Discord), api.telegram.org (Telegram — chat_id as key, bot token in URL), maker.ifttt.com (IFTTT). Other https endpoints can be enabled by the instance admin — the WASM sandbox requires each host to be declared in the extension's http.request policy (see README).")
+                                  ]),
+                                  _: 1 /* STABLE */
+                                })
+                              ]),
+                              _: 1 /* STABLE */
+                            })
                           ]),
                           _createVNode(_component_q_input, {
                             outlined: "",
@@ -1035,33 +1051,6 @@ return function render(_ctx, _cache) {
                               "onUpdate:modelValue": $event => ((_ctx.flowDialog.data.notifyOnPaid) = $event),
                               label: "Notify when paid"
                             }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"])
-                          ]),
-                          _createElementVNode("div", { class: "fb-side-title q-mt-md" }, "Allowed hosts"),
-                          _createElementVNode("div", { class: "fb-hint fb-hosts" }, [
-                            _createElementVNode("div", null, [
-                              _createElementVNode("b", null, "api.web3forms.com"),
-                              _createTextVNode(" — email")
-                            ]),
-                            _createElementVNode("div", null, [
-                              _createElementVNode("b", null, "ntfy.sh"),
-                              _createTextVNode(" — push")
-                            ]),
-                            _createElementVNode("div", null, [
-                              _createElementVNode("b", null, "hooks.slack.com"),
-                              _createTextVNode(" — Slack")
-                            ]),
-                            _createElementVNode("div", null, [
-                              _createElementVNode("b", null, "discord.com"),
-                              _createTextVNode(" — Discord")
-                            ]),
-                            _createElementVNode("div", null, [
-                              _createElementVNode("b", null, "api.telegram.org"),
-                              _createTextVNode(" — chat_id as key, bot token in URL")
-                            ]),
-                            _createElementVNode("div", null, [
-                              _createElementVNode("b", null, "maker.ifttt.com"),
-                              _createTextVNode(" — IFTTT applets")
-                            ])
                           ]),
                           _createElementVNode("div", { class: "row items-center q-gutter-sm q-mt-md" }, [
                             _createVNode(_component_q_btn, {

@@ -91,6 +91,8 @@ pub struct HttpRequest {
     pub headers: Vec<(String, String)>,
     pub body: Option<String>,
 }
+// The generated bindings name the WIT `http-call` record `HttpCall`.
+pub type HttpCall = HttpRequest;
 pub struct HttpResponse {
     pub status_code: i32,
     pub headers: Vec<(String, String)>,
