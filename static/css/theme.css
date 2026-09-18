@@ -46,6 +46,18 @@ body.body--dark .text-grey-8,
   color: var(--forms-muted) !important;
 }
 
+/* Light-mode previews inside a dark-mode admin page: pin the full light
+   palette on the preview element so body.body--dark vars don't leak in.
+   Kept before the preset blocks and at equal specificity (0,1,0) so presets
+   override it by source order. */
+:where(.fb-canvas, .form-preview):not(.theme-dark) {
+  --forms-page: #f6f7f9;
+  --forms-card: #ffffff;
+  --forms-text: #1f2937;
+  --forms-muted: #6b7280;
+  --forms-border: rgba(0, 0, 0, 0.12);
+}
+
 .theme-bitcoin {
   --q-primary: #f7931a;
   --q-secondary: #4a4a4a;
