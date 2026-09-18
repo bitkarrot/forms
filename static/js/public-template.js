@@ -234,7 +234,13 @@ return function render(_ctx, _cache) {
                                                       "onUpdate:modelValue": $event => ((_ctx.answers[field.id]) = $event),
                                                       label: field.type==='consent'?'I accept':'Yes'
                                                     }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "label"]))
-                                                  : _createCommentVNode("v-if", true)
+                                                  : _createCommentVNode("v-if", true),
+                                        (field.type==='nostr_pubkey')
+                                          ? (_openBlock(), _createElementBlock("div", {
+                                              key: 6,
+                                              class: "pf-hint q-mt-sm"
+                                            }, "Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login."))
+                                          : _createCommentVNode("v-if", true)
                                       ]))
                                     : (_openBlock(), _createElementBlock(_Fragment, { key: 1 }, [
                                         _createElementVNode("div", { class: "pf-qlabel" }, [
@@ -315,22 +321,21 @@ return function render(_ctx, _cache) {
                                                       "onUpdate:modelValue": $event => ((_ctx.answers[field.id]) = $event),
                                                       label: field.type==='consent'?'I accept':'Yes'
                                                     }, null, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "label"]))
-                                                  : _createCommentVNode("v-if", true)
+                                                  : _createCommentVNode("v-if", true),
+                                        (field.type==='nostr_pubkey')
+                                          ? (_openBlock(), _createElementBlock("div", {
+                                              key: 6,
+                                              class: "pf-hint q-mt-sm"
+                                            }, "Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login."))
+                                          : _createCommentVNode("v-if", true)
                                       ], 64 /* STABLE_FRAGMENT */))
                                 ], 2 /* CLASS */))
                               : _createCommentVNode("v-if", true)
                           ], 64 /* STABLE_FRAGMENT */))
                         }), 256 /* UNKEYED_FRAGMENT */)),
-                        (_ctx.submitError)
-                          ? (_openBlock(), _createElementBlock("div", {
-                              key: 0,
-                              class: "text-negative q-mt-md",
-                              role: "alert"
-                            }, _toDisplayString(_ctx.submitError), 1 /* TEXT */))
-                          : _createCommentVNode("v-if", true),
                         (_ctx.isStepper)
                           ? (_openBlock(), _createElementBlock("div", {
-                              key: 1,
+                              key: 0,
                               class: "text-center"
                             }, [
                               _createVNode(_component_q_btn, {
@@ -363,7 +368,7 @@ return function render(_ctx, _cache) {
                           : _createCommentVNode("v-if", true),
                         (_ctx.isStepper)
                           ? (_openBlock(), _createElementBlock("div", {
-                              key: 2,
+                              key: 1,
                               class: "tf-nav",
                               role: "group",
                               "aria-label": "Question navigation"
@@ -389,13 +394,13 @@ return function render(_ctx, _cache) {
                           : _createCommentVNode("v-if", true),
                         (_ctx.isStepper)
                           ? (_openBlock(), _createBlock(_component_q_linear_progress, {
-                              key: 3,
+                              key: 2,
                               value: _ctx.stepProgress,
                               class: "tf-progress",
                               "aria-label": "Form progress"
                             }, null, 8 /* PROPS */, ["value"]))
                           : (_openBlock(), _createBlock(_component_q_btn, {
-                              key: 4,
+                              key: 3,
                               unelevated: "",
                               "no-caps": "",
                               color: "primary",
@@ -404,13 +409,7 @@ return function render(_ctx, _cache) {
                               loading: _ctx.submitting,
                               label: _ctx.submitLabel,
                               onClick: _ctx.submit
-                            }, null, 8 /* PROPS */, ["loading", "label", "onClick"])),
-                        (_ctx.hasNostrField && (!_ctx.isStepper || _ctx.formFields[_ctx.step]?.type==='nostr_pubkey'))
-                          ? (_openBlock(), _createElementBlock("div", {
-                              key: 5,
-                              class: "pf-hint text-center q-mt-md"
-                            }, "Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login."))
-                          : _createCommentVNode("v-if", true)
+                            }, null, 8 /* PROPS */, ["loading", "label", "onClick"]))
                       ], 2 /* CLASS */))
                 ], 64 /* STABLE_FRAGMENT */))
               : _createCommentVNode("v-if", true)

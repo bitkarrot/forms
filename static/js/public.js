@@ -6,14 +6,13 @@
     render: window.FORMS_PUBLIC_RENDER(),
     data: () => ({
       flow: null, settings: {}, loading: true, loadError: '', answers: {}, submitting: false,
-      submitError: '', invoice: null, invoiceDialog: false, confirmed: false, submission: null,
+      invoice: null, invoiceDialog: false, confirmed: false, submission: null,
       pollTimer: null, tickTimer: null, nowTs: Math.floor(Date.now() / 1000), step: -1, expired: false,
     }),
     computed: {
       formFields() {
         try { return JSON.parse(this.flow?.schemaJson || '{"fields":[]}').fields || [] } catch (_) { return [] }
       },
-      hasNostrField() { return this.formFields.some(f => f.type === 'nostr_pubkey') },
       pricing() { try { return JSON.parse(this.flow?.pricingJson || '{}') } catch (_) { return {} } },
       isStepper() { return this.settings.renderer === 'stepper' && this.formFields.length > 0 },
       stepProgress() { return this.formFields.length ? (this.step + 1) / this.formFields.length : 0 },
@@ -92,16 +91,16 @@
         const v = this.answers[field.id]
         return v === undefined || v === null || v === '' || (Array.isArray(v) && !v.length)
       },
+      showError(msg) { LNbitsBridge.notify(msg, 'negative').catch(() => {}) },
       nextStep() {
         const field = this.formFields[this.step]
         if (field && field.required && this.fieldEmpty(field)) {
-          this.submitError = `"${field.label}" is required.`
+          this.showError(`"${field.label}" is required.`)
           return
         }
-        this.submitError = ''
         if (this.step < this.formFields.length - 1) this.step += 1
       },
-      prevStep() { this.step = Math.max(-1, this.step - 1); this.submitError = '' },
+      prevStep() { this.step = Math.max(-1, this.step - 1) },
       onOk() {
         if (this.step === -1) { this.step = 0; return }
         if (this.isLastStep) { this.submit(); return }
@@ -137,7 +136,7 @@
       },
       async submit() {
         if (this.submitting) return
-        this.submitting = true; this.submitError = ''
+        this.submitting = true
         try {
           const flowId = this.flow.id
           const result = await this.api('POST', `/f/${flowId}/submit`, {answers: this.answers})
@@ -148,7 +147,7 @@
           this.invoiceDialog = true
           this.startPolling(result.submissionId)
           this.startTicking()
-        } catch (e) { this.submitError = e.message }
+        } catch (e) { this.showError(e.message) }
         finally { this.submitting = false }
       },
       startPolling(submissionId) {
@@ -180,7 +179,7 @@
         this.stopPolling(); this.stopTicking()
         this.invoiceDialog = false
         this.expired = true
-        this.submitError = message
+        this.showError(message)
       },
       stopPolling() { if (this.pollTimer) { clearInterval(this.pollTimer); this.pollTimer = null } },
       stopTicking() { if (this.tickTimer) { clearInterval(this.tickTimer); this.tickTimer = null } },

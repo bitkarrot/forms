@@ -59,6 +59,7 @@
                   </div>
                 </div>
                 <q-checkbox v-else-if="['checkbox','consent'].includes(field.type)" v-model="answers[field.id]" :label="field.type==='consent'?'I accept':'Yes'"></q-checkbox>
+                <div v-if="field.type==='nostr_pubkey'" class="pf-hint q-mt-sm">Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login.</div>
               </div>
             </template>
             <template v-else>
@@ -75,9 +76,9 @@
                 </div>
               </div>
               <q-checkbox v-else-if="['checkbox','consent'].includes(field.type)" v-model="answers[field.id]" :label="field.type==='consent'?'I accept':'Yes'"></q-checkbox>
+              <div v-if="field.type==='nostr_pubkey'" class="pf-hint q-mt-sm">Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login.</div>
             </template>
           </div></template>
-          <div v-if="submitError" class="text-negative q-mt-md" role="alert">{{submitError}}</div>
           <div v-if="isStepper" class="text-center">
             <q-btn unelevated no-caps color="primary" :loading="submitting" @click="onOk">
               <span>{{isLastStep ? submitLabel : 'OK'}}</span><q-icon v-if="!isLastStep" name="check" class="q-ml-xs"></q-icon>
@@ -90,7 +91,6 @@
           </div>
           <q-linear-progress v-if="isStepper" :value="stepProgress" class="tf-progress" aria-label="Form progress"></q-linear-progress>
           <q-btn v-else unelevated no-caps color="primary" size="lg" class="full-width q-mt-sm" :loading="submitting" :label="submitLabel" @click="submit"></q-btn>
-          <div v-if="hasNostrField && (!isStepper || formFields[step]?.type==='nostr_pubkey')" class="pf-hint text-center q-mt-md">Nostr sign-in is not available on this page. Paste your npub manually, or use the embedded form on the organizer's website for one-click login.</div>
           </div>
         </template>
       </template>
