@@ -68,7 +68,7 @@ return function render(_ctx, _cache) {
                       color: "positive",
                       size: "3rem"
                     }),
-                    _createElementVNode("div", { class: "text-h5 q-mt-md" }, _toDisplayString(_ctx.settings.confirmText || 'Registration confirmed'), 1 /* TEXT */),
+                    _createElementVNode("div", { class: "text-h5 q-mt-md" }, _toDisplayString(_ctx.settings.confirmText || 'Thanks — your submission has been received.'), 1 /* TEXT */),
                     (_ctx.submission && _ctx.submission.ticketCode)
                       ? (_openBlock(), _createElementBlock("div", {
                           key: 0,

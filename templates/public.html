@@ -20,7 +20,7 @@
         <div v-if="settings.endImage" class="pf-banner" :style="endBannerStyle"></div>
         <q-card class="pf-card text-center">
           <q-icon name="check_circle" color="positive" size="3rem"></q-icon>
-          <div class="text-h5 q-mt-md">{{settings.confirmText || 'Registration confirmed'}}</div>
+          <div class="text-h5 q-mt-md">{{settings.confirmText || 'Thanks — your submission has been received.'}}</div>
           <div v-if="submission && submission.ticketCode" class="q-mt-lg">
             <div class="text-caption text-grey-7">Your confirmation code</div>
             <div class="text-h6 ticket-code">{{submission.ticketCode}}</div>

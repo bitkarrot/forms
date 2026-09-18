@@ -11,6 +11,9 @@
   var ORIGIN = srcUrl.origin;
   var API = ORIGIN + '/api/v1/ext/forms';
   var QR_URL = new URL('qr.js', srcUrl).href;
+  function assetUrl(u) {
+    try { return new URL(String(u), ORIGIN + '/').href; } catch (_) { return String(u); }
+  }
   var POLL_MS = 2000;
   var disposed = false, flow = null, fields = [], settings = {}, pricing = {};
   var submission = null, pollTimer = null, tickTimer = null, errorBox = null, qrCancel = null;
@@ -276,7 +279,7 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     var p = palette();
     if (settings.headerImage) {
       var banner = element('div', 'fm-banner', null, card);
-      banner.style.backgroundImage = 'url("' + String(settings.headerImage).replace(/"/g, '%22') + '")';
+      banner.style.backgroundImage = 'url("' + assetUrl(settings.headerImage).replace(/"/g, '%22') + '")';
     }
     element('h1', 'fm-title', flow.title, card);
     if (flow.description) element('p', 'fm-desc', flow.description, card);
@@ -419,10 +422,10 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     replaceContents(card);
     if (settings.endImage) {
       var endBanner = element('div', 'fm-banner', null, card);
-      endBanner.style.backgroundImage = 'url("' + String(settings.endImage).replace(/"/g, '%22') + '")';
+      endBanner.style.backgroundImage = 'url("' + assetUrl(settings.endImage).replace(/"/g, '%22') + '")';
     }
     var box = element('div', 'fm-center', null, card);
-    element('div', 'fm-title', settings.confirmText || 'Registration confirmed', box);
+    element('div', 'fm-title', settings.confirmText || 'Thanks — your submission has been received.', box);
     var code = view && view.ticketCode;
     if (code) {
       element('div', 'fm-muted', 'Your confirmation code', box);
