@@ -30,7 +30,7 @@ const PAGE: u32 = 1000;
 // traps — so notify() must never call it for a host not listed here. Instance
 // admins enabling a custom endpoint add it to BOTH this list and the
 // config.json policies, then rebuild the module.
-const NOTIFY_HOSTS: [&str; 7] = [
+const NOTIFY_HOSTS: [&str; 8] = [
     "api.web3forms.com",
     "ntfy.sh",
     "hooks.slack.com",
@@ -38,6 +38,7 @@ const NOTIFY_HOSTS: [&str; 7] = [
     "discordapp.com",
     "api.telegram.org",
     "maker.ifttt.com",
+    "webhook.site",
 ];
 const FIELD_TYPES: [&str; 11] = [
     "text", "email", "phone", "textarea", "number", "date", "select", "radio", "checkbox",

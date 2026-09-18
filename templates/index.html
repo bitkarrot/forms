@@ -176,7 +176,7 @@
             <div class="q-pa-sm">
               <div class="fb-hint">POST submission data to a webhook when someone submits or pays. For <b>email</b> use Web3Forms — free, no signup: get an access key at web3forms.com, use the URL below and paste your key.
                 <q-icon name="help_outline" size="xs" color="grey" class="cursor-help">
-                  <q-tooltip max-width="300px">Built-in endpoints: api.web3forms.com (email), ntfy.sh (push), hooks.slack.com (Slack), discord.com (Discord), api.telegram.org (Telegram — chat_id as key, bot token in URL), maker.ifttt.com (IFTTT). Other https endpoints can be enabled by the instance admin — the WASM sandbox requires each host to be declared in the extension's http.request policy (see README).</q-tooltip>
+                  <q-tooltip max-width="300px">Built-in endpoints: api.web3forms.com (email), ntfy.sh (push), hooks.slack.com (Slack), discord.com (Discord), api.telegram.org (Telegram — chat_id as key, bot token in URL), maker.ifttt.com (IFTTT), webhook.site (testing). Other https endpoints can be enabled by the instance admin — the WASM sandbox requires each host to be declared in the extension's http.request policy (see README).</q-tooltip>
                 </q-icon>
               </div>
               <q-input outlined dense class="q-mt-sm" v-model="flowDialog.data.notifyUrl" label="Webhook URL" placeholder="https://api.web3forms.com/submit"></q-input>

@@ -98,7 +98,8 @@
        {"host": "https://discord.com"},
        {"host": "https://discordapp.com"},
        {"host": "https://api.telegram.org"},
-       {"host": "https://maker.ifttt.com"}
+       {"host": "https://maker.ifttt.com"},
+       {"host": "https://webhook.site"}
      ]}
   ]
 }
