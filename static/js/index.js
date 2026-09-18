@@ -312,7 +312,7 @@
         if (flow) {
           const settings = JSON.parse(flow.settingsJson || '{}')
           const {preset, mode} = themeSettings(settings)
-          this.flowDialog = {show: true, editing: true, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {id: flow.id, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || '', headerImage: settings.headerImage || '', confirmText: settings.confirmText || '', bgImage: settings.bgImage || '', endImage: settings.endImage || '', cardOpacity: settings.cardOpacity ?? 1, colors: Object.assign({global: '', title: '', description: '', question: ''}, settings.colors || {}), notifyUrl: settings.notifyUrl || '', notifyKey: settings.notifyKey || '', notifyOnSubmit: settings.notifyOnSubmit !== false, notifyOnPaid: settings.notifyOnPaid !== false}}
+          this.flowDialog = {show: true, editing: true, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {id: flow.id, status: flow.status, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || '', headerImage: settings.headerImage || '', confirmText: settings.confirmText || '', bgImage: settings.bgImage || '', endImage: settings.endImage || '', cardOpacity: settings.cardOpacity ?? 1, colors: Object.assign({global: '', title: '', description: '', question: ''}, settings.colors || {}), notifyUrl: settings.notifyUrl || '', notifyKey: settings.notifyKey || '', notifyOnSubmit: settings.notifyOnSubmit !== false, notifyOnPaid: settings.notifyOnPaid !== false}}
         } else {
           const blank = flowTemplates[0].data
           this.flowDialog = {show: true, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, previewAnswers: {}, data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: '', headerImage: '', confirmText: '', bgImage: '', endImage: '', cardOpacity: 1, colors: {global: '', title: '', description: '', question: ''}, notifyUrl: '', notifyKey: '', notifyOnSubmit: true, notifyOnPaid: true}}
@@ -360,7 +360,7 @@
         fields.splice(j, 0, fields.splice(i, 1)[0])
         this.flowDialog.sel = j
       },
-      async saveFlow() {
+      async saveFlow(publish = false) {
         if (this.saving) return
         const d = this.flowDialog.data
         if (!d.title?.trim() || (!this.flowDialog.editing && !d.walletId)) { this.formError = 'Title and payout wallet are required.'; return }
@@ -378,10 +378,14 @@
           const saved = this.flowDialog.editing
             ? await this.api('PUT', `/flows/${d.id}`, payload)
             : await this.api('POST', '/flows', {...payload, walletId: d.walletId})
+          if (publish && saved.status !== 'published') {
+            await this.api('POST', `/flows/${saved.id}/status`, {status: 'published'})
+            saved.status = 'published'
+          }
           const i = this.flows.findIndex(f => f.id === saved.id)
           if (i < 0) this.flows.unshift(saved); else this.flows.splice(i, 1, saved)
           this.flowDialog.show = false
-          LNbitsBridge.notify('Flow saved.', 'positive').catch(() => {})
+          LNbitsBridge.notify(publish ? 'Flow published.' : 'Flow saved.', 'positive').catch(() => {})
         } catch (e) { this.formError = e.message }
         finally { this.saving = false }
       },

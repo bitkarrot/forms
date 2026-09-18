@@ -334,13 +334,24 @@ return function render(_ctx, _cache) {
                 label: "Cancel",
                 onClick: $event => (_ctx.flowDialog.show=false)
               }, null, 8 /* PROPS */, ["onClick"]),
+              (_ctx.flowDialog.data.status!=='published')
+                ? (_openBlock(), _createBlock(_component_q_btn, {
+                    key: 0,
+                    unelevated: "",
+                    "no-caps": "",
+                    color: "positive",
+                    label: "Publish",
+                    loading: _ctx.saving,
+                    onClick: $event => (_ctx.saveFlow(true))
+                  }, null, 8 /* PROPS */, ["loading", "onClick"]))
+                : _createCommentVNode("v-if", true),
               _createVNode(_component_q_btn, {
                 unelevated: "",
                 "no-caps": "",
                 color: "primary",
                 label: "Save",
                 loading: _ctx.saving,
-                onClick: _ctx.saveFlow
+                onClick: $event => (_ctx.saveFlow())
               }, null, 8 /* PROPS */, ["loading", "onClick"])
             ]),
             _createVNode(_component_q_separator),
