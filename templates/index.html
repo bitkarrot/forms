@@ -49,7 +49,7 @@
         <q-btn unelevated no-caps color="primary" label="Save" :loading="saving" @click="saveFlow()"></q-btn>
       </div>
       <q-separator></q-separator>
-      <div v-if="flowDialog.view==='edit'" class="fb-layout row no-wrap col" :class="{'fb-pal-open': flowDialog.palOpen}">
+      <div v-if="flowDialog.view==='edit'" class="fb-layout row no-wrap col" :class="{'fb-pal-open': flowDialog.palOpen, 'fb-set-open': flowDialog.setOpen}">
         <div class="fb-pal-toggle" @click="flowDialog.palOpen = !flowDialog.palOpen">
           <q-icon :name="flowDialog.palOpen ? 'expand_less' : 'add'" size="sm"></q-icon>
           <span>{{ flowDialog.palOpen ? 'Hide inputs' : 'Add question / template' }}</span>
@@ -105,6 +105,10 @@
             <div v-if="!flowDialog.data.fields.length" class="fb-empty">Pick a field type to add your first question — the form can also collect a payment with no questions.</div>
             <div v-else class="fb-addhint">Pick an input type to add another question</div>
           </div>
+        </div>
+        <div class="fb-side-toggle" @click="flowDialog.setOpen = !flowDialog.setOpen">
+          <q-icon :name="flowDialog.setOpen ? 'expand_more' : 'tune'" size="sm"></q-icon>
+          <span>{{ flowDialog.setOpen ? 'Hide settings' : 'Question / form settings' }}</span>
         </div>
         <div class="fb-side scroll">
           <template v-if="flowDialog.data.fields[flowDialog.sel]">

@@ -360,7 +360,7 @@ return function render(_ctx, _cache) {
             (_ctx.flowDialog.view==='edit')
               ? (_openBlock(), _createElementBlock("div", {
                   key: 0,
-                  class: _normalizeClass(["fb-layout row no-wrap col", {'fb-pal-open': _ctx.flowDialog.palOpen}])
+                  class: _normalizeClass(["fb-layout row no-wrap col", {'fb-pal-open': _ctx.flowDialog.palOpen, 'fb-set-open': _ctx.flowDialog.setOpen}])
                 }, [
                   _createElementVNode("div", {
                     class: "fb-pal-toggle",
@@ -650,6 +650,16 @@ return function render(_ctx, _cache) {
                           }, "Pick an input type to add another question"))
                     ])
                   ], 6 /* CLASS, STYLE */),
+                  _createElementVNode("div", {
+                    class: "fb-side-toggle",
+                    onClick: $event => (_ctx.flowDialog.setOpen = !_ctx.flowDialog.setOpen)
+                  }, [
+                    _createVNode(_component_q_icon, {
+                      name: _ctx.flowDialog.setOpen ? 'expand_more' : 'tune',
+                      size: "sm"
+                    }, null, 8 /* PROPS */, ["name"]),
+                    _createElementVNode("span", null, _toDisplayString(_ctx.flowDialog.setOpen ? 'Hide settings' : 'Question / form settings'), 1 /* TEXT */)
+                  ], 8 /* PROPS */, ["onClick"]),
                   _createElementVNode("div", { class: "fb-side scroll" }, [
                     (_ctx.flowDialog.data.fields[_ctx.flowDialog.sel])
                       ? (_openBlock(), _createElementBlock("div", {

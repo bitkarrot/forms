@@ -170,7 +170,7 @@
     data: () => ({
       flows: [], wallets: [], loading: false, loadError: '', saving: false, isDark: false,
       themePresetOptions, themeModeOptions, rendererOptions, fieldTypeOptions, flowTemplates, customCssSample, colorKeys,
-      flowDialog: {show: false, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, palOpen: false, previewAnswers: {}, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: '', headerImage: '', confirmText: '', bgImage: '', endImage: '', cardOpacity: 1, colors: {global: '', title: '', description: '', question: ''}, notifyUrl: '', notifyKey: '', notifyOnSubmit: true, notifyOnPaid: true}},
+      flowDialog: {show: false, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, palOpen: false, setOpen: false, previewAnswers: {}, data: {title: '', description: '', walletId: null, amountSat: 0, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: false, fields: [], customCss: '', headerImage: '', confirmText: '', bgImage: '', endImage: '', cardOpacity: 1, colors: {global: '', title: '', description: '', question: ''}, notifyUrl: '', notifyKey: '', notifyOnSubmit: true, notifyOnPaid: true}},
       notifyTesting: false, notifyResult: '', notifyOk: false,
       subsDialog: {show: false, flow: null, rows: []},
       csvDialog: {show: false, filename: '', content: ''},
@@ -311,10 +311,10 @@
         if (flow) {
           const settings = JSON.parse(flow.settingsJson || '{}')
           const {preset, mode} = themeSettings(settings)
-          this.flowDialog = {show: true, editing: true, template: 'blank', sel: 0, view: 'edit', previewStep: -1, palOpen: false, previewAnswers: {}, data: {id: flow.id, status: flow.status, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || '', headerImage: settings.headerImage || '', confirmText: settings.confirmText || '', bgImage: settings.bgImage || '', endImage: settings.endImage || '', cardOpacity: settings.cardOpacity ?? 1, colors: Object.assign({global: '', title: '', description: '', question: ''}, settings.colors || {}), notifyUrl: settings.notifyUrl || '', notifyKey: settings.notifyKey || '', notifyOnSubmit: settings.notifyOnSubmit !== false, notifyOnPaid: settings.notifyOnPaid !== false}}
+          this.flowDialog = {show: true, editing: true, template: 'blank', sel: 0, view: 'edit', previewStep: -1, palOpen: false, setOpen: false, previewAnswers: {}, data: {id: flow.id, status: flow.status, title: flow.title, description: flow.description, walletId: flow.walletId, amountSat: (JSON.parse(flow.pricingJson || '{}').amountSat) || 0, capacity: flow.capacity || 0, themePreset: preset, themeMode: mode, renderer: settings.renderer === 'stepper' ? 'stepper' : 'compact', requireApproval: Boolean(settings.requireApproval), fields: schemaToFields(flow.schemaJson), customCss: settings.customCss || '', headerImage: settings.headerImage || '', confirmText: settings.confirmText || '', bgImage: settings.bgImage || '', endImage: settings.endImage || '', cardOpacity: settings.cardOpacity ?? 1, colors: Object.assign({global: '', title: '', description: '', question: ''}, settings.colors || {}), notifyUrl: settings.notifyUrl || '', notifyKey: settings.notifyKey || '', notifyOnSubmit: settings.notifyOnSubmit !== false, notifyOnPaid: settings.notifyOnPaid !== false}}
         } else {
           const blank = flowTemplates[0].data
-          this.flowDialog = {show: true, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, palOpen: false, previewAnswers: {}, data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: '', headerImage: '', confirmText: '', bgImage: '', endImage: '', cardOpacity: 1, colors: {global: '', title: '', description: '', question: ''}, notifyUrl: '', notifyKey: '', notifyOnSubmit: true, notifyOnPaid: true}}
+          this.flowDialog = {show: true, editing: false, template: 'blank', sel: 0, view: 'edit', previewStep: -1, palOpen: false, setOpen: false, previewAnswers: {}, data: {title: blank.title, description: blank.description, walletId: this.wallets[0]?.id || null, amountSat: blank.amountSat, capacity: 0, themePreset: 'standard', themeMode: 'light', renderer: 'compact', requireApproval: blank.requireApproval, fields: blank.fields.map(f => ({...f})), customCss: '', headerImage: '', confirmText: '', bgImage: '', endImage: '', cardOpacity: 1, colors: {global: '', title: '', description: '', question: ''}, notifyUrl: '', notifyKey: '', notifyOnSubmit: true, notifyOnPaid: true}}
         }
         this.notifyResult = ''
       },
@@ -329,10 +329,11 @@
         d.fields = tpl.data.fields.map(f => ({...f}))
         this.flowDialog.sel = 0
         this.flowDialog.palOpen = false
+        this.flowDialog.setOpen = true
       },
       fieldIcon, fieldSvg,
       typeLabel(type) { return (fieldTypeOptions.find(t => t.value === type) || {}).label || type },
-      selectField(i) { this.flowDialog.sel = i },
+      selectField(i) { this.flowDialog.sel = i; this.flowDialog.setOpen = true },
       toggleRequired(i) {
         const f = this.flowDialog.data.fields[i]
         if (f.type === 'consent') { f.required = true; return }
@@ -343,6 +344,7 @@
         fields.push(newField(type))
         this.flowDialog.sel = fields.length - 1
         this.flowDialog.palOpen = false
+        this.flowDialog.setOpen = true
       },
       duplicateField(i) {
         const fields = this.flowDialog.data.fields

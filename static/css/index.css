@@ -186,12 +186,12 @@ body.body--dark .fb-gear { background: rgba(30, 30, 30, 0.85); color: #eee; }
   padding: 14px;
   overflow-y: auto;
 }
-.fb-pal-toggle { display: none; }
-/* Narrow windows — stack the columns and collapse the input palette behind a
-   toggle so the canvas keeps most of the screen */
+.fb-pal-toggle, .fb-side-toggle { display: none; }
+/* Narrow windows — stack the columns and collapse the input palette and the
+   settings panel behind toggles so the canvas keeps most of the screen */
 @media (max-width: 900px) {
   .fb-layout { flex-direction: column; }
-  .fb-pal-toggle {
+  .fb-pal-toggle, .fb-side-toggle {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -203,7 +203,8 @@ body.body--dark .fb-gear { background: rgba(30, 30, 30, 0.85); color: #eee; }
     cursor: pointer;
     user-select: none;
   }
-  .fb-pal-toggle:hover { background: rgba(128, 128, 128, 0.08); }
+  .fb-pal-toggle:hover, .fb-side-toggle:hover { background: rgba(128, 128, 128, 0.08); }
+  .fb-side-toggle { border-bottom: 0; border-top: 1px solid rgba(128, 128, 128, 0.25); }
   .fb-palette { display: none; }
   .fb-layout.fb-pal-open .fb-palette {
     width: 100%;
@@ -220,12 +221,13 @@ body.body--dark .fb-gear { background: rgba(30, 30, 30, 0.85); color: #eee; }
   }
   .fb-pal-group { width: 100%; margin: 2px 8px 4px; }
   .fb-pal-item { padding: 6px 8px; font-size: 0.85rem; gap: 6px; }
-  .fb-side {
+  .fb-side { display: none; }
+  .fb-layout.fb-set-open .fb-side {
+    display: block;
     width: 100%;
     min-width: 0;
     max-height: 45%;
     border-left: 0;
-    border-top: 1px solid rgba(128, 128, 128, 0.25);
   }
   .fp-header { flex-wrap: wrap; row-gap: 6px; }
 }
