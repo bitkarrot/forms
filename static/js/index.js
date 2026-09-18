@@ -433,8 +433,26 @@
         const flow = this.subsDialog.flow; if (!flow) return
         try {
           const rows = (await this.api('GET', `/flows/${flow.id}/export`)).data || []
-          const cols = ['id', 'status', 'amountSat', 'ticketCode', 'paymentHash', 'createdAt', 'paidAt', 'answersJson']
-          const csv = [cols.join(',')].concat(rows.map(r => cols.map(c => JSON.stringify(r[c] ?? '')).join(','))).join('\n')
+          let fields = []
+          try { fields = (JSON.parse(flow.schemaJson || '{}').fields || []).map(f => ({id: f.id, label: f.label || f.id})) } catch (_) {}
+          const known = new Set(fields.map(f => f.id))
+          const extraKeys = []
+          for (const r of rows) {
+            try {
+              for (const k of Object.keys(JSON.parse(r.answersJson || '{}'))) {
+                if (!known.has(k) && !extraKeys.includes(k)) extraKeys.push(k)
+              }
+            } catch (_) {}
+          }
+          const meta = ['id', 'status', 'amountSat', 'ticketCode', 'paymentHash', 'createdAt', 'paidAt']
+          const headers = [...meta, ...fields.map(f => f.label), ...extraKeys]
+          const cell = v => v === null || v === undefined ? '' : v === true ? 'yes' : v === false ? 'no' : Array.isArray(v) ? v.join('; ') : String(v)
+          const csv = [headers.map(h => JSON.stringify(h)).join(',')].concat(rows.map(r => {
+            let a = {}
+            try { a = JSON.parse(r.answersJson || '{}') } catch (_) {}
+            const answerCols = [...fields.map(f => a[f.id]), ...extraKeys.map(k => a[k])]
+            return [...meta.map(c => cell(r[c])), ...answerCols.map(cell)].map(v => JSON.stringify(v)).join(',')
+          })).join('\n')
           this.csvDialog = {show: true, filename: `${(flow.title || 'submissions').replace(/[^\w-]+/g, '_')}.csv`, content: csv}
         } catch (e) { LNbitsBridge.notify(e.message, 'negative').catch(() => {}) }
       },
