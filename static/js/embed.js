@@ -17,7 +17,7 @@
   var POLL_MS = 2000;
   var disposed = false, flow = null, fields = [], settings = {}, pricing = {};
   var submission = null, pollTimer = null, tickTimer = null, errorBox = null, qrCancel = null;
-  var answers = {}, stepIndex = -1, stepperKeys = false, widgetActive = false, cardFlat = false;
+  var answers = {}, stepIndex = -1, stepperKeys = false, widgetActive = false;
 
   var PRESETS = {
     standard: {card: '#ffffff', text: '#1f2937', muted: '#6b7280', primary: '#1976d2', border: 'rgba(0,0,0,0.15)'},
@@ -121,7 +121,9 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :host{display:block}
 button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not-allowed}
-.fm-card{max-width:560px;margin:0 auto;padding:1.75rem;border-radius:1rem;background:#fff;color:#1f2937;font:16px/1.5 sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.fm-head,.fm-body{max-width:560px;margin-left:auto;margin-right:auto}
+.fm-head:not(:empty){margin-bottom:1.25rem}
+.fm-card{margin:0 0 1rem;padding:1.75rem;border-radius:1rem;background:#fff;color:#1f2937;font:16px/1.5 sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .fm-banner{height:120px;border-radius:.75rem;background-size:cover;background-position:center;margin-bottom:1rem}
 .fm-title{font-size:1.5rem;line-height:1.2;margin-bottom:.5rem;overflow-wrap:anywhere}
 .fm-desc{white-space:pre-wrap;overflow-wrap:anywhere;margin-bottom:1rem}
@@ -175,46 +177,64 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
 .tf-progress{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(128,128,128,.2)}
 .tf-progress-fill{height:100%;background:var(--fm-primary);transition:width .25s}
 `, shadow);
-  var card = element('div', 'fm-card', null, shadow);
+  var head = element('div', 'fm-head', null, shadow);
+  var body = element('div', 'fm-body', null, shadow);
+  var card = element('div', 'fm-card', null, body);
   element('div', 'fm-center fm-muted', 'Loading form…', card);
+
+  // Single-card views re-seat `card`; headerless views clear `head`.
+  function resetView() {
+    replaceContents(head);
+    replaceContents(body);
+    body.appendChild(card);
+    replaceContents(card);
+  }
 
   function applyPalette() {
     var p = palette();
-    card.style.background = cardFlat ? 'transparent' : p.card;
-    card.style.boxShadow = cardFlat ? 'none' : '';
-    card.style.color = p.text;
-    card.style.setProperty('--fm-primary', p.primary);
-    card.querySelectorAll('.fm-input,.fm-textarea,.fm-select,.fm-bolt,.fm-nostr,.fm-btn').forEach(function (n) {
+    body.querySelectorAll('.fm-card').forEach(function (n) {
+      n.style.background = p.card;
+      n.style.color = p.text;
+    });
+    body.style.setProperty('--fm-primary', p.primary);
+    head.style.setProperty('--fm-primary', p.primary);
+    body.querySelectorAll('.fm-input,.fm-textarea,.fm-select,.fm-bolt,.fm-nostr,.fm-btn').forEach(function (n) {
       n.style.borderColor = p.border;
     });
-    card.querySelectorAll('.fm-submit,.fm-btn.fm-primary,.fm-ok,.fm-start').forEach(function (n) {
+    body.querySelectorAll('.fm-submit,.fm-btn.fm-primary,.fm-ok,.fm-start').forEach(function (n) {
       n.style.background = p.primary;
       n.style.color = contrastColor(p.primary);
     });
-    card.querySelectorAll('.tf-nav button').forEach(function (n) {
+    body.querySelectorAll('.tf-nav button').forEach(function (n) {
       n.style.background = p.text;
       n.style.color = p.card;
     });
     if (p.pill) {
-      card.querySelectorAll('.fm-submit,.fm-btn,.fm-ok,.fm-start').forEach(function (n) { n.style.borderRadius = '999px'; });
-      card.querySelectorAll('.fm-input,.fm-textarea,.fm-select').forEach(function (n) { n.style.borderRadius = '12px'; });
+      body.querySelectorAll('.fm-submit,.fm-btn,.fm-ok,.fm-start').forEach(function (n) { n.style.borderRadius = '999px'; });
+      body.querySelectorAll('.fm-input,.fm-textarea,.fm-select').forEach(function (n) { n.style.borderRadius = '12px'; });
     }
-    card.querySelectorAll('.fm-muted,.fm-help,.fm-note').forEach(function (n) { n.style.color = p.muted; });
-    card.querySelectorAll('.fm-spin').forEach(function (n) { n.style.borderColor = p.border; n.style.borderTopColor = 'transparent'; });
+    body.querySelectorAll('.fm-muted,.fm-help,.fm-note').forEach(function (n) { n.style.color = p.muted; });
+    body.querySelectorAll('.fm-spin').forEach(function (n) { n.style.borderColor = p.border; n.style.borderTopColor = 'transparent'; });
     applyCustom(p);
   }
 
   function applyCustom(p) {
     var c = settings.colors || {};
     var global = c.global || '';
-    if (global) card.style.color = global;
-    if (c.title) card.querySelectorAll('.fm-title').forEach(function (n) { n.style.color = c.title; });
-    if (c.description) card.querySelectorAll('.fm-desc').forEach(function (n) { n.style.color = c.description; });
+    if (global) {
+      head.style.color = global;
+      body.querySelectorAll('.fm-card').forEach(function (n) { n.style.color = global; });
+    }
+    if (c.title) head.querySelectorAll('.fm-title').forEach(function (n) { n.style.color = c.title; });
+    var desc = c.description || global;
+    if (desc) head.querySelectorAll('.fm-desc,.fm-muted').forEach(function (n) { n.style.color = desc; });
     var q = c.question || global;
-    if (q) card.querySelectorAll('.fm-label').forEach(function (n) { n.style.color = q; });
+    if (q) body.querySelectorAll('.fm-label,.tf-qlabel').forEach(function (n) { n.style.color = q; });
     var op = Number(settings.cardOpacity);
-    if (!cardFlat && !isNaN(op) && op < 1) {
-      card.style.background = 'color-mix(in srgb, ' + p.card + ' ' + (op * 100) + '%, transparent)';
+    if (!isNaN(op) && op < 1) {
+      body.querySelectorAll('.fm-card').forEach(function (n) {
+        n.style.background = 'color-mix(in srgb, ' + p.card + ' ' + (op * 100) + '%, transparent)';
+      });
     }
     var bg = (settings.bgImage || '').trim();
     if (bg) {
@@ -342,23 +362,29 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     stepIndex = -1;
     if (isStepperMode()) { renderStepper(message); return; }
     stepperKeys = false;
-    cardFlat = false;
-    replaceContents(card);
-    if (settings.headerImage) {
-      var banner = element('div', 'fm-banner', null, card);
-      banner.style.backgroundImage = 'url("' + assetUrl(settings.headerImage).replace(/"/g, '%22') + '")';
-    }
-    element('h1', 'fm-title', flow.title, card);
-    if (flow.description) element('p', 'fm-desc', flow.description, card);
-    if (flow.remaining !== null && flow.remaining !== undefined) {
-      element('div', 'fm-muted', flow.remaining + ' spot(s) remaining', card);
-    }
-    fields.forEach(function (f) { renderField(f, answers, card); });
-    errorBox = element('div', 'fm-error', message || '', card);
+    resetView();
+    card.remove();
+    renderHeader(head);
+    fields.forEach(function (f) {
+      renderField(f, answers, element('div', 'fm-card', null, body));
+    });
+    errorBox = element('div', 'fm-error', message || '', body);
     errorBox.setAttribute('role', 'alert');
     var label = submitLabel();
-    var submit = button('fm-submit', label, card, function () { submitAnswers(submit, label); });
+    var submit = button('fm-submit', label, body, function () { submitAnswers(submit, label); });
     applyPalette();
+  }
+
+  function renderHeader(parent) {
+    if (settings.headerImage) {
+      var banner = element('div', 'fm-banner', null, parent);
+      banner.style.backgroundImage = 'url("' + assetUrl(settings.headerImage).replace(/"/g, '%22') + '")';
+    }
+    element('h1', 'fm-title', flow.title, parent);
+    if (flow.description) element('p', 'fm-desc', flow.description, parent);
+    if (flow.remaining !== null && flow.remaining !== undefined) {
+      element('div', 'fm-muted', flow.remaining + ' spot(s) remaining', parent);
+    }
   }
 
   // --- Typeform-style stepper (mirrors the hosted public page) ---
@@ -366,20 +392,12 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
   function isOptionalLabel(field) { return /optional/i.test((field && field.label) || ''); }
 
   function renderStepper(message) {
-    replaceContents(card);
+    resetView();
     stepperKeys = true;
-    cardFlat = stepIndex === -1;
     if (stepIndex === -1) {
-      if (settings.headerImage) {
-        var banner = element('div', 'fm-banner', null, card);
-        banner.style.backgroundImage = 'url("' + assetUrl(settings.headerImage).replace(/"/g, '%22') + '")';
-      }
-      element('h1', 'fm-title', flow.title, card);
-      if (flow.description) element('p', 'fm-desc', flow.description, card);
-      if (flow.remaining !== null && flow.remaining !== undefined) {
-        element('div', 'fm-muted', flow.remaining + ' spot(s) remaining', card);
-      }
-      var stage = element('div', 'fm-stage fm-center', null, card);
+      card.remove();
+      renderHeader(head);
+      var stage = element('div', 'fm-stage fm-center', null, body);
       button('fm-start', 'Start →', stage, function () { stepOk(); });
       if (pricing.mode === 'fixed' && Number(pricing.amountSat) > 0) {
         element('div', 'fm-muted', formatSats(pricing.amountSat) + ' to complete', stage).style.marginTop = '.75rem';
@@ -560,8 +578,7 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
   }
 
   function renderInvoice(result) {
-    cardFlat = false;
-    replaceContents(card);
+    resetView();
     var amount = result.amountSat || (pricing.amountSat || 0);
     element('div', 'fm-title fm-center', 'Pay ' + formatSats(amount), card);
     var countdown = element('div', 'fm-muted fm-center', '', card);
@@ -616,8 +633,7 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
 
   function renderConfirmed(view) {
     stopTimers();
-    cardFlat = false;
-    replaceContents(card);
+    resetView();
     if (settings.endImage) {
       var endBanner = element('div', 'fm-banner', null, card);
       endBanner.style.backgroundImage = 'url("' + assetUrl(settings.endImage).replace(/"/g, '%22') + '")';
@@ -640,7 +656,7 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     settings = parseJson(flow.settingsJson, {});
     pricing = parseJson(flow.pricingJson, {});
     if (flow.status !== 'published') {
-      replaceContents(card);
+      resetView();
       element('div', 'fm-center', 'This form is not open for submissions.', card);
       applyPalette();
       return;
@@ -648,7 +664,7 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     renderForm();
   }).catch(function () {
     if (disposed) return;
-    replaceContents(card);
+    resetView();
     element('div', 'fm-error fm-center', 'This form is unavailable.', card);
     applyPalette();
   });
