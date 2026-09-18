@@ -122,8 +122,9 @@ body.theme-typeform .pf-card { padding: 2.25rem; }
 .theme-typeform .q-btn { border-radius: 999px; font-weight: 600; }
 .theme-typeform .q-btn--unelevated { padding: 0.55rem 1.6rem; }
 .theme-typeform .q-linear-progress { height: 6px; border-radius: 999px; }
-.theme-typeform .q-checkbox__inner,
+.theme-typeform .q-checkbox,
 .theme-typeform .q-option-group { font-size: 1.05rem; }
+.theme-typeform .q-checkbox__inner { font-size: 2.5rem; }
 .theme-typeform.theme-dark, body.theme-typeform.body--dark {
   --forms-page: #262627;
   --forms-card: #333334;
