@@ -9,7 +9,7 @@
       "min_lnbits_version": "1.6.0",
       "name": "Forms — Paid Workflows",
       "short_description": "Payment-gated forms, registrations and paid workflows",
-      "icon": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/static/assets/icon.png",
+      "icon": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/static/assets/icon.gif",
       "details_link": "https://raw.githubusercontent.com/bitkarrot/forms/v0.1.0/config.json",
       "html_url": "https://github.com/bitkarrot/forms/releases/tag/v0.1.0",
       "extension_type": "wasm"
