@@ -145,6 +145,7 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
 .fm-actions{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:.75rem 0}
 .fm-btn{padding:.55rem 1rem;border:1px solid;border-radius:.5rem;background:transparent;color:inherit;cursor:pointer;text-decoration:none;font-size:.9rem}
 .fm-btn.fm-primary{border:none;font-weight:700}
+.fm-btn.fm-cancel{display:block;margin:.75rem auto 0;font-size:.85rem;opacity:.75}
 .fm-wait{display:flex;align-items:center;justify-content:center;gap:.6rem;margin-top:1rem;font-size:.9rem}
 .fm-spin{width:1.1rem;height:1.1rem;border:2px solid;border-top-color:transparent;border-radius:50%;animation:fm-rot .8s linear infinite;display:inline-block}
 @keyframes fm-rot{to{transform:rotate(360deg)}}
@@ -273,6 +274,7 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
         radio.type = 'radio';
         radio.name = 'fm-' + field.id;
         radio.value = o;
+        radio.checked = answers[field.id] === o;
         radio.addEventListener('change', function () { answers[field.id] = o; });
         lab.appendChild(document.createTextNode(' ' + o));
       });
@@ -290,8 +292,10 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     }
     if (input && field.type !== 'radio') {
       input.id = 'fm-' + field.id;
+      if (input.type === 'checkbox') input.checked = !!answers[field.id];
+      else if (answers[field.id] !== undefined) input.value = answers[field.id];
       input.addEventListener('input', function () { answers[field.id] = input.type === 'checkbox' ? input.checked : input.value; });
-      if (field.type === 'checkbox' || field.type === 'consent') answers[field.id] = false;
+      if ((field.type === 'checkbox' || field.type === 'consent') && answers[field.id] === undefined) answers[field.id] = false;
     }
     if (field.help) element('div', 'fm-help', field.help, wrap);
     if (field.type === 'nostr_pubkey') {
@@ -331,10 +335,10 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     });
   }
 
-  function renderForm(message) {
+  function renderForm(message, keepAnswers) {
     stopTimers();
     submission = null;
-    answers = {};
+    if (!keepAnswers) answers = {};
     stepIndex = -1;
     if (isStepperMode()) { renderStepper(message); return; }
     stepperKeys = false;
@@ -577,6 +581,12 @@ button,input,textarea,select{font:inherit}button:disabled{opacity:.55;cursor:not
     var bolt = element('textarea', 'fm-bolt', null, card);
     bolt.readOnly = true; bolt.rows = 3; bolt.value = result.paymentRequest;
     bolt.setAttribute('aria-label', 'BOLT11 invoice');
+    button('fm-btn fm-cancel', 'Back to form', card, function () {
+      api('POST', '/s/' + encodeURIComponent(result.submissionId) + '/cancel').catch(function () {});
+      stopTimers();
+      if (isStepperMode()) renderStepper();
+      else renderForm(null, true);
+    });
     var copyStatus = element('div', 'fm-muted fm-center', '', card);
     copyStatus.setAttribute('role', 'status');
     var wait = element('div', 'fm-wait', null, card);

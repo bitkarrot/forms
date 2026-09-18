@@ -181,6 +181,19 @@
         this.expired = true
         this.showError(message)
       },
+      cancelInvoice() { this.invoiceDialog = false },
+      onInvoiceHide() {
+        // Dismissed while still pending — stop watching and cancel the
+        // submission so it doesn't linger as pending_payment.
+        if (!this.invoice || this.expired || this.submission?.paid) return
+        this.stopPolling(); this.stopTicking()
+        this.cancelSubmission()
+      },
+      async cancelSubmission() {
+        const id = this.submission?.submissionId || this.invoice?.submissionId
+        if (!id || this.submission?.status !== 'pending_payment') return
+        try { await this.api('POST', `/s/${id}/cancel`) } catch (_) {}
+      },
       stopPolling() { if (this.pollTimer) { clearInterval(this.pollTimer); this.pollTimer = null } },
       stopTicking() { if (this.tickTimer) { clearInterval(this.tickTimer); this.tickTimer = null } },
       copyInvoice() {

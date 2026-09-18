@@ -95,7 +95,7 @@
         </template>
       </template>
     </div>
-    <q-dialog v-model="invoiceDialog" position="top"><q-card class="q-pa-lg" style="min-width:min(92vw,420px)">
+    <q-dialog v-model="invoiceDialog" position="top" @hide="onInvoiceHide"><q-card class="q-pa-lg" style="min-width:min(92vw,420px)">
       <div v-if="invoice">
         <div class="text-h6 text-center">Pay {{formatSats(invoice.amountSat)}} sats</div>
         <div v-if="expiresInText" class="text-center text-caption text-grey-7">Expires in {{expiresInText}}</div>
@@ -103,6 +103,7 @@
         <div class="row justify-center q-mb-md"><q-btn unelevated no-caps color="primary" icon="bolt" label="Open in wallet" :href="'lightning:'+invoice.paymentRequest"></q-btn></div>
         <q-input outlined readonly type="textarea" autogrow :model-value="invoice.paymentRequest" label="BOLT11 invoice"><template #append><q-btn flat round dense icon="content_copy" aria-label="Copy invoice" @click="copyInvoice"></q-btn></template></q-input>
         <div class="pending-row q-mt-md" aria-live="polite"><q-spinner-dots color="primary" size="2rem"></q-spinner-dots><span>Waiting for verified payment…</span></div>
+        <div class="text-center q-mt-sm"><q-btn flat dense no-caps color="grey-7" label="Cancel" @click="cancelInvoice"></q-btn></div>
       </div>
     </q-card></q-dialog>
   </div>

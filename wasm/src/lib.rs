@@ -1166,6 +1166,30 @@ impl Guest for Component {
         ok(submission_view(&sub))
     }
 
+    fn public_cancel_submission(payload: String) -> String {
+        let req = match parse(&payload) {
+            Ok(v) => v,
+            Err(e) => return err(&e),
+        };
+        let sub_id = req.get("submissionId").and_then(Value::as_str).unwrap_or("");
+        let mut sub = match get("submissions", sub_id, false) {
+            Some(v) => v,
+            None => return err("Submission not found"),
+        };
+        if sub.get("status").and_then(Value::as_str) == Some("pending_payment") {
+            // Past expiry is reported as expired, like public-get-submission.
+            sub["status"] = json!(if sub.get("expiresAt").and_then(Value::as_u64).unwrap_or(0) <= now() {
+                "expired"
+            } else {
+                "cancelled"
+            });
+            if !set("submissions", &sub) {
+                return err("Could not update submission");
+            }
+        }
+        ok(submission_view(&sub))
+    }
+
     fn on_invoice_paid(payload: String) -> String {
         let event = match parse(&payload) {
             Ok(v) => v,

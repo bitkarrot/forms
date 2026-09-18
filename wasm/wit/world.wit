@@ -47,6 +47,7 @@ world forms {
   export public-get-flow: func(payload: string) -> string;
   export public-submit: func(payload: string) -> string;
   export public-get-submission: func(payload: string) -> string;
+  export public-cancel-submission: func(payload: string) -> string;
   export on-invoice-paid: func(payload: string) -> string;
   export send-test-notification: func(payload: string) -> string;
 }

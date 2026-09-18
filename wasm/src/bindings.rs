@@ -326,6 +326,32 @@ pub unsafe fn __post_return_public_get_submission<T: Guest>(arg0: *mut u8) {
 }
 #[doc(hidden)]
 #[allow(non_snake_case)]
+pub unsafe fn _export_public_cancel_submission_cabi<T: Guest>(
+    arg0: *mut u8,
+    arg1: usize,
+) -> *mut u8 {
+    #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
+    let len0 = arg1;
+    let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+    let result1 = T::public_cancel_submission(_rt::string_lift(bytes0));
+    let ptr2 = (&raw mut _RET_AREA.0).cast::<u8>();
+    let vec3 = (result1.into_bytes()).into_boxed_slice();
+    let ptr3 = vec3.as_ptr().cast::<u8>();
+    let len3 = vec3.len();
+    ::core::mem::forget(vec3);
+    *ptr2.add(::core::mem::size_of::<*const u8>()).cast::<usize>() = len3;
+    *ptr2.add(0).cast::<*mut u8>() = ptr3.cast_mut();
+    ptr2
+}
+#[doc(hidden)]
+#[allow(non_snake_case)]
+pub unsafe fn __post_return_public_cancel_submission<T: Guest>(arg0: *mut u8) {
+    let l0 = *arg0.add(0).cast::<*mut u8>();
+    let l1 = *arg0.add(::core::mem::size_of::<*const u8>()).cast::<usize>();
+    _rt::cabi_dealloc(l0, l1, 1);
+}
+#[doc(hidden)]
+#[allow(non_snake_case)]
 pub unsafe fn _export_on_invoice_paid_cabi<T: Guest>(
     arg0: *mut u8,
     arg1: usize,
@@ -390,6 +416,7 @@ pub trait Guest {
     fn public_get_flow(payload: _rt::String) -> _rt::String;
     fn public_submit(payload: _rt::String) -> _rt::String;
     fn public_get_submission(payload: _rt::String) -> _rt::String;
+    fn public_cancel_submission(payload: _rt::String) -> _rt::String;
     fn on_invoice_paid(payload: _rt::String) -> _rt::String;
     fn send_test_notification(payload: _rt::String) -> _rt::String;
 }
@@ -469,7 +496,13 @@ macro_rules! __export_world_forms_cabi {
         } #[unsafe (export_name = "cabi_post_public-get-submission")] unsafe extern "C"
         fn _post_return_public_get_submission(arg0 : * mut u8,) { unsafe {
         $($path_to_types)*:: __post_return_public_get_submission::<$ty > (arg0) } }
-        #[unsafe (export_name = "on-invoice-paid")] unsafe extern "C" fn
+        #[unsafe (export_name = "public-cancel-submission")] unsafe extern "C" fn
+        export_public_cancel_submission(arg0 : * mut u8, arg1 : usize,) -> * mut u8 {
+        unsafe { $($path_to_types)*:: _export_public_cancel_submission_cabi::<$ty >
+        (arg0, arg1) } } #[unsafe (export_name = "cabi_post_public-cancel-submission")]
+        unsafe extern "C" fn _post_return_public_cancel_submission(arg0 : * mut u8,) {
+        unsafe { $($path_to_types)*:: __post_return_public_cancel_submission::<$ty >
+        (arg0) } } #[unsafe (export_name = "on-invoice-paid")] unsafe extern "C" fn
         export_on_invoice_paid(arg0 : * mut u8, arg1 : usize,) -> * mut u8 { unsafe {
         $($path_to_types)*:: _export_on_invoice_paid_cabi::<$ty > (arg0, arg1) } }
         #[unsafe (export_name = "cabi_post_on-invoice-paid")] unsafe extern "C" fn
@@ -1920,9 +1953,9 @@ pub(crate) use __export_forms_impl as export;
 )]
 #[doc(hidden)]
 #[allow(clippy::octal_escapes)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1743] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xd3\x0c\x01A\x02\x01\
-A\x12\x01BB\x01r\x02\x05tables\x02ids\x04\0\x13storage-get-request\x03\0\0\x01ks\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1772] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xf0\x0c\x01A\x02\x01\
+A\x13\x01BB\x01r\x02\x05tables\x02ids\x04\0\x13storage-get-request\x03\0\0\x01ks\
 \x01r\x01\x09data-json\x02\x04\0\x14storage-get-response\x03\0\x03\x01r\x02\x05t\
 ables\x02ids\x04\0\x1astorage-get-public-request\x03\0\x05\x01r\x02\x05tables\x09\
 data-json\x02\x04\0\x13storage-set-request\x03\0\x07\x01r\x01\x02ok\x7f\x04\0\x14\
@@ -1954,9 +1987,10 @@ update-flow\x01\x01\x04\0\x0fset-flow-status\x01\x01\x04\0\x0bdelete-flow\x01\x0
 \x04\0\x10list-submissions\x01\x01\x04\0\x11update-submission\x01\x01\x04\0\x12e\
 xport-submissions\x01\x01\x04\0\x0clist-wallets\x01\x01\x04\0\x0fpublic-get-flow\
 \x01\x01\x04\0\x0dpublic-submit\x01\x01\x04\0\x15public-get-submission\x01\x01\x04\
-\0\x0fon-invoice-paid\x01\x01\x04\0\x16send-test-notification\x01\x01\x04\0\x16l\
-nbits:extension/forms\x04\0\x0b\x0b\x01\0\x05forms\x03\0\0\0G\x09producers\x01\x0c\
-processed-by\x02\x0dwit-component\x070.227.1\x10wit-bindgen-rust\x060.41.0";
+\0\x18public-cancel-submission\x01\x01\x04\0\x0fon-invoice-paid\x01\x01\x04\0\x16\
+send-test-notification\x01\x01\x04\0\x16lnbits:extension/forms\x04\0\x0b\x0b\x01\
+\0\x05forms\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x07\
+0.227.1\x10wit-bindgen-rust\x060.41.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

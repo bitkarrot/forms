@@ -417,7 +417,8 @@ return function render(_ctx, _cache) {
     _createVNode(_component_q_dialog, {
       modelValue: _ctx.invoiceDialog,
       "onUpdate:modelValue": $event => ((_ctx.invoiceDialog) = $event),
-      position: "top"
+      position: "top",
+      onHide: _ctx.onInvoiceHide
     }, {
       default: _withCtx(() => [
         _createVNode(_component_q_card, {
@@ -479,6 +480,16 @@ return function render(_ctx, _cache) {
                       size: "2rem"
                     }),
                     _createElementVNode("span", null, "Waiting for verified payment…")
+                  ]),
+                  _createElementVNode("div", { class: "text-center q-mt-sm" }, [
+                    _createVNode(_component_q_btn, {
+                      flat: "",
+                      dense: "",
+                      "no-caps": "",
+                      color: "grey-7",
+                      label: "Cancel",
+                      onClick: _ctx.cancelInvoice
+                    }, null, 8 /* PROPS */, ["onClick"])
                   ])
                 ]))
               : _createCommentVNode("v-if", true)
@@ -487,7 +498,7 @@ return function render(_ctx, _cache) {
         })
       ]),
       _: 1 /* STABLE */
-    }, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue"])
+    }, 8 /* PROPS */, ["modelValue", "onUpdate:modelValue", "onHide"])
   ], 4 /* STYLE */))
 }
 }

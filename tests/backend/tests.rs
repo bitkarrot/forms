@@ -15,6 +15,7 @@ pub(crate) trait Guest {
     fn public_get_flow(payload: String) -> String;
     fn public_submit(payload: String) -> String;
     fn public_get_submission(payload: String) -> String;
+    fn public_cancel_submission(payload: String) -> String;
     fn on_invoice_paid(payload: String) -> String;
     fn delete_flow(payload: String) -> String;
     fn send_test_notification(payload: String) -> String;
@@ -169,6 +170,29 @@ fn paid_submit_creates_pending_submission_and_invoice() {
     assert_eq!(sub["paymentHash"], host::HASH);
     let view = sub_status(result["submissionId"].as_str().unwrap());
     assert_eq!(view["paid"], false);
+}
+
+#[test]
+fn cancel_pending_submission_marks_cancelled() {
+    let flow = create_flow();
+    let flow_id = flow["id"].as_str().unwrap();
+    publish(flow_id);
+    let result = submit(flow_id);
+    let sub_id = result["submissionId"].as_str().unwrap();
+    let view = decode(Component::public_cancel_submission(
+        json!({"submissionId": sub_id}).to_string(),
+    ));
+    assert_eq!(view["status"], "cancelled", "{view}");
+    assert_eq!(host::row("submissions", sub_id).unwrap()["status"], "cancelled");
+    // Idempotent — a second cancel leaves it cancelled.
+    let again = decode(Component::public_cancel_submission(
+        json!({"submissionId": sub_id}).to_string(),
+    ));
+    assert_eq!(again["status"], "cancelled", "{again}");
+    let missing = decode(Component::public_cancel_submission(
+        json!({"submissionId": "sub_nope"}).to_string(),
+    ));
+    assert!(missing.get("error").is_some());
 }
 
 #[test]
