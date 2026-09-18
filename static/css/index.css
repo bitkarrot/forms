@@ -218,6 +218,20 @@ body.body--dark .fb-gear { background: rgba(30, 30, 30, 0.85); color: #eee; }
 .form-preview .text-h4, .form-preview .text-h5 { color: var(--fc-title, var(--fc-global, inherit)); }
 .form-preview p { color: var(--fc-desc, var(--fc-global, inherit)); }
 .form-preview .tf-qlabel, .form-preview .q-field__label, .form-preview .text-subtitle2 { color: var(--fc-question, var(--fc-global, inherit)); }
+
+/* Field chrome follows the form theme, not the admin page's global dark mode */
+.form-preview .q-field--outlined .q-field__control:before {
+  border-color: color-mix(in srgb, var(--forms-text, #1f2937) 45%, transparent);
+}
+.form-preview .q-field__native,
+.form-preview .q-field__input,
+.form-preview .q-field__marginal { color: var(--forms-text, inherit); }
+.form-preview .q-radio__inner,
+.form-preview .q-checkbox__inner {
+  color: color-mix(in srgb, var(--forms-text, #1f2937) 70%, transparent);
+}
+.form-preview .q-radio__inner--truthy,
+.form-preview .q-checkbox__inner--truthy { color: var(--q-primary); }
 .fb-swatch { border: 1px solid rgba(128, 128, 128, 0.45); }
 .form-banner {
   height: 140px;
