@@ -81,9 +81,10 @@ body.body--dark .pf-card { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); }
 
 /* Typeform-style stepper — flat question centered in the viewport */
 .tf-stage { display: flex; flex-direction: column; justify-content: center; min-height: 60vh; }
-.pf-card.tf-flat {
+.public-page .pf-card.tf-flat {
   background: transparent;
   box-shadow: none;
+  border: none;
   padding: 8px 0;
 }
 .tf-nav {
@@ -102,7 +103,7 @@ body.body--dark .pf-card { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); }
 }
 .tf-nav .q-btn:first-child { border-radius: 8px 8px 0 0; }
 .tf-nav .q-btn:last-child { border-radius: 0 0 8px 8px; margin-top: 1px; }
-body.body--dark .pf-card.tf-flat { box-shadow: none; }
+body.body--dark .public-page .pf-card.tf-flat { box-shadow: none; }
 .tf-progress {
   position: fixed !important;
   left: 0;
