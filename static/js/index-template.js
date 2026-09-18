@@ -9,6 +9,7 @@ return function render(_ctx, _cache) {
   const _component_q_card = _resolveComponent("q-card")
   const _component_q_badge = _resolveComponent("q-badge")
   const _component_q_td = _resolveComponent("q-td")
+  const _component_q_tooltip = _resolveComponent("q-tooltip")
   const _component_q_table = _resolveComponent("q-table")
   const _component_q_btn_toggle = _resolveComponent("q-btn-toggle")
   const _component_q_separator = _resolveComponent("q-separator")
@@ -20,7 +21,6 @@ return function render(_ctx, _cache) {
   const _component_q_item_section = _resolveComponent("q-item-section")
   const _component_q_item = _resolveComponent("q-item")
   const _component_q_toggle = _resolveComponent("q-toggle")
-  const _component_q_tooltip = _resolveComponent("q-tooltip")
   const _component_q_expansion_item = _resolveComponent("q-expansion-item")
   const _component_q_color = _resolveComponent("q-color")
   const _component_q_slider = _resolveComponent("q-slider")
@@ -32,7 +32,7 @@ return function render(_ctx, _cache) {
     style: {"max-width":"960px","margin":"0 auto"}
   }, [
     _createElementVNode("div", { class: "row items-center q-mb-md" }, [
-      _createElementVNode("div", { class: "text-h5" }, "Paid Workflows"),
+      _createElementVNode("div", { class: "text-h5" }, "Forms"),
       _createVNode(_component_q_space),
       _createVNode(_component_q_btn, {
         flat: "",
@@ -130,85 +130,167 @@ return function render(_ctx, _cache) {
                   default: _withCtx(() => [
                     _createVNode(_component_q_btn, {
                       flat: "",
+                      round: "",
                       dense: "",
-                      "no-caps": "",
                       size: "sm",
                       icon: "link",
-                      label: "Link",
+                      "aria-label": "Copy public link",
                       onClick: $event => (_ctx.copyPublicLink(props.row))
-                    }, null, 8 /* PROPS */, ["onClick"]),
+                    }, {
+                      default: _withCtx(() => [
+                        _createVNode(_component_q_tooltip, null, {
+                          default: _withCtx(() => [
+                            _createTextVNode("Copy public link")
+                          ]),
+                          _: 1 /* STABLE */
+                        })
+                      ]),
+                      _: 1 /* STABLE */
+                    }, 8 /* PROPS */, ["onClick"]),
                     _createVNode(_component_q_btn, {
                       flat: "",
+                      round: "",
                       dense: "",
-                      "no-caps": "",
                       size: "sm",
                       icon: "code",
-                      label: "Share",
+                      "aria-label": "Share and embed",
                       onClick: $event => (_ctx.openShare(props.row))
-                    }, null, 8 /* PROPS */, ["onClick"]),
+                    }, {
+                      default: _withCtx(() => [
+                        _createVNode(_component_q_tooltip, null, {
+                          default: _withCtx(() => [
+                            _createTextVNode("Share & embed")
+                          ]),
+                          _: 1 /* STABLE */
+                        })
+                      ]),
+                      _: 1 /* STABLE */
+                    }, 8 /* PROPS */, ["onClick"]),
                     _createVNode(_component_q_btn, {
                       flat: "",
+                      round: "",
                       dense: "",
-                      "no-caps": "",
                       size: "sm",
                       icon: "open_in_new",
-                      label: "View",
+                      "aria-label": "Open public page",
                       onClick: $event => (_ctx.openPublic(props.row))
-                    }, null, 8 /* PROPS */, ["onClick"]),
+                    }, {
+                      default: _withCtx(() => [
+                        _createVNode(_component_q_tooltip, null, {
+                          default: _withCtx(() => [
+                            _createTextVNode("Open public page")
+                          ]),
+                          _: 1 /* STABLE */
+                        })
+                      ]),
+                      _: 1 /* STABLE */
+                    }, 8 /* PROPS */, ["onClick"]),
                     (props.row.status!=='published')
                       ? (_openBlock(), _createBlock(_component_q_btn, {
                           key: 0,
                           flat: "",
+                          round: "",
                           dense: "",
-                          "no-caps": "",
                           size: "sm",
                           color: "positive",
-                          label: "Publish",
+                          icon: "publish",
+                          "aria-label": "Publish",
                           onClick: $event => (_ctx.setStatus(props.row,'published'))
-                        }, null, 8 /* PROPS */, ["onClick"]))
+                        }, {
+                          default: _withCtx(() => [
+                            _createVNode(_component_q_tooltip, null, {
+                              default: _withCtx(() => [
+                                _createTextVNode("Publish")
+                              ]),
+                              _: 1 /* STABLE */
+                            })
+                          ]),
+                          _: 1 /* STABLE */
+                        }, 8 /* PROPS */, ["onClick"]))
                       : _createCommentVNode("v-if", true),
                     (props.row.status==='published')
                       ? (_openBlock(), _createBlock(_component_q_btn, {
                           key: 1,
                           flat: "",
+                          round: "",
                           dense: "",
-                          "no-caps": "",
                           size: "sm",
                           color: "warning",
-                          label: "Close",
+                          icon: "block",
+                          "aria-label": "Close submissions",
                           onClick: $event => (_ctx.setStatus(props.row,'closed'))
-                        }, null, 8 /* PROPS */, ["onClick"]))
+                        }, {
+                          default: _withCtx(() => [
+                            _createVNode(_component_q_tooltip, null, {
+                              default: _withCtx(() => [
+                                _createTextVNode("Close submissions")
+                              ]),
+                              _: 1 /* STABLE */
+                            })
+                          ]),
+                          _: 1 /* STABLE */
+                        }, 8 /* PROPS */, ["onClick"]))
                       : _createCommentVNode("v-if", true),
                     _createVNode(_component_q_btn, {
                       flat: "",
+                      round: "",
                       dense: "",
-                      "no-caps": "",
                       size: "sm",
                       icon: "edit",
-                      label: "Edit",
+                      "aria-label": "Edit",
                       onClick: $event => (_ctx.openFlowDialog(props.row))
-                    }, null, 8 /* PROPS */, ["onClick"]),
+                    }, {
+                      default: _withCtx(() => [
+                        _createVNode(_component_q_tooltip, null, {
+                          default: _withCtx(() => [
+                            _createTextVNode("Edit")
+                          ]),
+                          _: 1 /* STABLE */
+                        })
+                      ]),
+                      _: 1 /* STABLE */
+                    }, 8 /* PROPS */, ["onClick"]),
                     _createVNode(_component_q_btn, {
                       flat: "",
+                      round: "",
                       dense: "",
-                      "no-caps": "",
                       size: "sm",
                       icon: "list",
-                      label: "Submissions",
+                      "aria-label": "Submissions",
                       onClick: $event => (_ctx.openSubmissions(props.row))
-                    }, null, 8 /* PROPS */, ["onClick"]),
+                    }, {
+                      default: _withCtx(() => [
+                        _createVNode(_component_q_tooltip, null, {
+                          default: _withCtx(() => [
+                            _createTextVNode("Submissions")
+                          ]),
+                          _: 1 /* STABLE */
+                        })
+                      ]),
+                      _: 1 /* STABLE */
+                    }, 8 /* PROPS */, ["onClick"]),
                     (props.row.status!=='published')
                       ? (_openBlock(), _createBlock(_component_q_btn, {
                           key: 2,
                           flat: "",
+                          round: "",
                           dense: "",
-                          "no-caps": "",
                           size: "sm",
                           icon: "delete",
                           color: "negative",
-                          label: "Delete",
+                          "aria-label": "Delete",
                           onClick: $event => (_ctx.confirmDelete(props.row))
-                        }, null, 8 /* PROPS */, ["onClick"]))
+                        }, {
+                          default: _withCtx(() => [
+                            _createVNode(_component_q_tooltip, null, {
+                              default: _withCtx(() => [
+                                _createTextVNode("Delete")
+                              ]),
+                              _: 1 /* STABLE */
+                            })
+                          ]),
+                          _: 1 /* STABLE */
+                        }, 8 /* PROPS */, ["onClick"]))
                       : _createCommentVNode("v-if", true)
                   ]),
                   _: 2 /* DYNAMIC */

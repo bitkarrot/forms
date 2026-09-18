@@ -14,7 +14,7 @@
 <div id="q-app" class="vue-pending">
   <div class="q-pa-md" style="max-width:960px;margin:0 auto">
     <div class="row items-center q-mb-md">
-      <div class="text-h5">Paid Workflows</div>
+      <div class="text-h5">Forms</div>
       <q-space></q-space>
       <q-btn flat round dense :icon="isDark?'light_mode':'dark_mode'" aria-label="Toggle theme" @click="toggleTheme"></q-btn>
       <q-btn unelevated no-caps color="primary" icon="add" label="New flow" @click="openFlowDialog()"></q-btn>
@@ -26,14 +26,14 @@
       <template #body-cell-status="props"><q-td :props="props"><q-badge :color="statusColor(props.row.status)">{{props.row.status}}</q-badge></q-td></template>
       <template #body-cell-price="props"><q-td :props="props">{{priceLabel(props.row)}}</q-td></template>
       <template #body-cell-actions="props"><q-td :props="props">
-        <q-btn flat dense no-caps size="sm" icon="link" label="Link" @click="copyPublicLink(props.row)"></q-btn>
-        <q-btn flat dense no-caps size="sm" icon="code" label="Share" @click="openShare(props.row)"></q-btn>
-        <q-btn flat dense no-caps size="sm" icon="open_in_new" label="View" @click="openPublic(props.row)"></q-btn>
-        <q-btn v-if="props.row.status!=='published'" flat dense no-caps size="sm" color="positive" label="Publish" @click="setStatus(props.row,'published')"></q-btn>
-        <q-btn v-if="props.row.status==='published'" flat dense no-caps size="sm" color="warning" label="Close" @click="setStatus(props.row,'closed')"></q-btn>
-        <q-btn flat dense no-caps size="sm" icon="edit" label="Edit" @click="openFlowDialog(props.row)"></q-btn>
-        <q-btn flat dense no-caps size="sm" icon="list" label="Submissions" @click="openSubmissions(props.row)"></q-btn>
-        <q-btn v-if="props.row.status!=='published'" flat dense no-caps size="sm" icon="delete" color="negative" label="Delete" @click="confirmDelete(props.row)"></q-btn>
+        <q-btn flat round dense size="sm" icon="link" aria-label="Copy public link" @click="copyPublicLink(props.row)"><q-tooltip>Copy public link</q-tooltip></q-btn>
+        <q-btn flat round dense size="sm" icon="code" aria-label="Share and embed" @click="openShare(props.row)"><q-tooltip>Share &amp; embed</q-tooltip></q-btn>
+        <q-btn flat round dense size="sm" icon="open_in_new" aria-label="Open public page" @click="openPublic(props.row)"><q-tooltip>Open public page</q-tooltip></q-btn>
+        <q-btn v-if="props.row.status!=='published'" flat round dense size="sm" color="positive" icon="publish" aria-label="Publish" @click="setStatus(props.row,'published')"><q-tooltip>Publish</q-tooltip></q-btn>
+        <q-btn v-if="props.row.status==='published'" flat round dense size="sm" color="warning" icon="block" aria-label="Close submissions" @click="setStatus(props.row,'closed')"><q-tooltip>Close submissions</q-tooltip></q-btn>
+        <q-btn flat round dense size="sm" icon="edit" aria-label="Edit" @click="openFlowDialog(props.row)"><q-tooltip>Edit</q-tooltip></q-btn>
+        <q-btn flat round dense size="sm" icon="list" aria-label="Submissions" @click="openSubmissions(props.row)"><q-tooltip>Submissions</q-tooltip></q-btn>
+        <q-btn v-if="props.row.status!=='published'" flat round dense size="sm" icon="delete" color="negative" aria-label="Delete" @click="confirmDelete(props.row)"><q-tooltip>Delete</q-tooltip></q-btn>
       </q-td></template>
     </q-table>
 

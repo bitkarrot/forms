@@ -129,7 +129,7 @@ say('flow saved and listed')
 
 say('publish + get public URL')
 const row = admin.locator('tr:has-text("Event registration")').first()
-const pubBtn = row.locator('.q-btn:has-text("Publish")')
+const pubBtn = row.locator('.q-btn[aria-label="Publish"]')
 if (await pubBtn.count()) { await pubBtn.click(); await sleep(900) }
 const publicId = await page.evaluate(async () => {
   const a = await fetch('/api/v1/auth', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: 'admin', password: 'adminpass123'})}).then(r => r.json())
