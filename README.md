@@ -26,7 +26,7 @@ self-hosted Lightning payments.
 
 ## Demo
 
-[![Watch the demo](https://raw.githubusercontent.com/bitkarrot/forms/main/screenshots/demo-video.png)](https://youtu.be/e7rzuCEnu8w)
+[![Watch the demo](https://github.com/user-attachments/assets/88dfb2dc-ad81-4cb2-94d9-23e3eba0944c)](https://youtu.be/e7rzuCEnu8w)
 
 _40-second walkthrough: Typeform-style stepper → Lightning invoice → confirmation
 with ticket code, the admin builder, and the JavaScript embed._
@@ -35,12 +35,12 @@ with ticket code, the admin builder, and the JavaScript embed._
 
 <table>
   <tr>
-    <td><img src="screenshots/admin-flows.png" alt="Forms admin — your forms at a glance"></td>
-    <td><img src="screenshots/builder.png" alt="Visual form builder with live preview"></td>
-  </tr>
-  <tr>
     <td><img src="screenshots/public-hosted.png" alt="Hosted public form page"></td>
     <td><img src="screenshots/public-filled.png" alt="Form filled in, ready to pay"></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/admin-flows.png" alt="Forms admin — your forms at a glance"></td>
+    <td><img src="screenshots/builder.png" alt="Visual form builder with live preview"></td>
   </tr>
   <tr>
     <td><img src="screenshots/payment.png" alt="Lightning invoice checkout"></td>
