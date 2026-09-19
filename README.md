@@ -24,6 +24,13 @@ self-hosted Lightning payments.
 - **Anything with fields** — text, email, phone, number, date, dropdowns,
   multiple choice, checkboxes, consent, Nostr pubkey
 
+## Demo
+
+[![Watch the demo](https://raw.githubusercontent.com/bitkarrot/forms/main/screenshots/demo-video.png)](https://youtu.be/e7rzuCEnu8w)
+
+_40-second walkthrough: Typeform-style stepper → Lightning invoice → confirmation
+with ticket code, the admin builder, and the JavaScript embed._
+
 ## Screenshots
 
 <table>

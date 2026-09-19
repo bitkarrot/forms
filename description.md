@@ -2,6 +2,12 @@
 
 Build payment-gated forms, event registrations, and membership workflows. Attendees fill in a public hosted form and pay a Lightning invoice that settles directly into the organizer's LNbits wallet — no third-party form service, no card processor required.
 
+## Demo
+
+[![Watch the demo](https://raw.githubusercontent.com/bitkarrot/forms/main/screenshots/demo-video.png)](https://youtu.be/e7rzuCEnu8w)
+
+_40-second walkthrough: Typeform-style stepper → Lightning invoice → confirmation with ticket code, the admin builder, and the JavaScript embed._
+
 ## Features
 
 - **Form builder** with live canvas preview: text, paragraph, email, phone, number, date, dropdown, multiple choice, checkbox, consent, and Nostr pubkey fields with required/optional rules.
