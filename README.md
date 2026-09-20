@@ -26,7 +26,7 @@ self-hosted Lightning payments.
 
 ## Demo
 
-[![Watch the demo](https://github.com/user-attachments/assets/88dfb2dc-ad81-4cb2-94d9-23e3eba0944c)](https://youtu.be/e7rzuCEnu8w)
+[![Watch the demo](https://github.com/user-attachments/assets/88dfb2dc-ad81-4cb2-94d9-23e3eba0944c)](https://www.youtube.com/watch?v=fLjzZwiQaxI)
 
 _40-second walkthrough: Typeform-style stepper → Lightning invoice → confirmation
 with ticket code, the admin builder, and the JavaScript embed._
