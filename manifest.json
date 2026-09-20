@@ -3,15 +3,15 @@
     {
       "id": "forms",
       "repo": "https://github.com/bitkarrot/forms",
-      "version": "0.2.4",
-      "archive": "https://github.com/bitkarrot/forms/releases/download/v0.2.4/forms-0.2.4.zip",
-      "hash": "e2f3ebb2b845d8f9537376a7e9be089f0bc1b72f5eea567c6900ba7bb485974c",
+      "version": "0.2.5",
+      "archive": "https://github.com/bitkarrot/forms/releases/download/v0.2.5/forms-0.2.5.zip",
+      "hash": "68d911d2dac1b175b77a9415317de4d80337c00831f466a206013fc902170dd7",
       "min_lnbits_version": "1.6.0",
       "name": "Forms \u2014 Paid Workflows",
       "short_description": "Payment-gated forms, registrations and paid workflows",
-      "icon": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.4/static/assets/icon.png",
-      "details_link": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.4/config.json",
-      "html_url": "https://github.com/bitkarrot/forms/releases/tag/v0.2.4",
+      "icon": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.5/static/assets/icon.png",
+      "details_link": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.5/config.json",
+      "html_url": "https://github.com/bitkarrot/forms/releases/tag/v0.2.5",
       "extension_type": "wasm"
     }
   ],

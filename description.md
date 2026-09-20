@@ -4,7 +4,7 @@ Build payment-gated forms, event registrations, and membership workflows. Attend
 
 ## Demo
 
-[![Watch the demo](https://raw.githubusercontent.com/bitkarrot/forms/main/screenshots/demo-video.png)](https://youtu.be/e7rzuCEnu8w)
+[![Watch the demo](https://raw.githubusercontent.com/bitkarrot/forms/main/screenshots/demo-video.png)](https://www.youtube.com/watch?v=fLjzZwiQaxI)
 
 _40-second walkthrough: Typeform-style stepper → Lightning invoice → confirmation with ticket code, the admin builder, and the JavaScript embed._
 
