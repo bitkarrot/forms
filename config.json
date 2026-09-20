@@ -13,6 +13,7 @@
   "tags": ["Forms", "Payments", "Lightning", "WASM"],
   "contributors": [{"name": "bitkarrot", "uri": "https://github.com/bitkarrot", "role": "Creator"}],
   "images": [
+    {"uri": "https://img.youtube.com/vi/fLjzZwiQaxI/hqdefault.jpg", "link": "https://www.youtube.com/embed/fLjzZwiQaxI"},
     {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.5/screenshots/stepper-themed.png"},
     {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.5/screenshots/admin-flows.png"},
     {"uri": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.5/screenshots/builder.png"},
