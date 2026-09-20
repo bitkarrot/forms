@@ -7,7 +7,7 @@
       "archive": "https://github.com/bitkarrot/forms/releases/download/v0.2.5/forms-0.2.5.zip",
       "hash": "68d911d2dac1b175b77a9415317de4d80337c00831f466a206013fc902170dd7",
       "min_lnbits_version": "1.6.0",
-      "name": "Forms \u2014 Paid Workflows",
+      "name": "Forms",
       "short_description": "Payment-gated forms, registrations and paid workflows",
       "icon": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.5/static/assets/icon.png",
       "details_link": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.5/config.json",
