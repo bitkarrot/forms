@@ -9,6 +9,7 @@
       "min_lnbits_version": "1.6.0",
       "name": "Forms",
       "short_description": "Payment-gated forms, registrations and paid workflows",
+      "pay_link": "https://fern-plasma.exe.xyz/paywall/api/v1/paywalls/invoice/nDR4QvgJbhudvUE7J2ZN6Q",
       "icon": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.5/static/assets/icon.png",
       "details_link": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.5/config.json",
       "html_url": "https://github.com/bitkarrot/forms/releases/tag/v0.2.5",

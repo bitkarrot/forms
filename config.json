@@ -2,6 +2,7 @@
   "id": "forms",
   "name": "Forms",
   "short_description": "Payment-gated forms, registrations and paid workflows",
+  "pay_link": "https://fern-plasma.exe.xyz/paywall/api/v1/paywalls/invoice/nDR4QvgJbhudvUE7J2ZN6Q",
   "description": "Build forms and paid registration flows: attendees submit and pay a Lightning invoice that settles directly into the organizer's wallet. Includes a public hosted page, preset light/dark themes with custom CSS, a website embed widget, CSV export, and optional Nostr pubkey prefill in the embed.",
   "version": "0.2.5",
   "min_lnbits_version": "1.6.0",
