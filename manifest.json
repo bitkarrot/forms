@@ -3,16 +3,16 @@
     {
       "id": "forms",
       "repo": "https://github.com/bitkarrot/forms",
-      "version": "0.2.5",
-      "archive": "https://github.com/bitkarrot/forms/releases/download/v0.2.5/forms-0.2.5.zip",
-      "hash": "68d911d2dac1b175b77a9415317de4d80337c00831f466a206013fc902170dd7",
+      "version": "0.2.6",
+      "archive": "https://github.com/bitkarrot/forms/releases/download/v0.2.6/forms-0.2.6.zip",
+      "hash": "224a0b1019b10f9b0f244b2102dc925b74cf8bd3c156e4a8b7e697af6d631552",
       "min_lnbits_version": "1.6.0",
       "name": "Forms",
       "short_description": "Payment-gated forms, registrations and paid workflows",
       "pay_link": "https://fern-plasma.exe.xyz/paywall/api/v1/paywalls/invoice/nDR4QvgJbhudvUE7J2ZN6Q",
-      "icon": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.5/static/assets/icon.png",
-      "details_link": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.5/config.json",
-      "html_url": "https://github.com/bitkarrot/forms/releases/tag/v0.2.5",
+      "icon": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.6/static/assets/icon.png",
+      "details_link": "https://raw.githubusercontent.com/bitkarrot/forms/v0.2.6/config.json",
+      "html_url": "https://github.com/bitkarrot/forms/releases/tag/v0.2.6",
       "extension_type": "wasm"
     }
   ],
