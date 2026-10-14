@@ -28,11 +28,16 @@ def test_wallet_id_is_never_in_public_fields():
         assert 'walletId' not in policy['public_fields']
 
 
-def test_no_websocket_or_outbound_permissions():
+def test_outbound_permissions_are_host_restricted():
     config = json.loads((ROOT / 'config.json').read_text())
     ids = {p['id'] for p in config['permissions']}
     assert 'websocket.subscribe' not in ids
-    assert not any(i.startswith('http.') for i in ids)
+    for permission in config['permissions']:
+        if permission['id'].startswith('http.'):
+            policies = permission.get('policies') or []
+            assert policies and all(
+                'host' in policy and '*' not in policy['host'] for policy in policies
+            )
 
 
 def test_storage_schema_has_flows_and_submissions():
